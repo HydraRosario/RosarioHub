@@ -432,7 +432,9 @@ function ArtistsTab({ artists, onEdit, onDelete }: {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <a 
-                                        href={`http://${artist.slug}.localhost:3000`}
+                                        href={process.env.NODE_ENV === 'production' 
+                                        ? `https://${artist.slug}.rosario-hub.vercel.app`
+                                        : `http://${artist.slug}.localhost:3000`}
                                         target="_blank"
                                         className="text-purple-600 hover:text-purple-900 mr-3 flex items-center"
                                     >
