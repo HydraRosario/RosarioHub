@@ -1,0 +1,292 @@
+// ─────────────────────────────────────────────────────────────
+//  COMPONENT ENGINE - Sistema Lego Dinámico
+//  Los componentes se renderizan según las métricas en tiempo real
+//──────────────────────────────────────────────────────────────
+
+export interface MetricData {
+    label: string
+    value: string
+    platform: 'spotify' | 'youtube' | 'instagram' | 'tiktok'
+    isLive: boolean
+    growth?: number // % crecimiento
+    priority: number // 1-10, más alto = más importante
+}
+
+export interface ComponentConfig {
+    type: 'hero' | 'stats' | 'media' | 'social' | 'booking' | 'milestone' | 'trending'
+    id: string
+    priority: number
+    data: any
+    conditions: {
+        minMetrics?: number
+        requiredPlatforms?: string[]
+        minGrowth?: number
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+//  COMPONENT MAP - Definición de componentes Lego
+//──────────────────────────────────────────────────────────────
+export const COMPONENT_MAP = {
+    // Hero siempre visible
+    hero: {
+        type: 'hero' as const,
+        priority: 10,
+        conditions: {},
+        render: (data: any) => ({
+            component: 'HeroSection',
+            props: { profile: data.profile }
+        })
+    },
+
+    // Stats básicas
+    stats: {
+        type: 'stats' as const,
+        priority: 8,
+        conditions: {},
+        render: (data: any) => ({
+            component: 'StatsSection',
+            props: { metrics: data.metrics }
+        })
+    },
+
+    // Media si hay contenido
+    media: {
+        type: 'media' as const,
+        priority: 7,
+        conditions: { minMetrics: 2 },
+        render: (data: any) => ({
+            component: 'MediaHub',
+            props: { media: data.media }
+        })
+    },
+
+    // Social si hay seguidores
+    social: {
+        type: 'social' as const,
+        priority: 6,
+        conditions: { minMetrics: 1 },
+        render: (data: any) => ({
+            component: 'SocialStack',
+            props: { social: data.social }
+        })
+    },
+
+    // Milestones si hay crecimiento
+    milestone: {
+        type: 'milestone' as const,
+        priority: 9,
+        conditions: { minGrowth: 5 },
+        render: (data: any) => ({
+            component: 'MilestoneBanner',
+            props: { milestones: data.milestones }
+        })
+    },
+
+    // Trending si hay picos de actividad
+    trending: {
+        type: 'trending' as const,
+        priority: 9,
+        conditions: { minGrowth: 10 },
+        render: (data: any) => ({
+            component: 'TrendingAlert',
+            props: { trends: data.trends }
+        })
+    },
+
+    // Booking siempre visible
+    booking: {
+        type: 'booking' as const,
+        priority: 5,
+        conditions: {},
+        render: (data: any) => ({
+            component: 'BookingSection',
+            props: { booking: data.booking }
+        })
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+//  CALCULADOR DE RELEVANCIA
+//──────────────────────────────────────────────────────────────
+export function calculateRelevanceScore(metrics: MetricData[]): number {
+    if (!metrics.length) return 0
+    
+    // Ponderación por plataforma
+    const platformWeights = {
+        spotify: 1.5,
+        youtube: 1.2,
+        instagram: 1.0,
+        tiktok: 0.8
+    }
+    
+    // Ponderación por live data
+    const liveBonus = metrics.filter(m => m.isLive).length * 2
+    
+    // Ponderación por crecimiento
+    const growthBonus = metrics
+        .filter(m => m.growth && m.growth > 0)
+        .reduce((sum, m) => sum + (m.growth || 0), 0) * 0.1
+    
+    // Score base
+    const baseScore = metrics.reduce((score, metric) => {
+        const weight = platformWeights[metric.platform] || 1
+        return score + (metric.priority * weight)
+    }, 0)
+    
+    return Math.round(baseScore + liveBonus + growthBonus)
+}
+
+// ─────────────────────────────────────────────────────────────
+//  MOTOR DE COMPONENTES DINÁMICOS
+//──────────────────────────────────────────────────────────────
+export function generateDynamicLayout(
+    metrics: MetricData[],
+    artistData: any
+): ComponentConfig[] {
+    const relevanceScore = calculateRelevanceScore(metrics)
+    const components: ComponentConfig[] = []
+    
+    // Siempre incluimos hero
+    components.push({
+        type: 'hero',
+        id: 'hero',
+        priority: 10,
+        data: artistData,
+        conditions: {}
+    })
+    
+    // Stats siempre visibles
+    components.push({
+        type: 'stats',
+        id: 'stats',
+        priority: 8,
+        data: { metrics },
+        conditions: {}
+    })
+    
+    // Componentes condicionales
+    const conditionalComponents = [
+        {
+            key: 'milestone',
+            condition: relevanceScore > 20,
+            data: { 
+                milestones: detectMilestones(metrics)
+            }
+        },
+        {
+            key: 'trending',
+            condition: relevanceScore > 30,
+            data: {
+                trends: detectTrends(metrics)
+            }
+        },
+        {
+            key: 'media',
+            condition: artistData.media && Object.keys(artistData.media).length > 0,
+            data: { media: artistData.media }
+        },
+        {
+            key: 'social',
+            condition: artistData.social && Object.keys(artistData.social).length > 0,
+            data: { social: artistData.social }
+        },
+        {
+            key: 'booking',
+            condition: artistData.booking,
+            data: { booking: artistData.booking }
+        }
+    ]
+    
+    // Agregar componentes que cumplen condiciones
+    conditionalComponents.forEach(({ key, condition, data }) => {
+        if (condition) {
+            const componentDef = COMPONENT_MAP[key as keyof typeof COMPONENT_MAP]
+            components.push({
+                type: componentDef.type,
+                id: key,
+                priority: componentDef.priority,
+                data,
+                // @ts-ignore
+                conditions: componentDef.conditions || {}
+            })
+        }
+    })
+    
+    // Ordenar por prioridad
+    return components.sort((a, b) => b.priority - a.priority)
+}
+
+// ─────────────────────────────────────────────────────────────
+//  DETECCIÓN DE MILESTONES
+//──────────────────────────────────────────────────────────────
+export function detectMilestones(metrics: MetricData[]): any[] {
+    const milestones: any[] = []
+    
+    metrics.forEach(metric => {
+        const value = parseInt(metric.value.replace(/[^0-9]/g, ''))
+        
+        if (metric.platform === 'spotify' && value >= 10000) {
+            milestones.push({
+                type: 'spotify_listeners',
+                title: '🎵 10K+ Oyentes en Spotify!',
+                value: metric.value,
+                icon: '🎵'
+            })
+        }
+        
+        if (metric.platform === 'youtube' && value >= 1000) {
+            milestones.push({
+                type: 'youtube_subs',
+                title: '📺 1K+ Suscriptores!',
+                value: metric.value,
+                icon: '📺'
+            })
+        }
+    })
+    
+    return milestones
+}
+
+// ─────────────────────────────────────────────────────────────
+//  DETECCIÓN DE TRENDS
+//──────────────────────────────────────────────────────────────
+export function detectTrends(metrics: MetricData[]): any[] {
+    const trends: any[] = []
+    
+    metrics.forEach(metric => {
+        if (metric.growth && metric.growth > 10) {
+            trends.push({
+                platform: metric.platform,
+                metric: metric.label,
+                growth: metric.growth,
+                status: 'viral'
+            })
+        }
+    })
+    
+    return trends
+}
+
+// ─────────────────────────────────────────────────────────────
+//  HOOK PARA LAYOUT DINÁMICO
+//──────────────────────────────────────────────────────────────
+export interface DynamicLayout {
+    components: ComponentConfig[]
+    relevanceScore: number
+    lastUpdate: Date
+}
+
+export function useDynamicLayout(
+    metrics: MetricData[],
+    artistData: any
+): DynamicLayout {
+    const layout = generateDynamicLayout(metrics, artistData)
+    const relevanceScore = calculateRelevanceScore(metrics)
+    
+    return {
+        components: layout,
+        relevanceScore,
+        lastUpdate: new Date()
+    }
+}

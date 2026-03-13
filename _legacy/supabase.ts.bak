@@ -1,0 +1,26 @@
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+// Tipos base para nuestros datos
+export type Artist = {
+  id: string
+  slug: string
+  name: string
+  email: string
+  status: 'active' | 'pending' | 'inactive'
+  theme: string
+  created_at: string
+  // Redes sociales base para el config
+  spotify_artist_id?: string
+  youtube_channel_id?: string
+  instagram_handle?: string
+  // Métricas agregadas
+  spotify_listeners?: number
+  youtube_subs?: number
+  instagram_followers?: number
+  relevance_score?: number
+}

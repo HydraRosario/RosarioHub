@@ -1,0 +1,319 @@
+# ROADMAP 2.0 - PLAN DE LANZAMIENTO MAÑANA 13/03/2026
+# ARTISTHUB - PLATAFORMA PARA ARTISTAS DE ROSARIO
+
+## ESTADO ACTUAL ANALIZADO:
+✅ Frontend React/Vite funcional con tema engine completo
+✅ 6 templates de diseño listos (Soft Trap, Brutalist, Indie, Pink Goth, Techno, Vaporwave)
+✅ Sistema de stats en tiempo real (Spotify + YouTube) implementado
+✅ Configuración por archivo JS (artistConfig.js) funcionando
+❌ NO HAY: Base de datos, panel de admin, SUBDOMINIOS, sistema de usuarios
+❌ STACK ACTUAL: Vite + React (NO SOPORTA SUBDOMINIOS DINÁMICOS)
+
+## PLAN DE ATAQUE - 24 HORAS PARA LANZAMIENTO
+
+### FASE 1: STACK ESCALABLE CON EDGE FUNCTIONS (7 horas)
+**OBJETIVO:** Arquitectura enterprise-ready desde el inicio
+
+1. **MIGRAR A NEXT.JS + SUPABASE EDGE** (3 horas)
+   - npx create-next-app@latest artisthub-next --typescript --tailwind --app
+   - Configurar Supabase con tablas: artists, historical_data, metric_snapshots
+   - Implementar Edge Functions para scraping (no más CORS proxy)
+   - Configurar Redis cache en Supabase para 5 minutos de TTL
+   - Archivos: /app/layout.jsx, /lib/supabase.js, /lib/edge/scraping.js
+
+2. **RANKING ENGINE CON RELEVANCE SCORE** (2 horas)
+   - Implementar METRIC_WEIGHTS para normalizar diferentes plataformas
+   - Crear función getDynamicLayout() que reordena componentes en tiempo real
+   - Sistema de scoring: spotify_listeners (1.5), youtube_subs (1.2), ig_followers (1.0), tiktok_views (0.8)
+   - Archivos: /lib/rankingEngine.js, /hooks/useDynamicLayout.js
+
+3. **EDGE FUNCTIONS PARA SCRAPING** (2 horas)
+   - Migrar useSpotifyStats y useYoutubeStats a Edge Functions
+   - /api/stats/[artist_id] con cache de 5 minutos
+   - IPs limpias para evitar bloqueos de Spotify/YouTube
+   - Manejo de rate limiting y errores robustos
+   - Archivos: /app/api/stats/[artist_id]/route.js, /lib/edge/platformScrapers.js
+
+### FASE 2: SISTEMA DE COMPONENTES LEGO + WEBSOCKETS (4 horas)
+**OBJETIVO:** UI dinámica data-driven y actualizaciones en tiempo real
+
+4. **ARQUITECTURA DE COMPONENTES DINÁMICOS** (2 horas)
+   - Crear ComponentMap para renderizado dinámico
+   - Sistema de layout basado en datos de Supabase
+   - Componentes: SpotifyCard, YoutubeCard, TikTokCard, StatsGrid
+   - Layout que cambia según ranking engine
+   - Archivos: /components/layout/, /lib/componentMapper.js
+
+5. **WEBSOCKETS PARA FANFARRONEO REAL-TIME** (2 horas)
+   - Implementar Supabase Realtime o Pusher
+   - Efecto "odómetro" cuando una métrica crece
+   - Notificaciones push para cambios significativos
+   - Sistema de eventos: metric_up, ranking_change, milestone_reached
+   - Archivos: /hooks/useRealtime.js, /components/MetricAnimation.jsx
+
+### FASE 3: LEADERBOARDS CON HISTORICAL DATA (4 horas)
+**OBJETIVO:** Analytics profesionales y gamificación robusta
+
+6. **HOMEPAGE CON "TOP 10 ROSARIO" DINÁMICO** (2 horas)
+   - Query a tabla historical_data con snapshots horarios
+   - Rankings por relevance score, no solo métricas crudas
+   - Categorías: Trending, Growth, All-Time, Weekly Rising
+   - Diseño pro con leaderboard animado y filtros
+   - Archivos: /app/page.jsx, /components/Leaderboard.jsx, /lib/analytics.js
+
+7. **CRON JOB CON HISTORICAL DATA + ANALYTICS** (2 horas)
+   - Edge Function: /api/cron/update-stats
+   - Snapshots cada hora en tabla metric_snapshots
+   - Procesamiento de growth rates y tendencias
+   - Detección automática de "ganador del mes" para marketing
+   - Gráficos de crecimiento para cada artista
+   - Archivos: /app/api/cron/update-stats/route.js, /lib/analyticsEngine.js
+
+### FASE 4: PANEL ADMIN ESCALABLE (3 horas)
+**OBJETIVO:** Dashboard enterprise para gestión avanzada
+
+8. **PERFILES DINÁMICOS CON SUBDOMINIOS + RANKING** (1.5 horas)
+   - Middleware que busca en Supabase y aplica ranking engine
+   - Layout dinámico basado en relevance score del momento
+   - Página 404 personalizada para subdominios no encontrados
+   - Optimización de loading con Edge Functions
+   - Archivos: /app/[artist]/page.jsx, middleware.js, /app/not-found.jsx
+
+9. **PANEL DE ADMIN CON ANALYTICS** (1.5 horas)
+   - Dashboard con métricas históricas de cada artista
+   - Gráficos de crecimiento, engagement, tendencias
+   - Sistema de activar/desactivar artistas
+   - Vista de revenue (setup fees + maintenance)
+   - Archivos: /app/factory/page.jsx, /components/AdminDashboard.jsx
+
+### FASE 5: SISTEMA DE COMPARTIR + BACKUP (2 horas)
+**OBJETIVO:** Viralidad y persistencia de datos
+
+10. **SISTEMA DE COMPARTIR VIRAL** (1 hora)
+    - Botones de compartir con métricas del momento
+    - QR code generator con stats embebidas
+    - Links dinámicos: "Mira cómo creció artista.artisthub.com esta semana"
+    - Open Graph tags optimizados para cada métrica
+    - Archivos: /components/ShareButtons.jsx, /lib/viralSharing.js
+
+11. **SISTEMA DE BACKUP + MIGRACIÓN** (1 hora)
+    - Exportar datos históricos de Supabase
+    - Sistema de migración para cuando se rompa el scraping
+    - Backup automático de configuraciones de temas
+    - Archivo: /lib/backupUtils.js, /app/api/backup/route.js
+
+### FASE 6: LANZAMIENTO ENTERPRISE (3 horas)
+**OBJETIVO:** Plataforma profesional lista para monetizar
+
+12. **PREPARAR 3 EJEMPLOS REALES CON ANALYTICS** (1 hora)
+    - Crear registros en Supabase con historical_data completa
+    - Demostrar ranking engine dinámico en acción
+    - Testear WebSockets y animaciones de odómetro
+    - Verificar Edge Functions con cache de 5 minutos
+
+13. **DOCUMENTACIÓN TÉCNICA + MARKETING** (1 hora)
+    - API documentation para Edge Functions
+    - Guía de migración desde scraping actual
+    - Marketing materials: "Analytics en tiempo real para artistas"
+    - Template de pitch para inversionistas
+
+14. **SISTEMA DE PAGO + ONBOARDING** (1 hora)
+    - Formulario de contacto integrado con analytics
+    - Checkout automatizado para setup fee y maintenance
+    - Onboarding guidado con tour de la plataforma
+    - Archivos: /app/contact/page.jsx, /components/Pricing.jsx, /app/onboarding/page.jsx
+
+### FASE 7: MEJORAS CRÍTICAS + TESTING (2 horas)
+**OBJETIVO:** Performance enterprise y robustez total
+
+15. **OPTIMIZACIÓN DE PERFORMANCE AVANZADA** (1 hora)
+    - Lazy loading de imágenes con Next.js Image
+    - Edge caching para static assets
+    - Bundle splitting por plataforma (Spotify vs YouTube)
+    - Service Worker para offline analytics
+
+16. **TESTING COMPLETO + MONITORING** (1 hora)
+    - Testear WebSockets en diferentes browsers
+    - Validar ranking engine con datos reales
+    - Load testing con 100 usuarios simultáneos
+    - Monitoring de Edge Functions y cache hit rates
+
+## ENTREGABLES MAÑANA:
+
+### MÍNIMO VIABLE ENTERPRISE:
+✅ **Edge Functions para scraping (no más CORS proxy)**
+✅ **Ranking Engine con relevance score dinámico**
+✅ **Supabase con tablas artists, historical_data, metric_snapshots**
+✅ **Panel de admin con analytics avanzadas en /factory**
+✅ **SUBDOMINIOS: nombre.artisthub.com con layout dinámico**
+✅ **Homepage con "Top 10 Rosario" por relevance score**
+✅ **WebSockets para fanfarroneo en tiempo real**
+✅ **Cron job con snapshots horarios y gráficos de crecimiento**
+✅ **Sistema de componentes Lego (data-driven UI)**
+✅ **Sistema de pago automatizado + onboarding guidado**
+
+### EXTRAS SI HAY TIEMPO:
+✅ Sistema de backup y migración automática
+✅ Performance avanzada con Edge caching
+✅ Load testing y monitoring completo
+
+## ARQUITECTURA FINAL ESCALABLE:
+
+```
+artisthub-enterprise/
+├── app/
+│   ├── layout.jsx
+│   ├── page.jsx (homepage con leaderboards dinámicos)
+│   ├── [artist]/
+│   │   └── page.jsx (perfil con ranking engine)
+│   ├── factory/
+│   │   └── page.jsx (admin dashboard con analytics)
+│   ├── api/
+│   │   ├── stats/[artist_id]/route.js (Edge Function)
+│   │   ├── cron/update-stats/route.js (snapshots)
+│   │   └── backup/route.js
+│   └── not-found.jsx
+├── components/
+│   ├── layout/ (ComponentMap dinámico)
+│   │   ├── SpotifyCard.jsx
+│   │   ├── YoutubeCard.jsx
+│   │   ├── TikTokCard.jsx
+│   │   └── StatsGrid.jsx
+│   ├── Leaderboard.jsx (con filtros y animaciones)
+│   ├── AdminDashboard.jsx (analytics y revenue)
+│   ├── MetricAnimation.jsx (efecto odómetro)
+│   └── ShareButtons.jsx (viral sharing)
+├── lib/
+│   ├── supabase.js (conexión y auth)
+│   ├── edge/
+│   │   └── platformScrapers.js (IPs limpias)
+│   ├── rankingEngine.js (relevance scores)
+│   ├── analyticsEngine.js (procesamiento histórico)
+│   └── componentMapper.js (sistema Lego)
+├── hooks/
+│   ├── useDynamicLayout.js (ranking engine)
+│   └── useRealtime.js (WebSockets)
+└── middleware.js (subdominios + routing)
+```
+
+## STACK TÉCNICO ENTERPRISE:
+
+**Frontend:** Next.js App Router + Tailwind ✅
+**Backend:** Edge Functions + Supabase PostgreSQL ✅
+**Auth:** Supabase Auth + middleware protegido ✅
+**Data:** 3 tablas (artists, historical_data, metric_snapshots) ✅
+**Caching:** Redis (5 minutos TTL) + Edge caching ✅
+**Real-time:** Supabase Realtime (WebSockets) ✅
+**Analytics:** Snapshots horarios + growth rates ✅
+**Hosting:** Vercel (Edge Functions + subdominios) ✅
+**Dominio:** artisthub.com con DNS *.artisthub.com → Vercel ✅
+
+## FLUJO DE DATOS ENTERPRISE ESCALABLE:
+
+1. **Acceso:** hydra.artisthub.com
+2. **Middleware:** Detecta "hydra" → query Supabase `SELECT * FROM artists WHERE slug = 'hydra'`
+3. **Edge Function:** `/api/stats/hydra` con IPs limpias + cache 5min
+4. **Ranking Engine:** Calcula relevance score dinámicamente
+5. **Componentes Lego:** ComponentMap renderiza layout según ranking
+6. **WebSockets:** Push updates con efecto odómetro en tiempo real
+7. **Cron Job:** Snapshots horarios → historical_data → analytics + leaderboards
+
+## KEY DIFFERENTIATORS VS LINKTREE:
+
+**Data-Driven UI:** El layout cambia según qué plataforma está trending
+**Real-time Fanfarroneo:** Efectos visuales cuando crecen las métricas
+**Analytics Profesionales:** Gráficos de crecimiento para cada artista
+**Relevance Scoring:** No solo muestra números, sino qué es más relevante
+**Enterprise Infrastructure:** Edge Functions, caching, WebSockets
+
+## RIESGOS Y MITIGACIÓN ENTERPRISE:
+
+❌ **Riesgo:** Edge Functions se rompen si Spotify cambia HTML
+✅ **Mitigación:** Sistema de fallback a scraping actual + API profesional pagada
+
+❌ **Riesgo:** WebSockets no funcionan en móviles
+✅ **Mitigación:** Service Workers + polling fallback
+
+❌ **Riesgo:** Ranking engine produce layouts extraños
+✅ **Mitigación:** Validación de layouts + A/B testing
+
+❌ **Riesgo:** Supabase rate limit con muchos artistas
+✅ **Mitigación:** Redis edge cache + pooling de conexiones
+
+## CHECKLIST DE LANZAMIENTO ENTERPRISE:
+
+- [ ] **Next.js migrado y funcionando**
+- [ ] **Edge Functions para scraping implementadas**
+- [ ] **Ranking Engine con relevance scores funcionando**
+- [ ] **Supabase configurado con 3 tablas**
+- [ ] **Middleware de subdominios con ComponentMap**
+- [ ] **WebSockets para fanfarroneo real-time**
+- [ ] **Panel admin con analytics avanzadas**
+- [ ] **Homepage con leaderboards dinámicos**
+- [ ] **Cron job con snapshots horarios**
+- [ ] **Sistema de pago automatizado funcionando**
+- [ ] **Load testing con 100 usuarios simultáneos**
+- [ ] **Monitoring de Edge Functions activo**
+- [ ] **3 ejemplos reales con analytics completas**
+- [ ] **Documentación técnica y marketing lista**
+
+## NEXT STEPS POST-LANZAMIENTO:
+
+1. **Semana 1:** Onboard 5-10 artistas reales con analytics
+2. **Semana 2:** Implementar A/B testing de layouts
+3. **Mes 1:** Migrar a API de scraping profesional
+4. **Mes 2:** **Escalabilidad a VisualArtist y SmallBusiness**
+5. **Mes 3:** Sistema de predicción de tendencias con ML
+
+---
+
+**TIEMPO ESTIMADO TOTAL:** 21 horas de trabajo focalizado
+**HORARIOS SUGERIDOS:** 9AM-11PM (con descansos)
+**RESULTADO ESPERADO:** Plataforma enterprise-ready con analytics profesionales, real-time updates, y arquitectura escalable que compite directamente con herramientas SaaS del mercado
+
+# LET'S GO! 🚀🎵📈🏆
+
+## ESQUEMA DE BASE DE DATOS ENTERPRISE:
+
+```sql
+-- Tabla principal de artistas
+CREATE TABLE artists (
+  id SERIAL PRIMARY KEY,
+  slug VARCHAR(100) UNIQUE NOT NULL,
+  artist_id VARCHAR(100),
+  spotify_url TEXT,
+  youtube_channel_id TEXT,
+  ig_handle TEXT,
+  tiktok_handle TEXT,
+  theme_id VARCHAR(50),
+  active_status BOOLEAN DEFAULT true,
+  relevance_score DECIMAL(10,2) DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Snapshots horarios para analytics
+CREATE TABLE metric_snapshots (
+  id SERIAL PRIMARY KEY,
+  artist_id INTEGER REFERENCES artists(id),
+  platform VARCHAR(20) NOT NULL,
+  metric_key VARCHAR(50) NOT NULL,
+  raw_value BIGINT,
+  formatted_value VARCHAR(20),
+  relevance_weight DECIMAL(3,2),
+  calculated_score DECIMAL(15,2),
+  timestamp TIMESTAMP DEFAULT NOW()
+);
+
+-- Datos históricos procesados para leaderboards
+CREATE TABLE historical_data (
+  id SERIAL PRIMARY KEY,
+  artist_id INTEGER REFERENCES artists(id),
+  date DATE NOT NULL,
+  total_relevance_score DECIMAL(15,2),
+  top_platform VARCHAR(20),
+  growth_rate DECIMAL(5,2),
+  milestone_achievements JSONB,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```

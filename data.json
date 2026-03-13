@@ -1,0 +1,17 @@
+[
+  {
+    "id": "1",
+    "name": "HydraRosario",
+    "slug": "hydrarosario",
+    "email": "hydra@rosariohub.com",
+    "status": "active",
+    "theme": "SOFT_TRAP",
+    "metrics": {
+      "spotify_listeners": 25000,
+      "youtube_subs": 1700,
+      "instagram_followers": 8500,
+      "relevance_score": 45
+    },
+    "created_at": "2026-03-13T01:53:14.165Z"
+  }
+]
