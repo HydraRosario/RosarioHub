@@ -350,14 +350,14 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
         : getThemeDefinition({ theme: 'SOFT_TRAP' })
 
     const sortedPlatforms = useMemo(() => {
-        if (!artistData) return []
-        return getSortedPlatforms(artistData.metrics, artistData.platforms)
-    }, [artistData])
+        if (!allMetrics.length) return []
+        return getSortedPlatforms(allMetrics)
+    }, [allMetrics])
 
     const relevanceScoreCalculated = useMemo(() => {
-        if (!artistData) return 0
-        return calculateRelevanceScore(artistData.metrics)
-    }, [artistData])
+        if (!allMetrics.length) return 0
+        return calculateRelevanceScore(allMetrics, artistData?.platforms || {})
+    }, [allMetrics, artistData])
 
     useEffect(() => {
         injectFonts(themeToUse.fontUrl)

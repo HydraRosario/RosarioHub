@@ -1,212 +1,125 @@
 # ROADMAP - ROSARIOHUB
 ## Red Social para Músicos y Artistas de Rosario
 
-**Última actualización:** 13/03/2026 19:00  
-**Estado:** Fase 1 completada - Iniciando Fase 2
+**Última actualización:** 13/03/2026  
+**Estado:** Fase 1-2 implementadas - En progreso: Onboarding + Engagement
 
 ---
 
 ## VISIÓN DEL PROYECTO
 
-**RosarioHub** es una plataforma/red social que centraliza la presencia digital de artistas y músicos de Rosario, Argentina. Cada artista tiene una página única que muestra sus métricas de todas las redes sociales en tiempo real, ordenadas dinámicamente según cuáles son sus puntos fuertes.
+**RosarioHub** es una plataforma que centraliza la presencia digital de artistas de Rosario, Argentina. Cada artista tiene una página única con métricas de todas sus redes sociales, ordenadas dinámicamente según sus puntos fuertes.
 
-### Características Principales:
+### Características Implementadas:
 - 📊 **Métricas en tiempo real** de Spotify, YouTube, Instagram, TikTok, SoundCloud, Twitter
-- 🏆 **Podio competitivo** - "El músico más escuchado del mes en Rosario" gana grabación y producción gratis
-- 🔥 **Layout Inteligente** - La página de cada artista se ve diferente según sus métricas más altas
+- 🏆 **Leaderboard Top 10** - Ranking competitivo de artistas rosarinos
+- 🔥 **Layout Inteligente** - La página de cada artista se adapta según sus métricas
 - 🎯 **Relevance Score** - Algoritmo que pondera y ordena plataformas automáticamente
-- 📍 **Geolocalización** - Solo artistas de Rosario
-- 🎵 **Descubrir** - Sección para encontrar artistas nuevos de la ciudad
-- 📅 **Eventos** - Shows en vivo de artistas del hub
+- 🎵 **Sección Descubrir** - Artistas emergentes de la ciudad
+- 📅 **CTA para Shows** - Link a WhatsApp para contacto
 
 ---
 
-## ARQUITECTURA DE DATOS
+## 🎯 ESTADO ACTUAL: FASE 1-2 IMPLEMENTADAS
 
-### Estructura de Artista (data.json)
-```json
-{
-  "id": "string",
-  "slug": "nombre-artista",
-  "theme": "SOFT_TRAP | BRUTALIST | INDIE_VIBE | PINK_GOTH | TECHNO_MINIMAL | VAPORWAVE",
-  "status": "active | pending | inactive",
-  "profile": {
-    "name": "Nombre del Artista",
-    "tagline": "Trap / R&B / DeepHouse",
-    "bio": "Descripción del artista...",
-    "heroImage": "URL a imagen"
-  },
-  "platforms": {
-    "spotify": { "enabled": true, "artistId": "ID Spotify", "iframe": "embed code" },
-    "youtube": { "enabled": true, "channelId": "ID Canal", "iframe": "embed code" },
-    "instagram": { "enabled": true, "username": "@handle" },
-    "tiktok": { "enabled": true, "username": "@handle" },
-    "soundcloud": { "enabled": true, "iframe": "embed code" },
-    "twitter": { "enabled": true, "username": "@handle" }
-  },
-  "social": {
-    "instagram": "URL completa",
-    "tiktok": "URL completa",
-    "youtube": "URL completa",
-    "spotify": "URL completa",
-    "soundcloud": "URL completa",
-    "twitter": "URL completa"
-  },
-  "booking": {
-    "whatsapp": "549xxxxxxxxx",
-    "whatsappMessage": "Mensaje predefinido",
-    "email": "email@booking.com"
-  },
-  "studio": {
-    "name": "RosarioHub",
-    "url": "https://rosariohub.com",
-    "city": "Rosario"
-  },
-  "metrics": {
-    "spotify_listeners": 25000,
-    "youtube_subs": 1700,
-    "youtube_views": 155000,
-    "instagram_followers": 8500,
-    "tiktok_followers": 0,
-    "tiktok_likes": 0,
-    "soundcloud_followers": 0,
-    "twitter_followers": 0,
-    "relevance_score": 0
-  },
-  "created_at": "timestamp"
-}
-```
+### ✅ FASE 1: MVP MÉTRICAS (COMPLETADO)
+- [x] Spotify Listeners (scraping)
+- [x] YouTube Subscribers/Views (API real)
+- [x] TikTok Followers (scraping)
+- [x] Sistema de Snapshots (cache diario)
+- [x] Páginas de artista con layout adaptativo
+- [x] Temas configurables (SOFT_TRAP, BRUTALIST, INDIE_VIBE, etc.)
+- [x] Redes sociales con enlaces funcionales
+
+### ✅ FASE 2: LEADERBOARD (COMPLETADO)
+- [x] Homepage pública (`/leaderboard`)
+- [x] Hero Section con propuesta de valor
+- [x] Top 10 Rosario Leaderboard
+- [x] Sección Descubrir (artistas emergentes)
+- [x] Call-to-Action "Unite a RosarioHub"
+- [x] Integración WhatsApp para contacto
 
 ---
 
-## 🎯 ROADMAP ESTRATÉGICO (POR PRIORIDAD)
+## 🚀 PRÓXIMAS PRIORIDADES
 
-### **FASE CRÍTICA 1: MVP MÉTRICAS FUNCIONALES**
-**Prioridad:** Máxima - **Estado:** ✅ COMPLETADA
+### **1. ONBOARDING DE ARTISTAS (CRÍTICO)**
 
-#### 1.1 ✅ Métricas que FUNCIONAN (scraping + API)
-- [x] **Spotify Listeners** - 24 oyentes (tiempo real via scraping)
-- [x] **YouTube Subscribers** - 1.71K (API real configurada)
-- [x] **YouTube Views** - 155K views (API real)
-- [x] **YouTube Videos** - 33 videos (API real)
-- [x] **TikTok Followers** - 785 (scraping)
+**Estado actual:** Solo 2 artistas activos - Necesitamos mínimo 10+
 
-#### 1.2 ✅ Sistema de Snapshots (cache diario)
-- [x] **API /api/snapshots** - Actualiza métricas una vez al día
-- [x] **Matching artists↔snapshots** - Sistema de vinculación por platform IDs
-- [x] **ClientMetrics hook** - Fetch de métricas del snapshot correcto
+- [ ] **Página pública de aplicación** - Formulario simple en homepage
+  - Nombre, género, bio, links a redes
+  - Validación: que sea de Rosario (checkbox + verificación manual)
+- [ ] **Dashboard de validación** - Admin revisa solicitudes en Factory
+- [ ] **Proceso de onboarding guiado** - Paso a paso para configurar métricas
+- [ ] **Añadir 8-10 artistas más** - Diversificar géneros (trap, rock, pop, jazz, electrónico)
 
-#### 1.3 ✅ Sistema de Ranking
-- [x] **Ordenamiento automático** - Mayor valor primero
-- [x] **Layout adaptativo** - Cada artista único
-- [x] **Themes configurables** - SOFT_TRAP, BRUTALIST, INDIE_VIBE, etc.
+**Estrategia sugerida:** En lugar de formulario complejo, hacer outreach directo a artistas conocidos y ofrecerles inclusión gratuita.
 
 ---
 
-### **FASE CRÍTICA 2: LEADERBOARD + COMPETENCIA**
-**Prioridad:** Alta - **Estado:** 🚧 EN PROGRESO
+### **2. SISTEMA DE ENGAGEMENT (MEDIA PRIORIDAD)**
 
-#### 2.1 Homepage Pública de RosarioHub
-- [ ] **Hero Section** - Propuesta de valor clara
-- [ ] **Top 10 Rosario Leaderboard** - Podio competitivo mensual
-- [ ] **Sección Descubrir** - Artistas nuevos/emergentes
-- [ ] **Call-to-Action** - "Unite a RosarioHub"
+- [ ] **Badge "Top del Mes"** - Destacar al #1 visualmente
+- [ ] **Comparador de Artistas** - Herramienta para comparar métricas side-by-side
+- [ ] **Gráficos de crecimiento** - Mostrar evolución vs mes anterior
 
-#### 2.2 Sistema Competitivo
-- [ ] **Podio Mensual** - 🥇🥈🥉 con premio real
-- [ ] **Premio del Ganador** - "Grabación + Producción Gratis"
-- [ ] **Badge Especial** - Perfil del ganador destacado
-- [ ] **Ranking Histórico** - Galería de ganadores anteriores
+**Estrategia sugerida:** El sistema de competencias formales (premios mensuales) requiere masa crítica. Por ahora, enfocar en hacer la plataforma visible y atractiva para nuevos artistas.
 
 ---
 
-### **FASE 3: EXPANSIÓN DE ARTISTAS (PRÓXIMO MES)**
-**Prioridad:** Media - **Estado:** 10% completado
+### **3. EVENTOS (BAJA PRIORIDAD - REQUIERE +20 ARTISTAS)**
 
-#### 3.1 Onboarding de Artistas
-- [ ] **Formulario de Aplicación** - Auto-registro
-- [ ] **Validación Manual** - Confirmar que son de Rosario
-- [ ] **Mínimo 10 artistas** - Crítico para competencia real
-- [ ] **Diversidad de Géneros** - Trap, Rock, Pop, Jazz, etc.
-
-#### 3.2 Comparador de Artistas
-- [ ] **Side-by-Side Comparison** - Herramienta de análisis
-- [ ] **Battle de Métricas** - Quién gana en cada plataforma
-- [ ] **Gráficos Comparativos** - Visualización de diferencias
+- [ ] Campo `proximo_show` en perfil de artista
+- [ ] Sección /eventos cuando haya suficientes shows programados
+- [ ] Integración con Links de TikTok/Instagram para tickets
 
 ---
 
-### **FASE 4: SISTEMA DE EVENTOS (CUANDO HAYA +20 ARTISTAS)**
-**Prioridad:** Baja - **Estado:** 0% completado
+### **4. ESCALABILIDAD (FUTURO - +50 ARTISTAS)**
 
-#### 4.1 Gestión de Shows en Vivo
-- [ ] **Campo próximo_show** en perfil de artista
-- [ ] **Sección /eventos** - Calendario de shows
-- [ ] **Sistema de Tickets** - Integración con plataformas
-- [ ] **Notificaciones** - Cuando un artista que sigues tiene show
+**No priorizado actualmente:**
+- Supabase (JSON local escala bien hasta 50+ artistas)
+- WebSockets (prematuro sin usuarios activos)
+- Dominios personalizados (complejidad DNS innecesaria)
 
 ---
 
-### **FASE 5: ESCALABILIDAD ENTERPRISE (CUANDO HAYA +50 ARTISTAS)**
-**Prioridad:** Muy Baja - **Estado:** 0% completado
+## 📊 DATOS ACTUALES
 
-#### 5.1 Infraestructura Profesional
-- [ ] **Supabase Migration** - Base de datos real
-- [ ] **WebSockets Real-time** - Actualizaciones live para miles de users
-- [ ] **Dominios Personalizados** - artista.rosariohub.com
-- [ ] **Sistema de Pagos** - Planes free/premium
-
-#### 5.2 Analytics Avanzados
-- [ ] **Growth Rate Tracking** - Tasa de crecimiento
-- [ ] **Engagement Metrics** - Profundidad de interacción
-- [ ] **Predictive Analytics** - Tendencias futuras
-- [ ] **API para Terceros** - Integraciones externas
+| Métrica | Valor |
+|---------|-------|
+| Artistas activos | 2 |
+| Artistas total | 2 |
+| Plataformas integradas | 6 (Spotify, YouTube, IG, TikTok, SoundCloud, Twitter) |
+| Sistema de métricas | Snapshots diarios |
+| Framework | Next.js 16 + TypeScript |
 
 ---
 
-## STACK TÉCNICO ACTUAL
+## 🎯 ACCIÓN INMEDIATA
 
-- **Framework:** Next.js 16 + App Router
-- **Lenguaje:** TypeScript
-- **Estilos:** Tailwind CSS
-- **Datos:** JSON local (data.json)
-- **APIs:** Next.js API Routes
-- **Scraping:** Server-side fetch con cache
-- **Animaciones:** Framer Motion
+**Objetivo:** Llegar a 10 artistas activos en 30 días
 
----
+1. **Esta semana:** Añadir 3-5 artistas conocidos localmente
+2. **Próxima semana:** Crear formulario público de aplicación
+3. **Mes 1:** Implementar sistema de badges y comparación básica
 
-## 🎯 PRÓXIMOS PASOS INMEDIATOS (ESTA SEMANA)
-
-### **1. Homepage con Leaderboard (PRIORIDAD)**
-- [ ] **Reemplazar redirect(/factory)** - Landing page real
-- [ ] **Hero Section** - Propuesta de valor clara
-- [ ] **Top 10 Rosario Leaderboard** - Podio competitivo
-- [ ] **Sección Descubrir** - Artistas nuevos/emergentes
-- [ ] **Call-to-Action** - "Unite a RosarioHub"
-
-### **2. Sistema Competitivo**
-- [ ] **Podio Mensual** - 🥇🥈🥉 con premio real
-- [ ] **Premio del Ganador** - "Grabación + Producción Gratis"
-- [ ] **Badge Especial** - Perfil del ganador destacado
-
-### **3. Onboarding de 10+ Artistas**
-- [ ] Formulario de aplicación
-- [ ] Validación "solo Rosario"
-- [ ] Diversidad de géneros
+**Contacto actual:** https://wa.me/5493417207642
 
 ---
 
-## 💡 NOTAS ESTRATÉGICAS IMPORTANTES
+## 💡 NOTAS ESTRATÉGICAS
 
-- **Supabase NO es prioritaria** - JSON local escala perfecto hasta ~50 artistas
-- **WebSockets NO son necesarias** - Prematuro hasta tener miles de usuarios activos
-- **Subdominios SON opcionales** - Requieren configuración DNS externa compleja
-- **Scraping puede fallar** - Solución: API oficial de Spotify/YouTube cuando sea viable
-- **FOCUS en MVP funcional** - Mejorar experiencia core antes de escalar
+- **Scraping es frágil:** YouTube API funciona bien, pero Spotify/TikTok pueden fallar. Mantener como fallback.
+- **Calidad > Cantidad:** Es mejor tener 10 artistas bien configurados que 50 incompletos.
+- **Factory Dashboard:** Ya existe para gestionar artistas. Usar para validación manual.
+- **Focus actual:**onsigue más artistas → mejora visibilidad → más artistas se suman naturalmente
 
-## 🚀 ESTADO ACTUAL: **FASE 1 COMPLETA - FASE 2 EN CURSO**
+---
 
-**Fase 1 completada:** Métricas reales (YouTube API + Spotify/TikTok scraping), snapshots diarios, artist pages funcionales, themes  
-**Fase 2 en progreso:** Homepage + Leaderboard + Sistema de competencias  
-**Próximo hit:** Lanzar homepage pública con leaderboard de los TOP 10 artistas de Rosario
+## 🚀 ESTADO: **PLATAFORMA FUNCIONAL - CRECIMIENTO ORGÁNICO**
+
+**Completado:** Métricas, snapshots, artist pages, leaderboard, themes, página pública  
+**En progreso:** Onboarding de más artistas, engagement  
+**Pendiente:** Eventos, comparador, badges complejos
