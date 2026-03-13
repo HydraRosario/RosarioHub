@@ -60,7 +60,7 @@ export async function POST() {
             
             if (artist.platforms?.youtube?.channelId) {
                 const channelId = artist.platforms.youtube.channelId
-                const apiKey = process.env.YOUTUBE_API_KEY || 'AIzaSyCOdtT-B_IF_R4kyZm1Is02XVHNWK_mrOA'
+                const apiKey = process.env.YOUTUBE_API_KEY
                 
                 try {
                     const ytResponse = await fetch(

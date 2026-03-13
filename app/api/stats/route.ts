@@ -86,8 +86,8 @@ async function scrapeSpotifyStats(artistId: string) {
     }
 }
 
-// YouTube Data API - using the user's API key
-const YOUTUBE_API_KEY = 'AIzaSyCOdtT-B_IF_R4kyZm1Is02XVHNWK_mrOA'
+// YouTube Data API - using environment variable
+const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY
 
 async function getYouTubeChannelStats(channelId: string) {
     const results: any[] = []
