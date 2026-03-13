@@ -1,18 +1,39 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export function proxy(req: NextRequest) {
+export function middleware(req: NextRequest) {
   const url = req.nextUrl
   const hostname = req.headers.get('host') || ''
 
   const getSubdomain = (host: string): string | null => {
     // Handle production
     if (process.env.NODE_ENV === 'production' || process.env.VERCEL === '1') {
-      const parts = host.split('.')
-      if (parts.length >= 2) {
-        return parts[0]
+      // List of base domains that should NOT be treated as subdomains
+      const baseDomains = ['vercel.app', 'vercel.dev', 'localhost', '127.0.0.1']
+      
+      // Check if this is a base domain
+      const isBaseDomain = baseDomains.some(domain => host.endsWith(domain))
+      
+      if (!isBaseDomain) {
+        // This is likely a custom domain, extract subdomain
+        const parts = host.split('.')
+        if (parts.length >= 2) {
+          return parts[0]
+        }
+        return null
       }
-      return null
+      
+      // It's a vercel domain - check if there's a subdomain
+      const cleanHost = host.replace('.vercel.app', '').replace('.vercel.dev', '')
+      const parts = cleanHost.split('.')
+      
+      // If it's exactly the base domain (rosario-hub), return null
+      if (parts.length === 1) {
+        return null
+      }
+      
+      // Otherwise, return the first part as subdomain
+      return parts[0]
     }
 
     // Handle development: hydrarosario.localhost:3000 -> hydrarosario

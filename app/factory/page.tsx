@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Plus, Users, TrendingUp, Settings, Music2, Youtube, Instagram, BarChart3, Globe, Zap, Eye, Edit, Trash2 } from 'lucide-react'
+import { Plus, Users, TrendingUp, Music2, Youtube, Instagram, BarChart3, Globe, Zap, Eye, Edit, Trash2 } from 'lucide-react'
 
 // ─────────────────────────────────────────────────────────────
 //  FACTORY DASHBOARD - Centro de Control de RosarioHub
@@ -76,7 +76,7 @@ interface Artist {
 export default function FactoryDashboard() {
     const [artists, setArtists] = useState<Artist[]>([])
     const [loading, setLoading] = useState(true)
-    const [activeTab, setActiveTab] = useState<'overview' | 'artists' | 'analytics' | 'settings'>('overview')
+    const [activeTab, setActiveTab] = useState<'overview' | 'artists' | 'analytics'>('overview')
     const [showCreateModal, setShowCreateModal] = useState(false)
     const [editingArtist, setEditingArtist] = useState<Artist | null>(null)
 
@@ -184,16 +184,6 @@ export default function FactoryDashboard() {
                             >
                                 Analytics
                             </button>
-                            <button
-                                onClick={() => setActiveTab('settings')}
-                                className={`px-3 py-2 text-sm font-medium ${
-                                    activeTab === 'settings' 
-                                        ? 'text-purple-600 border-b-2 border-purple-600' 
-                                        : 'text-gray-500 hover:text-gray-700'
-                                }`}
-                            >
-                                Settings
-                            </button>
                         </nav>
                     </div>
                 </div>
@@ -223,9 +213,6 @@ export default function FactoryDashboard() {
                         )}
                         {activeTab === 'analytics' && (
                             <AnalyticsTab artists={artists} />
-                        )}
-                        {activeTab === 'settings' && (
-                            <SettingsTab />
                         )}
                     </>
                 )}
@@ -364,14 +351,6 @@ function OverviewTab({ artists, stats, onCreateArtist }: {
                         >
                             <Plus className="w-5 h-5 mr-2" />
                             Create New Artist
-                        </button>
-                        <button className="w-full bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 flex items-center justify-center font-medium">
-                            <Settings className="w-5 h-5 mr-2" />
-                            Configure Scanning
-                        </button>
-                        <button className="w-full bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 flex items-center justify-center font-medium">
-                            <BarChart3 className="w-5 h-5 mr-2" />
-                            Export Analytics
                         </button>
                     </div>
                 </div>
@@ -542,63 +521,9 @@ function AnalyticsTab({ artists }: { artists: Artist[] }) {
     )
 }
 
-// ─────────────────────────────────────────────────────────────
-//  SETTINGS TAB
-//──────────────────────────────────────────────────────────────
-function SettingsTab() {
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-        >
-            <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-6">Factory Settings</h2>
-                <div className="space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Default Theme
-                        </label>
-                        <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500">
-                            <option>SOFT_TRAP</option>
-                            <option>BRUTALIST</option>
-                            <option>PINK_GOTH</option>
-                            <option>INDIE_VIBE</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Auto-Scraping Interval
-                        </label>
-                        <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500">
-                            <option>Every 5 minutes</option>
-                            <option>Every 15 minutes</option>
-                            <option>Every hour</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Enable Gamification
-                        </label>
-                        <label className="flex items-center">
-                            <input type="checkbox" className="rounded border-gray-300 text-purple-600 focus:ring-purple-500" defaultChecked />
-                            <span className="ml-2 text-sm text-gray-700">Enable leaderboards and achievements</span>
-                        </label>
-                    </div>
-                    <div className="pt-4">
-                        <button className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">
-                            Save Settings
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </motion.div>
-    )
-}
-
-// ─────────────────────────────────────────────────────────────
-//  CREATE ARTIST MODAL
-//──────────────────────────────────────────────────────────────
+ // ─────────────────────────────────────────────────────────────
+ //  CREATE ARTIST MODAL
+ //──────────────────────────────────────────────────────────────
 function CreateArtistModal({ onClose, onSave }: { 
     onClose: () => void, 
     onSave: (artist: Partial<Artist>) => void 
