@@ -1,17 +1,121 @@
 [
   {
     "id": "1",
-    "name": "HydraRosario",
     "slug": "hydrarosario",
-    "email": "hydra@rosariohub.com",
-    "status": "active",
     "theme": "SOFT_TRAP",
-    "metrics": {
-      "spotify_listeners": 25000,
-      "youtube_subs": 1700,
-      "instagram_followers": 8500,
-      "relevance_score": 45
+    "status": "active",
+    "profile": {
+      "name": "HydraRosario",
+      "tagline": "Trap & Deep House",
+      "bio": "Artista emergente de Rosario, Argentina. Fusionando sonidos urbanos con electrónica.",
+      "heroImage": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1920"
     },
-    "created_at": "2026-03-13T01:53:14.165Z"
+    "platforms": {
+      "spotify": {
+        "iframe": "<iframe data-testid=\"embed-iframe\" style=\"border-radius:12px\" src=\"https://open.spotify.com/embed/artist/4uPoJ3tuc56vh0w6ijU4cT?utm_source=generator&theme=0\" width=\"100%\" height=\"352\" frameBorder=\"0\" allowfullscreen=\"\" allow=\"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture\" loading=\"lazy\"></iframe>",
+        "enabled": true,
+        "artistId": "4uPoJ3tuc56vh0w6ijU4cT"
+      },
+      "youtube": {
+        "iframe": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/kc_uVELSJrQ\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" allowfullscreen></iframe>",
+        "enabled": true,
+        "channelId": "UCdfZnZPCKjkzYAoU9NC3zCw"
+      },
+      "instagram": {
+        "enabled": true,
+        "username": "hydra_rosario"
+      },
+      "tiktok": {
+        "enabled": true,
+        "username": "hhhestudios"
+      },
+      "soundcloud": {
+        "iframe": "<iframe \n  width=\"100%\" \n  height=\"300\" \n  scrolling=\"no\" \n  frameborder=\"no\" \n  allow=\"autoplay\" \n  src=\"https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/juan-cruz-helou/muy-rapido-para-nada&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true\">\n</iframe>",
+        "enabled": true
+      },
+      "twitter": {
+        "enabled": true
+      }
+    },
+    "social": {
+      "instagram": "https://instagram.com/hydra_rosario",
+      "tiktok": "https://www.tiktok.com/@hhhestudios",
+      "youtube": "https://youtube.com/@HydraRosario",
+      "spotify": "https://open.spotify.com/intl-es/artist/4uPoJ3tuc56vh0w6ijU4cT?si=QTjPdSRaQL2s_wIG9rZ8EA",
+      "soundcloud": "https://soundcloud.com/hydra_rosario",
+      "twitter": "https://x.com/Hydra_Rosario"
+    },
+    "booking": {
+      "whatsapp": "5493417207642",
+      "whatsappMessage": "¡Hola! estuve mirando tu página web y quería ponerme en contacto.",
+      "email": "HHHESTUDIOS@hotmail.com"
+    },
+    "studio": {
+      "name": "RosarioHub",
+      "url": "https://rosariohub.com",
+      "city": "Rosario"
+    },
+    "metrics": {},
+    "snapshots": [],
+    "created_at": "2026-03-13T01:53:14.165Z",
+    "name": "HydraRosario",
+    "email": "HHHESTUDIOS@hotmail.com"
+  },
+  {
+    "name": "Lauri",
+    "slug": "lauri",
+    "email": "lauri@example.com",
+    "theme": "INDIE_VIBE",
+    "id": "1773389297621",
+    "status": "active",
+    "metrics": {},
+    "snapshots": [],
+    "created_at": "2026-03-13T08:08:17.621Z",
+    "profile": {
+      "name": "Lauri",
+      "tagline": "Trap - Experimental Hip-hop",
+      "bio": "example",
+      "heroImage": ""
+    },
+    "platforms": {
+      "spotify": {
+        "iframe": "<iframe data-testid=\"embed-iframe\" style=\"border-radius:12px\" src=\"https://open.spotify.com/embed/artist/1tGoEax60SoeH420584o5k?utm_source=generator\" width=\"100%\" height=\"352\" frameBorder=\"0\" allowfullscreen=\"\" allow=\"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture\" loading=\"lazy\"></iframe>",
+        "enabled": true,
+        "artistId": "1tGoEax60SoeH420584o5k"
+      },
+      "youtube": {
+        "iframe": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/U1ITuGrzLzs?si=XvkIzmgwWcBqwqLf\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
+        "enabled": true,
+        "channelId": "UC6LcztnL1MmZMlMlsVz_L5Q"
+      },
+      "instagram": {
+        "enabled": true,
+        "username": "lauricaceres03"
+      },
+      "tiktok": {
+        "enabled": false,
+        "username": ""
+      },
+      "soundcloud": {
+        "iframe": "<iframe \n  width=\"100%\" \n  height=\"450\" \n  scrolling=\"no\" \n  frameborder=\"no\" \n  allow=\"autoplay\" \n  src=\"https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/user-556264010&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true\">\n</iframe>",
+        "enabled": true
+      },
+      "twitter": {
+        "enabled": false
+      }
+    },
+    "social": {
+      "instagram": "https://www.instagram.com/lauricaceres03/",
+      "tiktok": "",
+      "youtube": "https://www.youtube.com/channel/UC6LcztnL1MmZMlMlsVz_L5Q",
+      "spotify": "https://open.spotify.com/intl-es/artist/1tGoEax60SoeH420584o5k?si=xBmVemuSSEa-XH4E2d0ZhQ",
+      "soundcloud": "https://soundcloud.com/user-556264010",
+      "twitter": ""
+    },
+    "booking": {
+      "whatsapp": "5493413767117",
+      "whatsappMessage": "example",
+      "email": "lauri@example.com"
+    }
   }
 ]

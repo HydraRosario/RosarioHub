@@ -147,9 +147,24 @@ export const TEMPLATES = {
  * @returns {{ cssVars, classes, bodyClass, fontUrl, grain, templateDef }}
  */
 export function getThemeDefinition(config: any) {
-    const templateName = config.style?.template ?? 'SOFT_TRAP';
+    const templateName = config.theme || config.style?.template || 'SOFT_TRAP';
     const templateDef = TEMPLATES[templateName as keyof typeof TEMPLATES] ?? TEMPLATES.SOFT_TRAP;
-    const { colors, fonts } = config.style;
+    
+    // Colores por defecto del template
+    const defaultColors: Record<string, { primary: string, bg: string, accent: string, text: string }> = {
+        SOFT_TRAP: { primary: '#a855f7', bg: '#0a0a0a', accent: '#a855f7', text: '#ffffff' },
+        BRUTALIST: { primary: '#ef4444', bg: '#000000', accent: '#ef4444', text: '#ffffff' },
+        INDIE_VIBE: { primary: '#f59e0b', bg: '#1c1917', accent: '#f59e0b', text: '#fef3c7' },
+        PINK_GOTH: { primary: '#ec4899', bg: '#0f0a0f', accent: '#ec4899', text: '#fdf2f8' },
+        TECHNO_MINIMAL: { primary: '#84cc16', bg: '#0a0a0a', accent: '#84cc16', text: '#ffffff' },
+        VAPORWAVE: { primary: '#22d3ee', bg: '#0f0f1a', accent: '#22d3ee', text: '#ffffff' },
+    };
+    
+    const colors = config.style?.colors || defaultColors[templateName] || defaultColors.SOFT_TRAP;
+    const fonts = { 
+        heading: config.style?.fonts?.heading || templateDef.headingFont, 
+        body: config.style?.fonts?.body || templateDef.bodyFont 
+    };
 
     // CSS custom properties que se inyectarán en el div raíz
     const cssVars = {
@@ -157,8 +172,8 @@ export function getThemeDefinition(config: any) {
         '--color-bg': colors.bg,
         '--color-accent': colors.accent,
         '--color-text': colors.text,
-        '--font-heading': fonts?.heading ?? templateDef.headingFont,
-        '--font-body': fonts?.body ?? templateDef.bodyFont,
+        '--font-heading': fonts.heading,
+        '--font-body': fonts.body,
     };
 
     return {

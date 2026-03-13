@@ -166,6 +166,13 @@ export function generateDynamicLayout(
     })
     
     // Componentes condicionales
+    const hasPlatforms = artistData?.platforms && (
+        (artistData.platforms.spotify?.enabled) ||
+        (artistData.platforms.youtube?.enabled) ||
+        (artistData.platforms.instagram?.enabled) ||
+        (artistData.platforms.tiktok?.enabled)
+    )
+    
     const conditionalComponents = [
         {
             key: 'milestone',
@@ -183,18 +190,24 @@ export function generateDynamicLayout(
         },
         {
             key: 'media',
-            condition: artistData.media && Object.keys(artistData.media).length > 0,
-            data: { media: artistData.media }
+            condition: hasPlatforms && artistData?.platforms,
+            data: { 
+                media: artistData?.platforms || {},
+                social: artistData?.social || {}
+            }
         },
         {
             key: 'social',
-            condition: artistData.social && Object.keys(artistData.social).length > 0,
-            data: { social: artistData.social }
+            condition: artistData?.social && Object.keys(artistData.social).some(k => artistData.social[k]),
+            data: { 
+                social: artistData?.social || {},
+                platforms: artistData?.platforms || {}
+            }
         },
         {
             key: 'booking',
-            condition: artistData.booking,
-            data: { booking: artistData.booking }
+            condition: artistData?.booking,
+            data: { booking: artistData?.booking }
         }
     ]
     

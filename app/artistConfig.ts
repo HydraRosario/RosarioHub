@@ -47,7 +47,7 @@ consolidándose como una de las voces con mayor proyección de la ciudad.`,
 
     // Footer
     footer: {
-        studioName: "ArtistHub Studio",
+        studioName: "ArtistHub",
         studioUrl: "https://artisthub.vercel.app",
         city: "Rosario",
     },

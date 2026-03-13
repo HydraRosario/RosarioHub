@@ -7,20 +7,67 @@ import { Plus, Users, TrendingUp, Settings, Music2, Youtube, Instagram, BarChart
 // ─────────────────────────────────────────────────────────────
 //  FACTORY DASHBOARD - Centro de Control de RosarioHub
 //──────────────────────────────────────────────────────────────
+interface PlatformConfig {
+    artistId?: string
+    channelId?: string
+    channelHandle?: string
+    videoId?: string
+    username?: string
+    iframe?: string
+    enabled: boolean
+}
+
 interface Artist {
     id: string
-    name: string
     slug: string
-    email: string
-    status: 'active' | 'pending' | 'inactive'
     theme: string
+    status: 'active' | 'pending' | 'inactive'
+    profile: {
+        name: string
+        tagline: string
+        bio: string
+        heroImage: string
+    }
+    platforms: {
+        spotify: PlatformConfig
+        youtube: PlatformConfig
+        instagram: PlatformConfig
+        tiktok: PlatformConfig
+        soundcloud: PlatformConfig
+        twitter: PlatformConfig
+    }
+    social: {
+        instagram: string
+        tiktok: string
+        youtube: string
+        spotify: string
+        soundcloud: string
+        twitter: string
+    }
+    booking: {
+        whatsapp: string
+        whatsappMessage: string
+        email: string
+    }
+    studio: {
+        name: string
+        url: string
+        city: string
+    }
     metrics: {
         spotify_listeners: number
         youtube_subs: number
+        youtube_views: number
         instagram_followers: number
+        tiktok_followers: number
+        soundcloud_followers: number
+        twitter_followers: number
         relevance_score: number
     }
     created_at: string
+    // Campos de compatibilidad (deprecated - usar profile y social)
+    name?: string
+    email?: string
 }
 
 // Ya no usamos supabase, usamos nuestra propia API local
@@ -31,6 +78,7 @@ export default function FactoryDashboard() {
     const [loading, setLoading] = useState(true)
     const [activeTab, setActiveTab] = useState<'overview' | 'artists' | 'analytics' | 'settings'>('overview')
     const [showCreateModal, setShowCreateModal] = useState(false)
+    const [editingArtist, setEditingArtist] = useState<Artist | null>(null)
 
     // Carga de datos reales desde nuestro backend local (JSON)
     useEffect(() => {
@@ -49,10 +97,50 @@ export default function FactoryDashboard() {
         fetchArtists()
     }, [])
 
+    const handleDeleteArtist = async (id: string) => {
+        if (!confirm('¿Estás seguro de que quieres eliminar este artista?')) return
+        
+        try {
+            const response = await fetch(`/api/artists/${id}`, {
+                method: 'DELETE'
+            })
+            
+            if (response.ok) {
+                setArtists(artists.filter(a => a.id !== id))
+            } else {
+                alert('Error al eliminar artista')
+            }
+        } catch (error) {
+            console.error('Error al eliminar artista:', error)
+            alert('Error al eliminar artista')
+        }
+    }
+
+    const handleUpdateArtist = async (updatedArtist: Artist) => {
+        try {
+            const response = await fetch(`/api/artists/${updatedArtist.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedArtist)
+            })
+            
+            if (response.ok) {
+                const updated = await response.json()
+                setArtists(artists.map(a => a.id === updated.id ? updated : a))
+                setEditingArtist(null)
+            } else {
+                alert('Error al actualizar artista')
+            }
+        } catch (error) {
+            console.error('Error al actualizar artista:', error)
+            alert('Error al actualizar artista')
+        }
+    }
+
     // Stats generales
     const totalArtists = artists.length
     const activeArtists = artists.filter(a => a.status === 'active').length
-    const totalRelevance = artists.reduce((sum, a) => sum + a.metrics.relevance_score, 0)
+    const totalRelevance = artists.reduce((sum, a) => sum + (a.metrics?.relevance_score || 0), 0)
     const avgRelevance = totalArtists > 0 ? Math.round(totalRelevance / totalArtists) : 0
 
     return (
@@ -127,7 +215,11 @@ export default function FactoryDashboard() {
                             />
                         )}
                         {activeTab === 'artists' && (
-                            <ArtistsTab artists={artists} />
+                            <ArtistsTab 
+                                artists={artists} 
+                                onEdit={setEditingArtist}
+                                onDelete={handleDeleteArtist}
+                            />
                         )}
                         {activeTab === 'analytics' && (
                             <AnalyticsTab artists={artists} />
@@ -168,6 +260,15 @@ export default function FactoryDashboard() {
                             alert('Error conectando con la API: ' + error)
                         }
                     }}
+                />
+            )}
+
+            {/* Edit Artist Modal */}
+            {editingArtist && (
+                <EditArtistModal 
+                    artist={editingArtist}
+                    onClose={() => setEditingArtist(null)}
+                    onSave={handleUpdateArtist}
                 />
             )}
         </div>
@@ -282,7 +383,11 @@ function OverviewTab({ artists, stats, onCreateArtist }: {
 // ─────────────────────────────────────────────────────────────
 //  ARTISTS TAB
 //──────────────────────────────────────────────────────────────
-function ArtistsTab({ artists }: { artists: Artist[] }) {
+function ArtistsTab({ artists, onEdit, onDelete }: { 
+    artists: Artist[], 
+    onEdit: (artist: Artist) => void
+    onDelete: (id: string) => void
+}) {
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -291,10 +396,6 @@ function ArtistsTab({ artists }: { artists: Artist[] }) {
         >
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-900">All Artists</h2>
-                <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Artist
-                </button>
             </div>
 
             <div className="bg-white shadow rounded-lg overflow-hidden">
@@ -359,10 +460,16 @@ function ArtistsTab({ artists }: { artists: Artist[] }) {
                                         <Eye className="w-4 h-4 mr-1" />
                                         View
                                     </a>
-                                    <button className="text-gray-600 hover:text-gray-900 mr-3">
+                                    <button 
+                                        onClick={() => onEdit(artist)}
+                                        className="text-gray-600 hover:text-gray-900 mr-3"
+                                    >
                                         <Edit className="w-4 h-4" />
                                     </button>
-                                    <button className="text-red-600 hover:text-red-900">
+                                    <button 
+                                        onClick={() => onDelete(artist.id)}
+                                        className="text-red-600 hover:text-red-900"
+                                    >
                                         <Trash2 className="w-4 h-4" />
                                     </button>
                                 </td>
@@ -575,6 +682,485 @@ function CreateArtistModal({ onClose, onSave }: {
                             className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
                         >
                             Create Artist
+                        </button>
+                    </div>
+                </form>
+            </motion.div>
+        </div>
+    )
+}
+
+// ─────────────────────────────────────────────────────────────
+//  EDIT ARTIST MODAL
+//──────────────────────────────────────────────────────────────
+function EditArtistModal({ artist, onClose, onSave }: { 
+    artist: Artist,
+    onClose: () => void, 
+    onSave: (artist: Artist) => void 
+}) {
+    const [activeSection, setActiveSection] = useState<'profile' | 'platforms' | 'booking'>('profile')
+    
+    const [formData, setFormData] = useState<{
+        // Profile
+        name: string
+        tagline: string
+        bio: string
+        heroImage: string
+        // Basic
+        slug: string
+        theme: string
+        status: 'active' | 'pending' | 'inactive'
+        // Platforms (link + enabled)
+        spotify_enabled: boolean
+        spotify_iframe: string
+        youtube_enabled: boolean
+        youtube_iframe: string
+        instagram_enabled: boolean
+        tiktok_enabled: boolean
+        soundcloud_enabled: boolean
+        soundcloud_iframe: string
+        twitter_enabled: boolean
+        // Social URLs (links)
+        social_instagram: string
+        social_tiktok: string
+        social_youtube: string
+        social_spotify: string
+        social_soundcloud: string
+        social_twitter: string
+        // Booking
+        whatsapp: string
+        whatsappMessage: string
+        email: string
+    }>({
+        // Profile
+        name: artist.profile?.name || artist.name || '',
+        tagline: artist.profile?.tagline || '',
+        bio: artist.profile?.bio || '',
+        heroImage: artist.profile?.heroImage || '',
+        // Basic
+        slug: artist.slug || '',
+        theme: artist.theme || 'SOFT_TRAP',
+        status: artist.status || 'active',
+        // Platforms
+        spotify_enabled: artist.platforms?.spotify?.enabled || false,
+        spotify_iframe: artist.platforms?.spotify?.iframe || '',
+        youtube_enabled: artist.platforms?.youtube?.enabled || false,
+        youtube_iframe: artist.platforms?.youtube?.iframe || '',
+        instagram_enabled: artist.platforms?.instagram?.enabled || false,
+        tiktok_enabled: artist.platforms?.tiktok?.enabled || false,
+        soundcloud_enabled: artist.platforms?.soundcloud?.enabled || false,
+        soundcloud_iframe: artist.platforms?.soundcloud?.iframe || '',
+        twitter_enabled: artist.platforms?.twitter?.enabled || false,
+        // Social URLs
+        social_instagram: artist.social?.instagram || '',
+        social_tiktok: artist.social?.tiktok || '',
+        social_youtube: artist.social?.youtube || '',
+        social_spotify: artist.social?.spotify || '',
+        social_soundcloud: artist.social?.soundcloud || '',
+        social_twitter: artist.social?.twitter || '',
+        // Booking
+        whatsapp: artist.booking?.whatsapp || '',
+        whatsappMessage: artist.booking?.whatsappMessage || '',
+        email: artist.booking?.email || artist.email || ''
+    })
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+        const validStatus = formData.status === 'active' || formData.status === 'pending' || formData.status === 'inactive' 
+            ? formData.status as 'active' | 'pending' | 'inactive'
+            : 'pending'
+            
+        onSave({
+            ...artist,
+            name: formData.name,
+            slug: formData.slug,
+            email: formData.email,
+            theme: formData.theme,
+            status: validStatus,
+            profile: {
+                name: formData.name,
+                tagline: formData.tagline,
+                bio: formData.bio,
+                heroImage: formData.heroImage
+            },
+            platforms: {
+                spotify: { iframe: formData.spotify_iframe, enabled: formData.spotify_enabled },
+                youtube: { iframe: formData.youtube_iframe, enabled: formData.youtube_enabled },
+                instagram: { enabled: formData.instagram_enabled },
+                tiktok: { enabled: formData.tiktok_enabled },
+                soundcloud: { iframe: formData.soundcloud_iframe, enabled: formData.soundcloud_enabled },
+                twitter: { enabled: formData.twitter_enabled }
+            },
+            social: {
+                instagram: formData.social_instagram,
+                tiktok: formData.social_tiktok,
+                youtube: formData.social_youtube,
+                spotify: formData.social_spotify,
+                soundcloud: formData.social_soundcloud,
+                twitter: formData.social_twitter
+            },
+            booking: {
+                whatsapp: formData.whatsapp,
+                whatsappMessage: formData.whatsappMessage,
+                email: formData.email
+            }
+        })
+    }
+
+    const sectionTabs = [
+        { key: 'profile', label: 'Perfil' },
+        { key: 'platforms', label: 'Plataformas' },
+        { key: 'booking', label: 'Contacto' }
+    ]
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+            <motion.div 
+                className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 my-8"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.2 }}
+            >
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Editar Artista</h2>
+                
+                {/* Tabs */}
+                <div className="flex border-b mb-4">
+                    {sectionTabs.map(tab => (
+                        <button
+                            key={tab.key}
+                            type="button"
+                            onClick={() => setActiveSection(tab.key as any)}
+                            className={`px-4 py-2 text-sm font-medium ${
+                                activeSection === tab.key 
+                                    ? 'text-purple-600 border-b-2 border-purple-600' 
+                                    : 'text-gray-500'
+                            }`}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-4 max-h-[60vh] overflow-y-auto">
+                    {/* PROFILE SECTION */}
+                    {activeSection === 'profile' && (
+                        <>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre del Artista</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Tagline</label>
+                                <input
+                                    type="text"
+                                    value={formData.tagline}
+                                    onChange={(e) => setFormData({...formData, tagline: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    placeholder="Trap from Rosario"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                                <textarea
+                                    value={formData.bio}
+                                    onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    rows={3}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">URL Imagen de Fondo</label>
+                                <input
+                                    type="url"
+                                    value={formData.heroImage}
+                                    onChange={(e) => setFormData({...formData, heroImage: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    placeholder="https://..."
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Slug (subdomain)</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={formData.slug}
+                                    onChange={(e) => setFormData({...formData, slug: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Tema</label>
+                                <select
+                                    value={formData.theme}
+                                    onChange={(e) => setFormData({...formData, theme: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                >
+                                    <option value="SOFT_TRAP">Soft Trap</option>
+                                    <option value="BRUTALIST">Brutalist</option>
+                                    <option value="PINK_GOTH">Pink Goth</option>
+                                    <option value="INDIE_VIBE">Indie Vibe</option>
+                                    <option value="TECHNO_MINIMAL">Techno</option>
+                                    <option value="VAPORWAVE">Vaporwave</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                                <select
+                                    value={formData.status}
+                                    onChange={(e) => setFormData({...formData, status: e.target.value as any})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                >
+                                    <option value="active">Active</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </>
+                    )}
+
+                    {/* PLATFORMS SECTION - SINGLE SECTION WITH LINK + IFRAME */}
+                    {activeSection === 'platforms' && (
+                        <div className="space-y-4">
+                            <p className="text-sm text-gray-500">Para cada plataforma: activala, poné el link (se abre en nueva pestaña) y el iframe (se muestra en la página).</p>
+                            
+                            {/* Spotify */}
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="font-bold flex items-center gap-2">
+                                        <span className="text-green-500">🎵</span> Spotify
+                                    </span>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={formData.spotify_enabled}
+                                            onChange={(e) => setFormData({...formData, spotify_enabled: e.target.checked})}
+                                            className="w-4 h-4"
+                                        />
+                                        <span className="text-sm">Activo</span>
+                                    </label>
+                                </div>
+                                <div className="space-y-2">
+                                    <input
+                                        type="url"
+                                        placeholder="Link de artista (https://open.spotify.com/intl-es/artist/...)"
+                                        value={formData.social_spotify}
+                                        onChange={(e) => setFormData({...formData, social_spotify: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                    <textarea
+                                        placeholder="Iframe (copiá el código completo desde Spotify)"
+                                        value={formData.spotify_iframe}
+                                        onChange={(e) => setFormData({...formData, spotify_iframe: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm font-mono"
+                                        rows={3}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* YouTube */}
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="font-bold flex items-center gap-2">
+                                        <span className="text-red-500">▶️</span> YouTube
+                                    </span>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={formData.youtube_enabled}
+                                            onChange={(e) => setFormData({...formData, youtube_enabled: e.target.checked})}
+                                            className="w-4 h-4"
+                                        />
+                                        <span className="text-sm">Activo</span>
+                                    </label>
+                                </div>
+                                <div className="space-y-2">
+                                    <input
+                                        type="url"
+                                        placeholder="Link del canal o video (https://youtube.com/...)"
+                                        value={formData.social_youtube}
+                                        onChange={(e) => setFormData({...formData, social_youtube: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                    <textarea
+                                        placeholder="Iframe (copiá el código completo desde YouTube)"
+                                        value={formData.youtube_iframe}
+                                        onChange={(e) => setFormData({...formData, youtube_iframe: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm font-mono"
+                                        rows={3}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Instagram */}
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="font-bold flex items-center gap-2">
+                                        <span className="text-pink-500">📸</span> Instagram
+                                    </span>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={formData.instagram_enabled}
+                                            onChange={(e) => setFormData({...formData, instagram_enabled: e.target.checked})}
+                                            className="w-4 h-4"
+                                        />
+                                        <span className="text-sm">Activo</span>
+                                    </label>
+                                </div>
+                                <div className="space-y-2">
+                                    <input
+                                        type="url"
+                                        placeholder="Link de perfil (https://instagram.com/...)"
+                                        value={formData.social_instagram}
+                                        onChange={(e) => setFormData({...formData, social_instagram: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* TikTok */}
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="font-bold flex items-center gap-2">
+                                        <span className="text-cyan-500">🎬</span> TikTok
+                                    </span>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={formData.tiktok_enabled}
+                                            onChange={(e) => setFormData({...formData, tiktok_enabled: e.target.checked})}
+                                            className="w-4 h-4"
+                                        />
+                                        <span className="text-sm">Activo</span>
+                                    </label>
+                                </div>
+                                <div className="space-y-2">
+                                    <input
+                                        type="url"
+                                        placeholder="Link de perfil (https://tiktok.com/...)"
+                                        value={formData.social_tiktok}
+                                        onChange={(e) => setFormData({...formData, social_tiktok: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* SoundCloud */}
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="font-bold flex items-center gap-2">
+                                        <span className="text-orange-500">☁️</span> SoundCloud
+                                    </span>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={formData.soundcloud_enabled}
+                                            onChange={(e) => setFormData({...formData, soundcloud_enabled: e.target.checked})}
+                                            className="w-4 h-4"
+                                        />
+                                        <span className="text-sm">Activo</span>
+                                    </label>
+                                </div>
+                                <div className="space-y-2">
+                                    <input
+                                        type="url"
+                                        placeholder="Link de perfil (https://soundcloud.com/...)"
+                                        value={formData.social_soundcloud}
+                                        onChange={(e) => setFormData({...formData, social_soundcloud: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                    <textarea
+                                        placeholder="Iframe (código de embed de SoundCloud)"
+                                        value={formData.soundcloud_iframe}
+                                        onChange={(e) => setFormData({...formData, soundcloud_iframe: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm font-mono"
+                                        rows={3}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Twitter/X */}
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="font-bold flex items-center gap-2">
+                                        <span className="text-black">🐦</span> X / Twitter
+                                    </span>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={formData.twitter_enabled}
+                                            onChange={(e) => setFormData({...formData, twitter_enabled: e.target.checked})}
+                                            className="w-4 h-4"
+                                        />
+                                        <span className="text-sm">Activo</span>
+                                    </label>
+                                </div>
+                                <div className="space-y-2">
+                                    <input
+                                        type="url"
+                                        placeholder="Link de perfil (https://x.com/...)"
+                                        value={formData.social_twitter}
+                                        onChange={(e) => setFormData({...formData, social_twitter: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* BOOKING SECTION */}
+                    {activeSection === 'booking' && (
+                        <>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
+                                <input
+                                    type="text"
+                                    value={formData.whatsapp}
+                                    onChange={(e) => setFormData({...formData, whatsapp: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    placeholder="5493412345678"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Mensaje de WhatsApp</label>
+                                <textarea
+                                    value={formData.whatsappMessage}
+                                    onChange={(e) => setFormData({...formData, whatsappMessage: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    rows={2}
+                                ></textarea>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Email de Booking</label>
+                                <input
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                />
+                            </div>
+                        </>
+                    )}
+
+                    <div className="flex justify-end space-x-3 pt-4 border-t">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                        >
+                            Guardar
                         </button>
                     </div>
                 </form>

@@ -1,334 +1,212 @@
-# ROADMAP 2.0 - PLAN DE LANZAMIENTO MAÑANA 13/03/2026
-# ARTISTHUB - PLATAFORMA PARA ARTISTAS DE ROSARIO
+# ROADMAP - ROSARIOHUB
+## Red Social para Músicos y Artistas de Rosario
 
-## ESTADO ACTUAL ANALIZADO (13/03/2026 - 00:15):
-✅ Frontend Next.js 16 + TypeScript + Tailwind funcionando
-✅ 6 templates de diseño listos (Soft Trap, Brutalist, Indie, Pink Goth, Techno, Vaporwave)
-✅ Theme Engine completo con sistema de componentes dinámicos
-✅ Middleware para SUBDOMINIOS implementado y funcionando
-✅ Panel de admin (/factory) con gestión de artistas funcionando
-✅ Sistema de stats con API local (/api/stats) implementado
-✅ Base de datos local JSON con estructura de artistas
-✅ Component Engine para renderizado dinámico funcionando
-✅ Sistema de routing dinámico /artist/[slug] implementado
-✅ Configuración por archivo TypeScript (artistConfig.ts) funcionando
-❌ FALTAN: Supabase integration, Edge Functions, WebSockets, cron jobs, analytics históricos
-
-## PLAN DE ATAQUE - ACTUALIZADO (QUEDAN 6 HORAS PARA LANZAMIENTO)
-
-### FASE 1: INTEGRACIÓN SUPABASE + EDGE FUNCTIONS (3 horas)
-**OBJETIVO:** Migrar de JSON local a infrastructure enterprise
-
-1. **CONFIGURAR SUPABASE + MIGRAR DATOS** (1.5 horas)
-   - Crear proyecto Supabase con tablas: artists, historical_data, metric_snapshots
-   - Migrar data.json a Supabase artists table
-   - Configurar @supabase/supabase-js (ya instalado)
-   - Archivos: /lib/supabase.ts, /app/api/artists/route.ts (actualizar)
-
-2. **EDGE FUNCTIONS PARA SCRAPING** (1.5 horas)
-   - Migrar /api/stats a Edge Functions con IPs limpias
-   - Implementar cache de 5 minutos en Supabase
-   - Manejo robusto de errores y rate limiting
-   - Archivos: /app/api/stats/[artist_id]/route.ts, /lib/edge/scrapers.ts
-
-### FASE 2: RANKING ENGINE + HOMEPAGE DINÁMICA (2 horas)
-**OBJETIVO:** Analytics profesionales y leaderboards
-
-3. **RANKING ENGINE CON RELEVANCE SCORE** (1 hora)
-   - Implementar METRIC_WEIGHTS para normalizar diferentes plataformas
-   - Crear función getDynamicLayout() que reordena componentes 
-   - Sistema de scoring: spotify_listeners (1.5), youtube_subs (1.2), ig_followers (1.0)
-   - Archivos: /lib/rankingEngine.ts, /hooks/useDynamicLayout.ts
-
-4. **HOMEPAGE CON "TOP 10 ROSARIO"** (1 hora)
-   - Reemplazar redirect(/factory) por leaderboard dinámico
-   - Query a Supabase con relevance scores
-   - Categorías: Trending, Growth, All-Time
-   - Archivos: /app/page.tsx, /components/Leaderboard.tsx
-
-### FASE 3: WEBSOCKETS + CRON JOBS (1 hora)
-**OBJETIVO:** Real-time updates y analytics históricos
-
-5. **WEBSOCKETS PARA UPDATES EN TIEMPO REAL** (0.5 horas)
-   - Implementar Supabase Realtime para métricas
-   - Efecto "odómetro" cuando una métrica crece
-   - Archivos: /hooks/useRealtime.ts, /components/MetricAnimation.tsx
-
-6. **CRON JOB CON HISTORICAL DATA** (0.5 horas)
-   - Edge Function: /api/cron/update-stats
-   - Snapshots cada hora en metric_snapshots
-   - Archivos: /app/api/cron/update-stats/route.ts
-
-## ENTREGABLES FINALES PARA LANZAMIENTO:
-
-### ✅ MÍNIMO VIABLE ENTERPRISE (Listo para 6 AM):
-✅ **Next.js 16 + TypeScript + Tailwind funcionando**
-✅ **Middleware de subdominios implementado**
-✅ **Panel de admin (/factory) con gestión de artistas**
-✅ **Theme Engine con 6 templates funcionando**
-✅ **Sistema de routing dinámico /artist/[slug]**
-✅ **API local para stats y artistas**
-❌ **POR COMPLETAR:** Supabase integration, Edge Functions, Ranking Engine, Homepage dinámica
-
-### EXTRAS SI HAY TIEMPO EXTRA:
-- WebSockets para real-time updates
-- Cron jobs con analytics históricos
-- Sistema de pago automatizado
-
-### FASE 4: PANEL ADMIN ESCALABLE (3 horas)
-**OBJETIVO:** Dashboard enterprise para gestión avanzada
-
-8. **PERFILES DINÁMICOS CON SUBDOMINIOS + RANKING** (1.5 horas)
-   - Middleware que busca en Supabase y aplica ranking engine
-   - Layout dinámico basado en relevance score del momento
-   - Página 404 personalizada para subdominios no encontrados
-   - Optimización de loading con Edge Functions
-   - Archivos: /app/[artist]/page.jsx, middleware.js, /app/not-found.jsx
-
-9. **PANEL DE ADMIN CON ANALYTICS** (1.5 horas)
-   - Dashboard con métricas históricas de cada artista
-   - Gráficos de crecimiento, engagement, tendencias
-   - Sistema de activar/desactivar artistas
-   - Vista de revenue (setup fees + maintenance)
-   - Archivos: /app/factory/page.jsx, /components/AdminDashboard.jsx
-
-### FASE 5: SISTEMA DE COMPARTIR + BACKUP (2 horas)
-**OBJETIVO:** Viralidad y persistencia de datos
-
-10. **SISTEMA DE COMPARTIR VIRAL** (1 hora)
-    - Botones de compartir con métricas del momento
-    - QR code generator con stats embebidas
-    - Links dinámicos: "Mira cómo creció artista.artisthub.com esta semana"
-    - Open Graph tags optimizados para cada métrica
-    - Archivos: /components/ShareButtons.jsx, /lib/viralSharing.js
-
-11. **SISTEMA DE BACKUP + MIGRACIÓN** (1 hora)
-    - Exportar datos históricos de Supabase
-    - Sistema de migración para cuando se rompa el scraping
-    - Backup automático de configuraciones de temas
-    - Archivo: /lib/backupUtils.js, /app/api/backup/route.js
-
-### FASE 6: LANZAMIENTO ENTERPRISE (3 horas)
-**OBJETIVO:** Plataforma profesional lista para monetizar
-
-12. **PREPARAR 3 EJEMPLOS REALES CON ANALYTICS** (1 hora)
-    - Crear registros en Supabase con historical_data completa
-    - Demostrar ranking engine dinámico en acción
-    - Testear WebSockets y animaciones de odómetro
-    - Verificar Edge Functions con cache de 5 minutos
-
-13. **DOCUMENTACIÓN TÉCNICA + MARKETING** (1 hora)
-    - API documentation para Edge Functions
-    - Guía de migración desde scraping actual
-    - Marketing materials: "Analytics en tiempo real para artistas"
-    - Template de pitch para inversionistas
-
-14. **SISTEMA DE PAGO + ONBOARDING** (1 hora)
-    - Formulario de contacto integrado con analytics
-    - Checkout automatizado para setup fee y maintenance
-    - Onboarding guidado con tour de la plataforma
-    - Archivos: /app/contact/page.jsx, /components/Pricing.jsx, /app/onboarding/page.jsx
-
-### FASE 7: MEJORAS CRÍTICAS + TESTING (2 horas)
-**OBJETIVO:** Performance enterprise y robustez total
-
-15. **OPTIMIZACIÓN DE PERFORMANCE AVANZADA** (1 hora)
-    - Lazy loading de imágenes con Next.js Image
-    - Edge caching para static assets
-    - Bundle splitting por plataforma (Spotify vs YouTube)
-    - Service Worker para offline analytics
-
-16. **TESTING COMPLETO + MONITORING** (1 hora)
-    - Testear WebSockets en diferentes browsers
-    - Validar ranking engine con datos reales
-    - Load testing con 100 usuarios simultáneos
-    - Monitoring de Edge Functions y cache hit rates
-
-## ENTREGABLES MAÑANA:
-
-### MÍNIMO VIABLE ENTERPRISE:
-✅ **Edge Functions para scraping (no más CORS proxy)**
-✅ **Ranking Engine con relevance score dinámico**
-✅ **Supabase con tablas artists, historical_data, metric_snapshots**
-✅ **Panel de admin con analytics avanzadas en /factory**
-✅ **SUBDOMINIOS: nombre.artisthub.com con layout dinámico**
-✅ **Homepage con "Top 10 Rosario" por relevance score**
-✅ **WebSockets para fanfarroneo en tiempo real**
-✅ **Cron job con snapshots horarios y gráficos de crecimiento**
-✅ **Sistema de componentes Lego (data-driven UI)**
-✅ **Sistema de pago automatizado + onboarding guidado**
-
-### EXTRAS SI HAY TIEMPO:
-✅ Sistema de backup y migración automática
-✅ Performance avanzada con Edge caching
-✅ Load testing y monitoring completo
-
-## ARQUITECTURA FINAL ESCALABLE:
-
-```
-artisthub-enterprise/
-├── app/
-│   ├── layout.jsx
-│   ├── page.jsx (homepage con leaderboards dinámicos)
-│   ├── [artist]/
-│   │   └── page.jsx (perfil con ranking engine)
-│   ├── factory/
-│   │   └── page.jsx (admin dashboard con analytics)
-│   ├── api/
-│   │   ├── stats/[artist_id]/route.js (Edge Function)
-│   │   ├── cron/update-stats/route.js (snapshots)
-│   │   └── backup/route.js
-│   └── not-found.jsx
-├── components/
-│   ├── layout/ (ComponentMap dinámico)
-│   │   ├── SpotifyCard.jsx
-│   │   ├── YoutubeCard.jsx
-│   │   ├── TikTokCard.jsx
-│   │   └── StatsGrid.jsx
-│   ├── Leaderboard.jsx (con filtros y animaciones)
-│   ├── AdminDashboard.jsx (analytics y revenue)
-│   ├── MetricAnimation.jsx (efecto odómetro)
-│   └── ShareButtons.jsx (viral sharing)
-├── lib/
-│   ├── supabase.js (conexión y auth)
-│   ├── edge/
-│   │   └── platformScrapers.js (IPs limpias)
-│   ├── rankingEngine.js (relevance scores)
-│   ├── analyticsEngine.js (procesamiento histórico)
-│   └── componentMapper.js (sistema Lego)
-├── hooks/
-│   ├── useDynamicLayout.js (ranking engine)
-│   └── useRealtime.js (WebSockets)
-└── middleware.js (subdominios + routing)
-```
-
-## STACK TÉCNICO ENTERPRISE:
-
-**Frontend:** Next.js App Router + Tailwind ✅
-**Backend:** Edge Functions + Supabase PostgreSQL ✅
-**Auth:** Supabase Auth + middleware protegido ✅
-**Data:** 3 tablas (artists, historical_data, metric_snapshots) ✅
-**Caching:** Redis (5 minutos TTL) + Edge caching ✅
-**Real-time:** Supabase Realtime (WebSockets) ✅
-**Analytics:** Snapshots horarios + growth rates ✅
-**Hosting:** Vercel (Edge Functions + subdominios) ✅
-**Dominio:** artisthub.com con DNS *.artisthub.com → Vercel ✅
-
-## FLUJO DE DATOS ENTERPRISE ESCALABLE:
-
-1. **Acceso:** hydra.artisthub.com
-2. **Middleware:** Detecta "hydra" → query Supabase `SELECT * FROM artists WHERE slug = 'hydra'`
-3. **Edge Function:** `/api/stats/hydra` con IPs limpias + cache 5min
-4. **Ranking Engine:** Calcula relevance score dinámicamente
-5. **Componentes Lego:** ComponentMap renderiza layout según ranking
-6. **WebSockets:** Push updates con efecto odómetro en tiempo real
-7. **Cron Job:** Snapshots horarios → historical_data → analytics + leaderboards
-
-## KEY DIFFERENTIATORS VS LINKTREE:
-
-**Data-Driven UI:** El layout cambia según qué plataforma está trending
-**Real-time Fanfarroneo:** Efectos visuales cuando crecen las métricas
-**Analytics Profesionales:** Gráficos de crecimiento para cada artista
-**Relevance Scoring:** No solo muestra números, sino qué es más relevante
-**Enterprise Infrastructure:** Edge Functions, caching, WebSockets
-
-## RIESGOS Y MITIGACIÓN ENTERPRISE:
-
-❌ **Riesgo:** Edge Functions se rompen si Spotify cambia HTML
-✅ **Mitigación:** Sistema de fallback a scraping actual + API profesional pagada
-
-❌ **Riesgo:** WebSockets no funcionan en móviles
-✅ **Mitigación:** Service Workers + polling fallback
-
-❌ **Riesgo:** Ranking engine produce layouts extraños
-✅ **Mitigación:** Validación de layouts + A/B testing
-
-❌ **Riesgo:** Supabase rate limit con muchos artistas
-✅ **Mitigación:** Redis edge cache + pooling de conexiones
-
-## CHECKLIST DE LANZAMIENTO ENTERPRISE:
-
-- [ ] **Next.js migrado y funcionando**
-- [ ] **Edge Functions para scraping implementadas**
-- [ ] **Ranking Engine con relevance scores funcionando**
-- [ ] **Supabase configurado con 3 tablas**
-- [ ] **Middleware de subdominios con ComponentMap**
-- [ ] **WebSockets para fanfarroneo real-time**
-- [ ] **Panel admin con analytics avanzadas**
-- [ ] **Homepage con leaderboards dinámicos**
-- [ ] **Cron job con snapshots horarios**
-- [ ] **Sistema de pago automatizado funcionando**
-- [ ] **Load testing con 100 usuarios simultáneos**
-- [ ] **Monitoring de Edge Functions activo**
-- [ ] **3 ejemplos reales con analytics completas**
-- [ ] **Documentación técnica y marketing lista**
-
-## NEXT STEPS POST-LANZAMIENTO:
-
-1. **Semana 1:** Onboard 5-10 artistas reales con analytics
-2. **Semana 2:** Implementar A/B testing de layouts
-3. **Mes 1:** Migrar a API de scraping profesional
-4. **Mes 2:** **Escalabilidad a VisualArtist y SmallBusiness**
-5. **Mes 3:** Sistema de predicción de tendencias con ML
+**Última actualización:** 13/03/2026 19:00  
+**Estado:** Fase 1 completada - Iniciando Fase 2
 
 ---
 
-**TIEMPO ESTIMADO RESTANTE:** 6 horas de trabajo focalizado
-**HORARIOS SUGERIDOS:** 12:15 AM - 6:15 AM (con descansos)
-**RESULTADO ESPERADO:** Plataforma enterprise-ready con analytics profesionales, subdominios funcionando, y arquitectura escalable
+## VISIÓN DEL PROYECTO
 
-# VAMOS CON TODO! 🚀🎵📈🏆
+**RosarioHub** es una plataforma/red social que centraliza la presencia digital de artistas y músicos de Rosario, Argentina. Cada artista tiene una página única que muestra sus métricas de todas las redes sociales en tiempo real, ordenadas dinámicamente según cuáles son sus puntos fuertes.
 
-## PROGRESO REAL:
-- **85% completado** del roadmap original
-- **Stack migrado** de Vite+React a Next.js+TypeScript 
-- **Subdominios funcionando** con middleware
-- **Panel admin completo** con gestión de artistas
-- **Theme Engine robusto** con 6 templates
-- **Sistema de routing dinámico** implementado
-- **API endpoints funcionando** para stats y artistas
+### Características Principales:
+- 📊 **Métricas en tiempo real** de Spotify, YouTube, Instagram, TikTok, SoundCloud, Twitter
+- 🏆 **Podio competitivo** - "El músico más escuchado del mes en Rosario" gana grabación y producción gratis
+- 🔥 **Layout Inteligente** - La página de cada artista se ve diferente según sus métricas más altas
+- 🎯 **Relevance Score** - Algoritmo que pondera y ordena plataformas automáticamente
+- 📍 **Geolocalización** - Solo artistas de Rosario
+- 🎵 **Descubrir** - Sección para encontrar artistas nuevos de la ciudad
+- 📅 **Eventos** - Shows en vivo de artistas del hub
 
-## ESQUEMA DE BASE DE DATOS ENTERPRISE:
+---
 
-```sql
--- Tabla principal de artistas
-CREATE TABLE artists (
-  id SERIAL PRIMARY KEY,
-  slug VARCHAR(100) UNIQUE NOT NULL,
-  artist_id VARCHAR(100),
-  spotify_url TEXT,
-  youtube_channel_id TEXT,
-  ig_handle TEXT,
-  tiktok_handle TEXT,
-  theme_id VARCHAR(50),
-  active_status BOOLEAN DEFAULT true,
-  relevance_score DECIMAL(10,2) DEFAULT 0,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
-);
+## ARQUITECTURA DE DATOS
 
--- Snapshots horarios para analytics
-CREATE TABLE metric_snapshots (
-  id SERIAL PRIMARY KEY,
-  artist_id INTEGER REFERENCES artists(id),
-  platform VARCHAR(20) NOT NULL,
-  metric_key VARCHAR(50) NOT NULL,
-  raw_value BIGINT,
-  formatted_value VARCHAR(20),
-  relevance_weight DECIMAL(3,2),
-  calculated_score DECIMAL(15,2),
-  timestamp TIMESTAMP DEFAULT NOW()
-);
-
--- Datos históricos procesados para leaderboards
-CREATE TABLE historical_data (
-  id SERIAL PRIMARY KEY,
-  artist_id INTEGER REFERENCES artists(id),
-  date DATE NOT NULL,
-  total_relevance_score DECIMAL(15,2),
-  top_platform VARCHAR(20),
-  growth_rate DECIMAL(5,2),
-  milestone_achievements JSONB,
-  created_at TIMESTAMP DEFAULT NOW()
-);
+### Estructura de Artista (data.json)
+```json
+{
+  "id": "string",
+  "slug": "nombre-artista",
+  "theme": "SOFT_TRAP | BRUTALIST | INDIE_VIBE | PINK_GOTH | TECHNO_MINIMAL | VAPORWAVE",
+  "status": "active | pending | inactive",
+  "profile": {
+    "name": "Nombre del Artista",
+    "tagline": "Trap / R&B / DeepHouse",
+    "bio": "Descripción del artista...",
+    "heroImage": "URL a imagen"
+  },
+  "platforms": {
+    "spotify": { "enabled": true, "artistId": "ID Spotify", "iframe": "embed code" },
+    "youtube": { "enabled": true, "channelId": "ID Canal", "iframe": "embed code" },
+    "instagram": { "enabled": true, "username": "@handle" },
+    "tiktok": { "enabled": true, "username": "@handle" },
+    "soundcloud": { "enabled": true, "iframe": "embed code" },
+    "twitter": { "enabled": true, "username": "@handle" }
+  },
+  "social": {
+    "instagram": "URL completa",
+    "tiktok": "URL completa",
+    "youtube": "URL completa",
+    "spotify": "URL completa",
+    "soundcloud": "URL completa",
+    "twitter": "URL completa"
+  },
+  "booking": {
+    "whatsapp": "549xxxxxxxxx",
+    "whatsappMessage": "Mensaje predefinido",
+    "email": "email@booking.com"
+  },
+  "studio": {
+    "name": "RosarioHub",
+    "url": "https://rosariohub.com",
+    "city": "Rosario"
+  },
+  "metrics": {
+    "spotify_listeners": 25000,
+    "youtube_subs": 1700,
+    "youtube_views": 155000,
+    "instagram_followers": 8500,
+    "tiktok_followers": 0,
+    "tiktok_likes": 0,
+    "soundcloud_followers": 0,
+    "twitter_followers": 0,
+    "relevance_score": 0
+  },
+  "created_at": "timestamp"
+}
 ```
+
+---
+
+## 🎯 ROADMAP ESTRATÉGICO (POR PRIORIDAD)
+
+### **FASE CRÍTICA 1: MVP MÉTRICAS FUNCIONALES**
+**Prioridad:** Máxima - **Estado:** ✅ COMPLETADA
+
+#### 1.1 ✅ Métricas que FUNCIONAN (scraping + API)
+- [x] **Spotify Listeners** - 24 oyentes (tiempo real via scraping)
+- [x] **YouTube Subscribers** - 1.71K (API real configurada)
+- [x] **YouTube Views** - 155K views (API real)
+- [x] **YouTube Videos** - 33 videos (API real)
+- [x] **TikTok Followers** - 785 (scraping)
+
+#### 1.2 ✅ Sistema de Snapshots (cache diario)
+- [x] **API /api/snapshots** - Actualiza métricas una vez al día
+- [x] **Matching artists↔snapshots** - Sistema de vinculación por platform IDs
+- [x] **ClientMetrics hook** - Fetch de métricas del snapshot correcto
+
+#### 1.3 ✅ Sistema de Ranking
+- [x] **Ordenamiento automático** - Mayor valor primero
+- [x] **Layout adaptativo** - Cada artista único
+- [x] **Themes configurables** - SOFT_TRAP, BRUTALIST, INDIE_VIBE, etc.
+
+---
+
+### **FASE CRÍTICA 2: LEADERBOARD + COMPETENCIA**
+**Prioridad:** Alta - **Estado:** 🚧 EN PROGRESO
+
+#### 2.1 Homepage Pública de RosarioHub
+- [ ] **Hero Section** - Propuesta de valor clara
+- [ ] **Top 10 Rosario Leaderboard** - Podio competitivo mensual
+- [ ] **Sección Descubrir** - Artistas nuevos/emergentes
+- [ ] **Call-to-Action** - "Unite a RosarioHub"
+
+#### 2.2 Sistema Competitivo
+- [ ] **Podio Mensual** - 🥇🥈🥉 con premio real
+- [ ] **Premio del Ganador** - "Grabación + Producción Gratis"
+- [ ] **Badge Especial** - Perfil del ganador destacado
+- [ ] **Ranking Histórico** - Galería de ganadores anteriores
+
+---
+
+### **FASE 3: EXPANSIÓN DE ARTISTAS (PRÓXIMO MES)**
+**Prioridad:** Media - **Estado:** 10% completado
+
+#### 3.1 Onboarding de Artistas
+- [ ] **Formulario de Aplicación** - Auto-registro
+- [ ] **Validación Manual** - Confirmar que son de Rosario
+- [ ] **Mínimo 10 artistas** - Crítico para competencia real
+- [ ] **Diversidad de Géneros** - Trap, Rock, Pop, Jazz, etc.
+
+#### 3.2 Comparador de Artistas
+- [ ] **Side-by-Side Comparison** - Herramienta de análisis
+- [ ] **Battle de Métricas** - Quién gana en cada plataforma
+- [ ] **Gráficos Comparativos** - Visualización de diferencias
+
+---
+
+### **FASE 4: SISTEMA DE EVENTOS (CUANDO HAYA +20 ARTISTAS)**
+**Prioridad:** Baja - **Estado:** 0% completado
+
+#### 4.1 Gestión de Shows en Vivo
+- [ ] **Campo próximo_show** en perfil de artista
+- [ ] **Sección /eventos** - Calendario de shows
+- [ ] **Sistema de Tickets** - Integración con plataformas
+- [ ] **Notificaciones** - Cuando un artista que sigues tiene show
+
+---
+
+### **FASE 5: ESCALABILIDAD ENTERPRISE (CUANDO HAYA +50 ARTISTAS)**
+**Prioridad:** Muy Baja - **Estado:** 0% completado
+
+#### 5.1 Infraestructura Profesional
+- [ ] **Supabase Migration** - Base de datos real
+- [ ] **WebSockets Real-time** - Actualizaciones live para miles de users
+- [ ] **Dominios Personalizados** - artista.rosariohub.com
+- [ ] **Sistema de Pagos** - Planes free/premium
+
+#### 5.2 Analytics Avanzados
+- [ ] **Growth Rate Tracking** - Tasa de crecimiento
+- [ ] **Engagement Metrics** - Profundidad de interacción
+- [ ] **Predictive Analytics** - Tendencias futuras
+- [ ] **API para Terceros** - Integraciones externas
+
+---
+
+## STACK TÉCNICO ACTUAL
+
+- **Framework:** Next.js 16 + App Router
+- **Lenguaje:** TypeScript
+- **Estilos:** Tailwind CSS
+- **Datos:** JSON local (data.json)
+- **APIs:** Next.js API Routes
+- **Scraping:** Server-side fetch con cache
+- **Animaciones:** Framer Motion
+
+---
+
+## 🎯 PRÓXIMOS PASOS INMEDIATOS (ESTA SEMANA)
+
+### **1. Homepage con Leaderboard (PRIORIDAD)**
+- [ ] **Reemplazar redirect(/factory)** - Landing page real
+- [ ] **Hero Section** - Propuesta de valor clara
+- [ ] **Top 10 Rosario Leaderboard** - Podio competitivo
+- [ ] **Sección Descubrir** - Artistas nuevos/emergentes
+- [ ] **Call-to-Action** - "Unite a RosarioHub"
+
+### **2. Sistema Competitivo**
+- [ ] **Podio Mensual** - 🥇🥈🥉 con premio real
+- [ ] **Premio del Ganador** - "Grabación + Producción Gratis"
+- [ ] **Badge Especial** - Perfil del ganador destacado
+
+### **3. Onboarding de 10+ Artistas**
+- [ ] Formulario de aplicación
+- [ ] Validación "solo Rosario"
+- [ ] Diversidad de géneros
+
+---
+
+## 💡 NOTAS ESTRATÉGICAS IMPORTANTES
+
+- **Supabase NO es prioritaria** - JSON local escala perfecto hasta ~50 artistas
+- **WebSockets NO son necesarias** - Prematuro hasta tener miles de usuarios activos
+- **Subdominios SON opcionales** - Requieren configuración DNS externa compleja
+- **Scraping puede fallar** - Solución: API oficial de Spotify/YouTube cuando sea viable
+- **FOCUS en MVP funcional** - Mejorar experiencia core antes de escalar
+
+## 🚀 ESTADO ACTUAL: **FASE 1 COMPLETA - FASE 2 EN CURSO**
+
+**Fase 1 completada:** Métricas reales (YouTube API + Spotify/TikTok scraping), snapshots diarios, artist pages funcionales, themes  
+**Fase 2 en progreso:** Homepage + Leaderboard + Sistema de competencias  
+**Próximo hit:** Lanzar homepage pública con leaderboard de los TOP 10 artistas de Rosario

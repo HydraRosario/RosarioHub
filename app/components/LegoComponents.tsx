@@ -1,14 +1,30 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Instagram, Youtube, Music2, MessageCircle, Mail, TrendingUp, Zap, MapPin, Play, ExternalLink } from 'lucide-react'
+import { Instagram, Youtube, Music2, MessageCircle, Mail, TrendingUp, Zap, MapPin, Play, ExternalLink, Twitter, Cloud } from 'lucide-react'
 import { useTheme } from '../themeEngine'
+import { PlatformScore, formatMetricValue } from '../lib/rankingEngine'
 
-export function DynamicHero({ profile, metrics }: { profile: any, metrics: any[] }) {
+interface Profile {
+    name: string
+    tagline?: string
+    bio?: string
+    heroImageUrl?: string
+}
+
+export function DynamicHero({ profile, metrics, sortedPlatforms }: { 
+    profile: Profile, 
+    metrics: any[],
+    sortedPlatforms?: PlatformScore[]
+}) {
     const { classes } = useTheme()
+    
+    // Show ALL metrics sorted by value (highest first!)
+    const displayMetrics = metrics?.length > 0 ? metrics : []
+    
     return (
         <section 
-            className="relative min-h-screen flex flex-col justify-end pb-24 overflow-hidden"
+            className="relative min-h-screen flex flex-col justify-end pb-16 overflow-hidden"
             style={{ 
                 backgroundImage: `url(${profile.heroImageUrl})`,
                 backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed'
@@ -17,34 +33,40 @@ export function DynamicHero({ profile, metrics }: { profile: any, metrics: any[]
             <div className="absolute inset-0 bg-black/60 bg-gradient-to-t from-black via-black/40 to-transparent" />
             <div className="container mx-auto relative z-10 flex flex-col items-center text-center px-4">
                 <div className={`mb-6 px-4 py-1.5 border border-white/20 text-xs font-bold tracking-widest uppercase text-white/80 backdrop-blur-md ${classes.badge || 'rounded-full'}`}>
-                    <MapPin className="inline w-3 h-3 mr-1" /> {profile.badge || 'Rosario, SF'}
+                    <MapPin className="inline w-3 h-3 mr-1" /> Rosario, SF
                 </div>
                 <h1 className={`text-6xl md:text-8xl mb-4 text-white drop-shadow-2xl ${classes.heroName || ''}`} style={{ color: 'var(--color-primary)' }}>
                     {profile.name}
                 </h1>
-                <p className="text-sm md:text-lg text-white/80 tracking-[0.4em] md:tracking-[0.8em] font-semibold mb-16 uppercase" style={{ fontFamily: 'var(--font-body)' }}>
+                <p className="text-sm md:text-lg text-white/80 tracking-[0.4em] md:tracking-[0.8em] font-semibold mb-12 uppercase" style={{ fontFamily: 'var(--font-body)' }}>
                     {profile.tagline || 'TRAP / R&B / DEEPHOUSE'}
                 </p>
-                <div className="flex flex-wrap justify-center gap-12 md:gap-24">
-                    {metrics.slice(0, 3).map(stat => (
-                        <div key={stat.label} className="text-left flex flex-col items-start">
-                            {stat.isLive && (
-                                <span className="mb-1.5 inline-block px-1.5 py-[1px] text-[0.6rem] font-bold bg-green-500/20 text-green-400 border border-green-500/30 rounded w-max flex items-center gap-1">
-                                    <span className="w-1.5 h-1.5 animate-pulse rounded-full bg-green-400"></span>
-                                    LIVE
+                {displayMetrics.length > 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-8 w-full max-w-5xl">
+                        {displayMetrics.map((stat: any) => (
+                            <div key={stat.platform + stat.metric || stat.label} className="flex flex-col items-center">
+                                <span className="text-2xl md:text-4xl font-black drop-shadow-lg" style={{ color: 'var(--color-primary)' }}>
+                                    {stat.value}
                                 </span>
-                            )}
-                            <span className="text-3xl md:text-5xl font-black mb-1 drop-shadow-lg" style={{ color: 'var(--color-primary)' }}>{stat.value}</span>
-                            <span className="text-[0.65rem] md:text-xs font-bold text-white/60 uppercase tracking-widest leading-none">{stat.label}</span>
-                        </div>
-                    ))}
-                </div>
+                                {stat.isLive && (
+                                    <span className="mt-1 mb-2 inline-block px-2 py-0.5 text-[0.5rem] font-bold bg-green-500/20 text-green-400 border border-green-500/30 rounded flex items-center gap-1">
+                                        <span className="w-1.5 h-1.5 animate-pulse rounded-full bg-green-400"></span>
+                                        LIVE
+                                    </span>
+                                )}
+                                <span className="text-[0.6rem] md:text-xs font-bold text-white/60 uppercase tracking-widest">
+                                    {stat.label}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </section>
     )
 }
 
-export function DynamicBio({ profile }: { profile: any }) {
+export function DynamicBio({ profile }: { profile: Profile }) {
     const { classes } = useTheme()
     return (
         <section className="py-24 md:py-32 px-4 bg-[#0a0a0a] text-white">
@@ -53,7 +75,7 @@ export function DynamicBio({ profile }: { profile: any }) {
                     initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-100px' }}
                     className={`w-full aspect-[4/5] object-cover bg-neutral-900 border border-white/5 ${classes.iframeWrap || 'rounded-3xl'}`}
                 >
-                    <img src={profile.heroImageUrl} alt={profile.name} className="w-full h-full object-cover opacity-80" />
+                    <img src={profile.heroImageUrl || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800'} alt={profile.name} className="w-full h-full object-cover opacity-80" />
                 </motion.div>
                 <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-100px' }}>
                    <h4 className="text-[0.65rem] md:text-xs font-bold tracking-widest uppercase flex items-center mb-6" style={{ color: 'var(--color-primary)' }}>
@@ -64,51 +86,130 @@ export function DynamicBio({ profile }: { profile: any }) {
                        SOBRE EL <br/><span style={{ color: 'var(--color-primary)' }}>ARTISTA</span>
                    </h2>
                    <p className="text-white/60 text-lg leading-relaxed mb-10 text-pretty" style={{ fontFamily: 'var(--font-body)' }}>
-                       {profile.bio}
+                       {profile.bio || 'Artista emergente de Rosario, Argentina.'}
                    </p>
                    <div className="flex flex-wrap gap-4">
                        <span className={`px-5 py-2.5 text-[0.65rem] md:text-xs font-bold uppercase tracking-wider bg-white/[0.03] text-white/50 border border-white/10 ${classes.badge || 'rounded-full'}`}>INDEPENDENT</span>
                        <span className={`px-5 py-2.5 text-[0.65rem] md:text-xs font-bold uppercase tracking-wider bg-white/[0.03] text-white/50 border border-white/10 ${classes.badge || 'rounded-full'}`}>PRODUCER</span>
                        <span className={`px-5 py-2.5 text-[0.65rem] md:text-xs font-bold uppercase tracking-wider bg-white/[0.03] text-white/50 border border-white/10 ${classes.badge || 'rounded-full'}`}>ARTIST</span>
                    </div>
-                </motion.div>
+               </motion.div>
             </div>
         </section>
     )
 }
 
-export function DynamicMediaHub({ media }: { media: any }) {
+interface Platforms {
+    spotify?: { iframe?: string; enabled?: boolean }
+    youtube?: { iframe?: string; enabled?: boolean }
+    instagram?: { enabled?: boolean }
+    tiktok?: { enabled?: boolean }
+    soundcloud?: { iframe?: string; enabled?: boolean }
+    twitter?: { enabled?: boolean }
+}
+
+interface Social {
+    instagram?: string
+    tiktok?: string
+    youtube?: string
+    spotify?: string
+    soundcloud?: string
+    twitter?: string
+}
+
+export function DynamicMediaHub({ media, social }: { media: Platforms, social: Social }) {
     const { classes } = useTheme()
+    
+    const spotifyEnabled = media.spotify?.enabled && media.spotify?.iframe
+    const youtubeEnabled = media.youtube?.enabled && media.youtube?.iframe
+    const soundcloudEnabled = media.soundcloud?.enabled && media.soundcloud?.iframe
+    
+    const enabledEmbeds = [spotifyEnabled, youtubeEnabled, soundcloudEnabled].filter(Boolean).length
+    
     return (
         <section className="py-24 md:py-32 px-4 bg-[#050505]">
             <div className="container mx-auto max-w-6xl">
                 <h4 className="text-[0.65rem] md:text-xs font-bold tracking-widest uppercase flex items-center mb-10" style={{ color: 'var(--color-primary)' }}>
                     <Play className="w-4 h-4 mr-2" /> ESCUCHÁ Y MIRÁ
                 </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {media.spotifyArtistId && (
+                <div className={`grid gap-8 ${enabledEmbeds === 1 ? 'grid-cols-1 max-w-2xl mx-auto' : 'grid-cols-1 md:grid-cols-2'}`}>
+                    {spotifyEnabled ? (
                         <motion.div 
                             initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-50px' }}
                             className={`p-8 bg-[#0a0a0a] border border-white/5 shadow-2xl ${classes.card || 'rounded-[2rem]'}`}
                         >
                             <h5 className="text-[0.65rem] md:text-xs text-white/40 font-bold uppercase tracking-widest flex items-center mb-8">
-                                <Music2 className="w-4 h-4 mr-3" /> PERFIL DEL ARTISTA
+                                <Music2 className="w-4 h-4 mr-3" /> SPOTIFY
                             </h5>
-                            <div className={`${classes.iframeWrap || 'rounded-[1.5rem]'} w-full bg-black/50 overflow-hidden ring-1 ring-white/10`} style={{ minHeight: '352px' }}>
-                                <iframe style={{borderRadius: '0'}} src={`https://open.spotify.com/embed/artist/${media.spotifyArtistId}?utm_source=generator&theme=0`} width="100%" height="352" frameBorder="0" allowFullScreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                            <div className={`${classes.iframeWrap || 'rounded-[1.5rem]'} w-full bg-black/50 overflow-hidden ring-1 ring-white/10`} style={{ minHeight: '352px' }} dangerouslySetInnerHTML={{ __html: media.spotify?.iframe || '' }} />
+                        </motion.div>
+                    ) : (
+                        <motion.div 
+                            initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-50px' }}
+                            className={`p-8 bg-[#0a0a0a] border border-white/5 shadow-2xl opacity-50 ${classes.card || 'rounded-[2rem]'}`}
+                        >
+                            <h5 className="text-[0.65rem] md:text-xs text-white/40 font-bold uppercase tracking-widest flex items-center mb-8">
+                                <Music2 className="w-4 h-4 mr-3" /> SPOTIFY
+                            </h5>
+                            <div className={`${classes.iframeWrap || 'rounded-[1.5rem]'} w-full bg-black/50 overflow-hidden ring-1 ring-white/10 flex items-center justify-center`} style={{ minHeight: '352px' }}>
+                                <div className="text-white/30 text-center">
+                                    <Music2 className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                                    <p className="text-sm">Spotify no disponible</p>
+                                </div>
                             </div>
                         </motion.div>
                     )}
-                    {media.youtubeVideoId && (
+                    
+                    {youtubeEnabled ? (
                         <motion.div 
                             initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-50px' }} transition={{ delay: 0.2 }}
                             className={`p-8 bg-[#0a0a0a] border border-white/5 shadow-2xl flex flex-col ${classes.card || 'rounded-[2rem]'}`}
                         >
                             <h5 className="text-[0.65rem] md:text-xs text-white/40 font-bold uppercase tracking-widest flex items-center mb-8">
-                                <Youtube className="w-4 h-4 mr-3" /> VIDEO PRINCIPAL
+                                <Youtube className="w-4 h-4 mr-3" /> YOUTUBE
                             </h5>
-                            <div className={`${classes.iframeWrap || 'rounded-[1.5rem]'} w-full overflow-hidden aspect-video bg-black/50 relative ring-1 ring-white/10 flex-1`}>
-                                <iframe className="absolute inset-0 w-full h-full" src={`https://www.youtube.com/embed/${media.youtubeVideoId}?rel=0`} title="YouTube video" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                            <div className={`${classes.iframeWrap || 'rounded-[1.5rem]'} w-full overflow-hidden aspect-video bg-black/50 relative ring-1 ring-white/10 flex-1`} dangerouslySetInnerHTML={{ __html: media.youtube?.iframe || '' }} />
+                        </motion.div>
+                    ) : (
+                        <motion.div 
+                            initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-50px' }} transition={{ delay: 0.2 }}
+                            className={`p-8 bg-[#0a0a0a] border border-white/5 shadow-2xl flex flex-col opacity-50 ${classes.card || 'rounded-[2rem]'}`}
+                        >
+                            <h5 className="text-[0.65rem] md:text-xs text-white/40 font-bold uppercase tracking-widest flex items-center mb-8">
+                                <Youtube className="w-4 h-4 mr-3" /> YOUTUBE
+                            </h5>
+                            <div className={`${classes.iframeWrap || 'rounded-[1.5rem]'} w-full overflow-hidden aspect-video bg-black/50 relative ring-1 ring-white/10 flex items-center justify-center flex-1`}>
+                                <div className="text-white/30 text-center">
+                                    <Youtube className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                                    <p className="text-sm">YouTube no disponible</p>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {soundcloudEnabled ? (
+                        <motion.div 
+                            initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-50px' }} transition={{ delay: 0.4 }}
+                            className={`p-8 bg-[#0a0a0a] border border-white/5 shadow-2xl flex flex-col ${classes.card || 'rounded-[2rem]'}`}
+                        >
+                            <h5 className="text-[0.65rem] md:text-xs text-white/40 font-bold uppercase tracking-widest flex items-center mb-8">
+                                <Cloud className="w-4 h-4 mr-3" /> SOUNDCLOUD
+                            </h5>
+                            <div className={`${classes.iframeWrap || 'rounded-[1.5rem]'} w-full overflow-hidden bg-black/50 relative ring-1 ring-white/10`} dangerouslySetInnerHTML={{ __html: media.soundcloud?.iframe || '' }} />
+                        </motion.div>
+                    ) : (
+                        <motion.div 
+                            initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-50px' }} transition={{ delay: 0.4 }}
+                            className={`p-8 bg-[#0a0a0a] border border-white/5 shadow-2xl flex flex-col opacity-50 ${classes.card || 'rounded-[2rem]'}`}
+                        >
+                            <h5 className="text-[0.65rem] md:text-xs text-white/40 font-bold uppercase tracking-widest flex items-center mb-8">
+                                <Cloud className="w-4 h-4 mr-3" /> SOUNDCLOUD
+                            </h5>
+                            <div className={`${classes.iframeWrap || 'rounded-[1.5rem]'} w-full overflow-hidden bg-black/50 relative ring-1 ring-white/10 flex items-center justify-center`} style={{ minHeight: '166px' }}>
+                                <div className="text-white/30 text-center">
+                                    <Cloud className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                                    <p className="text-sm">SoundCloud no disponible</p>
+                                </div>
                             </div>
                         </motion.div>
                     )}
@@ -118,8 +219,71 @@ export function DynamicMediaHub({ media }: { media: any }) {
     )
 }
 
-export function DynamicSocialStack({ social }: { social: any }) {
+export function DynamicSocialStack({ social, platforms }: { social: Social, platforms: Platforms }) {
     const { classes } = useTheme()
+    
+    const socialLinks = [
+        { 
+            key: 'instagram', 
+            url: social.instagram, 
+            enabled: platforms.instagram?.enabled && social.instagram,
+            label: 'Instagram', 
+            icon: <Instagram size={24} />,
+            gradient: 'from-yellow-500 via-pink-500 to-purple-500',
+            shadow: 'shadow-pink-500/20'
+        },
+        { 
+            key: 'tiktok', 
+            url: social.tiktok, 
+            enabled: platforms.tiktok?.enabled && social.tiktok,
+            label: 'TikTok', 
+            icon: <Music2 size={24} className="text-cyan-400 drop-shadow-[2px_2px_0_rgba(255,0,80,1)]" />,
+            gradient: 'from-gray-900 to-gray-700',
+            shadow: 'shadow-cyan-500/10',
+            border: true
+        },
+        { 
+            key: 'youtube', 
+            url: social.youtube, 
+            enabled: platforms.youtube?.enabled && social.youtube,
+            label: 'YouTube', 
+            icon: <Youtube size={24} />,
+            gradient: 'bg-[#FF0000]',
+            shadow: 'shadow-red-500/20'
+        },
+        { 
+            key: 'spotify', 
+            url: social.spotify, 
+            enabled: platforms.spotify?.enabled && social.spotify,
+            label: 'Spotify', 
+            icon: <Music2 size={24} />,
+            gradient: 'bg-[#1DB954]',
+            shadow: 'shadow-green-500/20'
+        },
+        { 
+            key: 'soundcloud', 
+            url: social.soundcloud, 
+            enabled: platforms.soundcloud?.enabled && social.soundcloud,
+            label: 'SoundCloud', 
+            icon: <Cloud size={24} className="text-orange-400" />,
+            gradient: 'bg-orange-500',
+            shadow: 'shadow-orange-500/20'
+        },
+        { 
+            key: 'twitter', 
+            url: social.twitter, 
+            enabled: platforms.twitter?.enabled && social.twitter,
+            label: 'X / Twitter', 
+            icon: <Twitter size={24} />,
+            gradient: 'bg-black',
+            shadow: 'shadow-white/10',
+            border: true
+        }
+    ]
+    
+    const enabledLinks = socialLinks.filter(link => link.enabled)
+    const disabledLinks = socialLinks.filter(link => !link.enabled)
+    
     return (
         <section className="py-24 md:py-32 px-4 bg-[#0a0a0a]">
             <div className="container mx-auto max-w-3xl">
@@ -127,65 +291,62 @@ export function DynamicSocialStack({ social }: { social: any }) {
                     <TrendingUp className="w-4 h-4 mr-2" /> SEGUIME EN
                 </h4>
                 <div className="flex flex-col gap-4">
-                    {social.instagram && (
-                        <motion.a href={social.instagram} whileHover={{ scale: 1.01 }} className={`flex items-center p-5 bg-[#0d0d0d] hover:bg-[#111111] transition border border-white/5 ${classes.socialBtn || 'rounded-2xl'}`}>
-                            <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-gradient-to-tr from-yellow-500 via-pink-500 to-purple-500 text-white mr-6 shadow-lg shadow-pink-500/20">
-                                <Instagram size={24} />
+                    {enabledLinks.map(link => (
+                        <motion.a 
+                            key={link.key}
+                            href={link.url} 
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            whileHover={{ scale: 1.01 }} 
+                            className={`flex items-center p-5 bg-[#0d0d0d] hover:bg-[#111111] transition border border-white/5 ${classes.socialBtn || 'rounded-2xl'}`}
+                        >
+                            <div className={`w-14 h-14 flex items-center justify-center rounded-xl text-white mr-6 shadow-lg ${link.gradient} ${link.shadow} ${link.border ? 'border border-white/10' : ''}`}>
+                                {link.icon}
                             </div>
                             <div className="flex-1">
-                                <h3 className="text-white font-bold text-lg mb-0.5">Instagram</h3>
-                                <p className="text-white/40 text-sm">Seguí en Instagram</p>
+                                <h3 className="text-white font-bold text-lg mb-0.5">{link.label}</h3>
+                                <p className="text-white/40 text-sm">Seguí en {link.label}</p>
                             </div>
                             <ExternalLink className="w-5 h-5 text-white/20" />
                         </motion.a>
-                    )}
-                    {social.tiktok && (
-                        <motion.a href={social.tiktok} whileHover={{ scale: 1.01 }} className={`flex items-center p-5 bg-[#0d0d0d] hover:bg-[#111111] transition border border-white/5 ${classes.socialBtn || 'rounded-2xl'}`}>
-                            <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-[#000000] text-white border border-white/10 mr-6 shadow-lg shadow-cyan-500/10">
-                                <Music2 size={24} className="text-cyan-400 drop-shadow-[2px_2px_0_rgba(255,0,80,1)]" />
+                    ))}
+                    
+                    {disabledLinks.map(link => (
+                        <div 
+                            key={link.key}
+                            className={`flex items-center p-5 bg-[#0d0d0d] border border-white/5 opacity-40 cursor-not-allowed ${classes.socialBtn || 'rounded-2xl'}`}
+                        >
+                            <div className={`w-14 h-14 flex items-center justify-center rounded-xl text-white mr-6 shadow-lg grayscale ${link.gradient} ${link.shadow} ${link.border ? 'border border-white/10' : ''}`}>
+                                {link.icon}
                             </div>
                             <div className="flex-1">
-                                <h3 className="text-white font-bold text-lg mb-0.5">TikTok</h3>
-                                <p className="text-white/40 text-sm">Seguí el contenido</p>
+                                <h3 className="text-white font-bold text-lg mb-0.5">{link.label}</h3>
+                                <p className="text-white/40 text-sm">No disponible</p>
                             </div>
-                            <ExternalLink className="w-5 h-5 text-white/20" />
-                        </motion.a>
-                    )}
-                    {social.youtube && (
-                        <motion.a href={social.youtube} whileHover={{ scale: 1.01 }} className={`flex items-center p-5 bg-[#0d0d0d] hover:bg-[#111111] transition border border-white/5 ${classes.socialBtn || 'rounded-2xl'}`}>
-                            <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-[#FF0000] text-white mr-6 shadow-lg shadow-red-500/20">
-                                <Youtube size={24} />
-                            </div>
-                            <div className="flex-1">
-                                <h3 className="text-white font-bold text-lg mb-0.5">YouTube</h3>
-                                <p className="text-white/40 text-sm">Suscribite al canal</p>
-                            </div>
-                            <ExternalLink className="w-5 h-5 text-white/20" />
-                        </motion.a>
-                    )}
-                    {social.spotify && (
-                        <motion.a href={social.spotify} whileHover={{ scale: 1.01 }} className={`flex items-center p-5 bg-[#0d0d0d] hover:bg-[#111111] transition border border-white/5 ${classes.socialBtn || 'rounded-2xl'}`}>
-                            <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-[#1DB954] text-white mr-6 shadow-lg shadow-green-500/20">
-                                <Music2 size={24} />
-                            </div>
-                            <div className="flex-1">
-                                <h3 className="text-white font-bold text-lg mb-0.5">Spotify</h3>
-                                <p className="text-white/40 text-sm">Seguí en Spotify</p>
-                            </div>
-                            <ExternalLink className="w-5 h-5 text-white/20" />
-                        </motion.a>
-                    )}
+                            <ExternalLink className="w-5 h-5 text-white/10" />
+                        </div>
+                    ))}
                 </div>
             </div>
         </section>
     )
 }
 
-export function DynamicBooking({ booking }: { booking: any }) {
+interface Booking {
+    whatsapp?: string
+    whatsappMessage?: string
+    email?: string
+}
+
+export function DynamicBooking({ booking }: { booking: Booking }) {
     const { classes } = useTheme()
+    
+    const whatsappNumber = booking.whatsapp?.replace(/\D/g, '') || ''
+    const whatsappMessage = booking.whatsappMessage || '¡Hola! Quiero coordinar una fecha.'
+    
     return (
         <section className="py-32 px-4 bg-[#050505] text-center border-t border-white/5 relative overflow-hidden">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[var(--color-primary)] opacity-[0.03] blur-[120px] rounded-full point-events-none"></div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[var(--color-primary)] opacity-[0.03] blur-[120px] rounded-full pointer-events-none"></div>
             <div className="container mx-auto max-w-2xl flex flex-col items-center relative z-10">
                 <div className={`px-4 py-1.5 border border-white/10 mb-8 inline-flex items-center text-[0.65rem] md:text-xs font-bold tracking-widest uppercase text-white/70 ${classes.badge || 'rounded-full'}`}>
                     <Zap className="w-3 h-3 mr-2" style={{ color: 'var(--color-primary)' }}/> AGENDÁ AHORA
@@ -196,30 +357,71 @@ export function DynamicBooking({ booking }: { booking: any }) {
                 <p className="text-white/50 mb-12 text-lg max-w-md mx-auto leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>
                     ¿Querés agendar un show, festival o evento privado? Contactanos directamente por WhatsApp y coordinamos los detalles.
                 </p>
-                <motion.a 
-                    whileHover={{ scale: 1.05 }}
-                    href={`https://wa.me/${booking.whatsappNumber}?text=${encodeURIComponent(booking.whatsappMessage)}`} 
-                    className={`inline-flex items-center justify-center px-8 py-5 text-black text-lg font-bold mb-8 hover:opacity-90 w-full md:w-auto shadow-xl ${classes.btn || 'rounded-full'}`}
-                    style={{ backgroundColor: 'var(--color-primary)', boxShadow: '0 0 40px rgba(var(--color-primary), 0.2)' }}
-                >
-                    <MessageCircle className="w-6 h-6 mr-3"/> Consultar por WhatsApp
-                </motion.a>
-                <p className="text-sm text-white/30 flex items-center justify-center gap-2">
-                    <Mail className="w-4 h-4"/> O escribinos a <br className="md:hidden"/><a href={`mailto:${booking.email}`} className="font-medium hover:text-white transition underline underline-offset-4 decoration-white/20" style={{ color: 'var(--color-primary)' }}>{booking.email}</a>
-                </p>
+                {whatsappNumber ? (
+                    <motion.a 
+                        whileHover={{ scale: 1.05 }}
+                        href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`} 
+                        className={`inline-flex items-center justify-center px-8 py-5 text-black text-lg font-bold mb-8 hover:opacity-90 w-full md:w-auto shadow-xl ${classes.btn || 'rounded-full'}`}
+                        style={{ backgroundColor: 'var(--color-primary)', boxShadow: '0 0 40px rgba(var(--color-primary), 0.2)' }}
+                    >
+                        <MessageCircle className="w-6 h-6 mr-3"/> Consultar por WhatsApp
+                    </motion.a>
+                ) : (
+                    <div className={`inline-flex items-center justify-center px-8 py-5 text-white/30 text-lg font-bold mb-8 w-full md:w-auto ${classes.btn || 'rounded-full'}`} style={{ backgroundColor: 'var(--color-primary)', opacity: 0.3 }}>
+                        <MessageCircle className="w-6 h-6 mr-3"/> WhatsApp no disponible
+                    </div>
+                )}
+                {booking.email && (
+                    <p className="text-sm text-white/30 flex items-center justify-center gap-2">
+                        <Mail className="w-4 h-4"/> O escribinos a <br className="md:hidden"/><a href={`mailto:${booking.email}`} className="font-medium hover:text-white transition underline underline-offset-4 decoration-white/20" style={{ color: 'var(--color-primary)' }}>{booking.email}</a>
+                    </p>
+                )}
             </div>
         </section>
     )
 }
 
-export function Footer() {
+interface Studio {
+    name?: string
+    url?: string
+    city?: string
+}
+
+export function Footer({ studio }: { studio?: Studio }) {
+    const studioName = studio?.name || 'ArtistHub'
+    const currentYear = new Date().getFullYear()
+    
     return (
         <footer className="py-12 bg-black border-t border-white/5 text-center text-white/20">
-            <p className="text-xs font-mono tracking-widest uppercase">© 2024 ArtistHub Studio</p>
+            <p className="text-xs font-mono tracking-widest uppercase">© {currentYear} {studioName}</p>
         </footer>
     )
 }
 
-export function MilestoneBanner({ milestones }: { milestones: any[] }) { return null }
-export function TrendingAlert({ trends }: { trends: any[] }) { return null }
+interface MilestoneProps {
+    relevanceScore?: number
+    metrics?: {
+        spotify_listeners: number
+        youtube_subs: number
+        instagram_followers: number
+        [key: string]: number
+    }
+}
+
+export function MilestoneBanner({ relevanceScore, metrics }: MilestoneProps) {
+    // Las métricas ya se muestran en el Hero ordenadas por valor
+    // Este banner está deshabilitado para evitar duplicación
+    return null
+}
+
+interface TrendingProps {
+    sortedPlatforms?: PlatformScore[]
+}
+
+export function TrendingAlert({ sortedPlatforms }: TrendingProps) {
+    // Las métricas ya se muestran en el Hero ordenadas por valor
+    // Este alert está deshabilitado para evitar duplicación
+    return null
+}
+
 export function DynamicStatsSection({ metrics }: { metrics: any[] }) { return null }
