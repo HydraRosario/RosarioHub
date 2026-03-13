@@ -90,7 +90,7 @@ export default async function LeaderboardPage() {
                             {top10.map((artist: any, index: number) => (
                                 <a 
                                     key={artist.id}
-                                    href={`http://${artist.slug}.localhost:3000/`}
+                                    href={`/artist/${artist.slug}`}
                                     className={`group flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-purple-500/50 transition-all ${
                                         index < 3 ? 'ring-1 ring-yellow-500/30' : ''
                                     }`}
