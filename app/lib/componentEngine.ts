@@ -3,16 +3,8 @@
 //  Los componentes se renderizan según las métricas en tiempo real
 //──────────────────────────────────────────────────────────────
 
-import { calculateRelevanceScore, PlatformScore } from './rankingEngine'
-
-export interface MetricData extends PlatformScore {
-    label: string
-    value: string
-    platform: 'spotify' | 'youtube' | 'instagram' | 'tiktok'
-    isLive: boolean
-    growth?: number // % crecimiento
-    priority: number // 1-10, más alto = más importante
-}
+import { calculateRelevanceScore } from './rankingEngine'
+import { MetricData } from '../factory/types'
 
 export interface ComponentConfig {
     type: 'hero' | 'stats' | 'media' | 'social' | 'booking' | 'milestone' | 'trending'

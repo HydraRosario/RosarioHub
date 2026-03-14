@@ -1,17 +1,11 @@
-export interface PlatformScore {
-    platform: string
-    score: number
-    weight: number
-    metric: string
-    numericValue: number
-}
+import { MetricData } from '../factory/types'
 
 export interface Platforms {
-    spotify?: { artistId?: string; enabled?: boolean }
-    youtube?: { channelId?: string; enabled?: boolean }
+    spotify?: { artistId?: string; enabled?: boolean; artistLink?: string }
+    youtube?: { channelId?: string; enabled?: boolean; channelLink?: string }
     instagram?: { username?: string; enabled?: boolean }
     tiktok?: { username?: string; enabled?: boolean }
-    soundcloud?: { enabled?: boolean }
+    soundcloud?: { enabled?: boolean; iframe?: string }
     twitter?: { enabled?: boolean }
 }
 
@@ -25,7 +19,7 @@ const PLATFORM_WEIGHTS = {
 }
 
 export function calculateRelevanceScore(
-    metrics: PlatformScore[],
+    metrics: MetricData[],
     platforms: Platforms
 ): number {
     if (!metrics || !Array.isArray(metrics)) return 0
@@ -50,8 +44,8 @@ export function calculateRelevanceScore(
 }
 
 export function getSortedPlatforms(
-    metrics: PlatformScore[]
-): PlatformScore[] {
+    metrics: MetricData[]
+): MetricData[] {
     if (!metrics || !Array.isArray(metrics)) return []
     return [...metrics].sort((a, b) => {
         const weightDiff = PLATFORM_WEIGHTS[b.platform as keyof typeof PLATFORM_WEIGHTS] - 

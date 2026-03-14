@@ -4,20 +4,7 @@ import path from 'path'
 
 const snapshotsFilePath = path.join(process.cwd(), 'snapshots.json')
 
-interface Snapshot {
-    artistId: string
-    timestamp: string
-    metrics: {
-        youtube_subs?: number
-        youtube_views?: number
-        youtube_videos?: number
-        spotify_listeners?: number
-        tiktok_followers?: number
-        instagram_followers?: number
-        soundcloud_followers?: number
-        twitter_followers?: number
-    }
-}
+import { Snapshot } from '../../factory/types'
 
 interface SnapshotsData {
     lastUpdate: string

@@ -3,8 +3,22 @@
 import { motion } from 'framer-motion'
 import { Instagram, Youtube, Music2, MessageCircle, Mail, TrendingUp, Zap, MapPin, Play, ExternalLink, Twitter, Cloud, RefreshCw } from 'lucide-react'
 import { useTheme } from '../themeEngine'
-import { PlatformScore, formatMetricValue } from '../lib/rankingEngine'
-import { TrendChart } from './TrendChart'
+import { MetricData } from '../factory/types'
+
+// TrendChart Inline - 15 lines minimal version
+function TrendChart({ data, height = 40 }: { data: { value: number }[], height?: number }) {
+    if (!data || data.length < 2) return null
+    const values = data.map(d => d.value)
+    const min = Math.min(...values)
+    const max = Math.max(...values)
+    const range = max - min || 1
+    const points = values.map((v, i) => `${(i / (values.length - 1)) * 100},${100 - ((v - min) / range) * 100}`).join(' ')
+    return (
+        <svg viewBox="0 0 100 100" className="w-full h-full preserve-3d" preserveAspectRatio="none">
+            <polyline fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" points={points} className="text-purple-500/50" />
+        </svg>
+    )
+}
 
 interface Profile {
     name: string
@@ -14,11 +28,10 @@ interface Profile {
     profileImage?: string
 }
 
-export function DynamicHero({ profile, metrics, sortedPlatforms, history, lastUpdated }: { 
+export function DynamicHero({ profile, metrics, history, lastUpdated }: { 
     profile: Profile, 
-    metrics: any[],
-    sortedPlatforms?: PlatformScore[],
-    history?: any,
+    metrics: MetricData[],
+    history?: Record<string, {timestamp: string, value: number}[]>,
     lastUpdated?: string | null
 }) {
     const { classes } = useTheme()
@@ -416,28 +429,4 @@ export function Footer() {
     )
 }
 
-interface MilestoneProps {
-    relevanceScore?: number
-    metrics?: {
-        spotify_listeners: number
-        youtube_subs: number
-        instagram_followers: number
-        [key: string]: number
-    }
-}
-
-export function MilestoneBanner({ relevanceScore, metrics }: MilestoneProps) {
-    // Las métricas ya se muestran en el Hero ordenadas por valor
-    // Este banner está deshabilitado para evitar duplicación
-    return null
-}
-
-interface TrendingProps {
-    sortedPlatforms?: PlatformScore[]
-}
-
-export function TrendingAlert({ sortedPlatforms }: TrendingProps) {
-    // Las métricas ya se muestran en el Hero ordenadas por valor
-    // Este alert está deshabilitado para evitar duplicación
-    return null
-}
+// Eliminados componentes MilestoneBanner y TrendingAlert por redundancia.

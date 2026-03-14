@@ -3,10 +3,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 
-import { 
-    useDynamicLayout, 
-    MetricData 
-} from '../../lib/componentEngine'
+import { Artist, MetricData } from '../../factory/types'
 
 import {
     DynamicHero,
@@ -14,9 +11,7 @@ import {
     DynamicMediaHub,
     DynamicSocialStack,
     DynamicBooking,
-    Footer,
-    MilestoneBanner,
-    TrendingAlert
+    Footer
 } from '../../components/LegoComponents'
 
 import {
@@ -28,245 +23,20 @@ import {
 import {
     calculateRelevanceScore,
     getSortedPlatforms,
-    PlatformScore,
     Platforms
 } from '../../lib/rankingEngine'
 
-interface ArtistData {
-    id: string
-    slug: string
-    theme: string
-    status: string
-    profile: {
-        name: string
-        tagline: string
-        bio: string
-        heroImage: string
-        profileImage?: string
-    }
-    platforms: Platforms
-    social: {
-        instagram: string
-        tiktok: string
-        youtube: string
-        spotify: string
-        soundcloud: string
-        twitter: string
-    }
-    booking: {
-        whatsapp: string
-        whatsappMessage: string
-        email: string
-    }
-    metrics: {
-        spotify_listeners: number
-        youtube_subs: number
-        youtube_views: number
-        instagram_followers: number
-        tiktok_followers: number
-        tiktok_likes: number
-        soundcloud_followers: number
-        twitter_followers: number
-        relevance_score: number
-    }
-    created_at: string
-}
-
-interface PlatformMetrics {
-    platform: string
-    label: string
-    value: string
-    numericValue: number
-    isLive: boolean
-    priority: number
-    metric: string
-}
-
-function usePlatformStats(platforms: Platforms, jsonMetrics: any) {
-    const [allStats, setAllStats] = useState<PlatformMetrics[]>([])
-    const [loading, setLoading] = useState(true)
-
-    const spotifyId = platforms.spotify?.artistId || ''
-    const youtubeId = platforms.youtube?.channelId || ''
-    const instagramUser = platforms.instagram?.username || ''
-    const tiktokUser = platforms.tiktok?.username || ''
-
-    useEffect(() => {
-        const fetchAllStats = async () => {
-            try {
-                const params = new URLSearchParams()
-                if (spotifyId) params.append('spotify', spotifyId)
-                if (youtubeId) params.append('youtube', youtubeId)
-                if (instagramUser) params.append('instagram', instagramUser)
-                if (tiktokUser) params.append('tiktok', tiktokUser)
-
-                const response = await fetch(`/api/stats?${params.toString()}`)
-                const data = await response.json()
-                
-                if (response.ok) {
-                    // Map to store best value for each metric type
-                    const metricMap = new Map<string, { value: number, isLive: boolean, label: string }>()
-                    
-                    // Add scraped data first
-                    const allScraped = [
-                        ...(data.spotify || []),
-                        ...(data.youtube || []),
-                        ...(data.instagram || []),
-                        ...(data.tiktok || [])
-                    ]
-                    
-                    // Add scraped data to map - always keep these as live
-                    for (const stat of allScraped) {
-                        const key = `${stat.platform}-${stat.metric}`
-                        metricMap.set(key, {
-                            value: stat.numericValue,
-                            isLive: true,
-                            label: stat.label
-                        })
-                    }
-                    
-                    // Add JSON data - ONLY if no scraped data exists for that metric
-                    // This ensures we show scraped (live) data when available
-                    if (jsonMetrics) {
-                        // Spotify
-                        if (jsonMetrics.spotify_listeners > 0 && !metricMap.has('spotify-listeners')) {
-                            metricMap.set('spotify-listeners', {
-                                value: jsonMetrics.spotify_listeners,
-                                isLive: false,
-                                label: 'Spotify Oyentes'
-                            })
-                        }
-                        
-                        // YouTube Subs - only add if no scraped data
-                        if (jsonMetrics.youtube_subs > 0 && !metricMap.has('youtube-subscribers')) {
-                            metricMap.set('youtube-subscribers', {
-                                value: jsonMetrics.youtube_subs,
-                                isLive: false,
-                                label: 'YouTube Subs'
-                            })
-                        }
-                        
-                        // YouTube Views - only add if no scraped data
-                        if (jsonMetrics.youtube_views > 0 && !metricMap.has('youtube-views')) {
-                            metricMap.set('youtube-views', {
-                                value: jsonMetrics.youtube_views,
-                                isLive: false,
-                                label: 'YouTube Views'
-                            })
-                        }
-                        
-                        // Instagram - add if no scraped data
-                        if (jsonMetrics.instagram_followers > 0 && !metricMap.has('instagram-followers')) {
-                            metricMap.set('instagram-followers', {
-                                value: jsonMetrics.instagram_followers,
-                                isLive: false,
-                                label: 'Instagram'
-                            })
-                        }
-                        
-                        // TikTok Followers - only add if no scraped data
-                        if (jsonMetrics.tiktok_followers > 0 && !metricMap.has('tiktok-followers')) {
-                            metricMap.set('tiktok-followers', {
-                                value: jsonMetrics.tiktok_followers,
-                                isLive: false,
-                                label: 'TikTok Followers'
-                            })
-                        }
-                        
-                        // TikTok Likes - only add if no scraped data
-                        if (jsonMetrics.tiktok_likes > 0 && !metricMap.has('tiktok-likes')) {
-                            metricMap.set('tiktok-likes', {
-                                value: jsonMetrics.tiktok_likes,
-                                isLive: false,
-                                label: 'TikTok Likes'
-                            })
-                        }
-                    }
-                    
-                    // Convert to array - sort by highest value
-                    const combined: PlatformMetrics[] = Array.from(metricMap.entries()).map(([key, value]) => {
-                        const [platform, metric] = key.split('-')
-                        return {
-                            platform,
-                            label: value.label,
-                            value: formatNumber(value.value),
-                            numericValue: value.value,
-                            isLive: value.isLive,
-                            priority: getPriority(platform, metric),
-                            metric
-                        }
-                    })
-                    
-                    // Sort by numeric value (highest first) - THIS IS THE KEY FEATURE!
-                    combined.sort((a, b) => b.numericValue - a.numericValue)
-                    
-                    setAllStats(combined)
-                }
-            } catch (err) {
-                console.error("Error fetching stats: ", err)
-                // Fallback to JSON metrics only
-                const fallback = buildFromJson(jsonMetrics)
-                setAllStats(fallback)
-            } finally {
-                setLoading(false)
-            }
-        }
-        
-        fetchAllStats()
-    }, [spotifyId, youtubeId, instagramUser, tiktokUser, jsonMetrics])
-
-    return { allStats, loading }
-}
-
-function getPriority(platform: string, metric: string): number {
-    if (platform === 'instagram') return 9
-    if (platform === 'spotify' && metric === 'listeners') return 8
-    if (platform === 'youtube' && metric === 'subscribers') return 6
-    if (platform === 'youtube' && metric === 'views') return 5
-    if (platform === 'tiktok' && metric === 'followers') return 4
-    if (platform === 'tiktok' && metric === 'likes') return 3
-    return 5
-}
+import { 
+    useDynamicLayout
+} from '../../lib/componentEngine'
 
 function formatNumber(num: number): string {
     if (!num) return '0'
     return num.toLocaleString('es-AR')
 }
 
-function buildFromJson(metrics: any): PlatformMetrics[] {
-    if (!metrics) return []
-    const result: PlatformMetrics[] = []
-    
-    if (metrics.spotify_listeners > 0) result.push({
-        platform: 'spotify', label: 'Spotify Oyentes', value: formatNumber(metrics.spotify_listeners),
-        numericValue: metrics.spotify_listeners, isLive: false, priority: 8, metric: 'listeners'
-    })
-    if (metrics.youtube_subs > 0) result.push({
-        platform: 'youtube', label: 'YouTube Subs', value: formatNumber(metrics.youtube_subs),
-        numericValue: metrics.youtube_subs, isLive: false, priority: 6, metric: 'subscribers'
-    })
-    if (metrics.youtube_views > 0) result.push({
-        platform: 'youtube', label: 'YouTube Views', value: formatNumber(metrics.youtube_views),
-        numericValue: metrics.youtube_views, isLive: false, priority: 5, metric: 'views'
-    })
-    if (metrics.instagram_followers > 0) result.push({
-        platform: 'instagram', label: 'Instagram', value: formatNumber(metrics.instagram_followers),
-        numericValue: metrics.instagram_followers, isLive: false, priority: 9, metric: 'followers'
-    })
-    if (metrics.tiktok_followers > 0) result.push({
-        platform: 'tiktok', label: 'TikTok Followers', value: formatNumber(metrics.tiktok_followers),
-        numericValue: metrics.tiktok_followers, isLive: false, priority: 4, metric: 'followers'
-    })
-    if (metrics.tiktok_likes > 0) result.push({
-        platform: 'tiktok', label: 'TikTok Likes', value: formatNumber(metrics.tiktok_likes),
-        numericValue: metrics.tiktok_likes, isLive: false, priority: 3, metric: 'likes'
-    })
-    
-    return result.sort((a, b) => b.numericValue - a.numericValue)
-}
-
 export default function ArtistPage({ params }: { params: Promise<{ slug: string }> }) {
-    const [artistData, setArtistData] = useState<ArtistData | null>(null)
+    const [artistData, setArtistData] = useState<Artist | null>(null)
     const [loading, setLoading] = useState(true)
     const [slug, setSlug] = useState<string>('')
     const [snapshots, setSnapshots] = useState<any[]>([])
@@ -300,7 +70,7 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
         const fetchArtistInfo = async () => {
             try {
                 const response = await fetch('/api/artists')
-                const allArtists: ArtistData[] = await response.json()
+                const allArtists: Artist[] = await response.json()
                 const found = allArtists.find((a) => a.slug === slug)
                 if (found) {
                     setArtistData(found)
@@ -316,44 +86,40 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
         fetchArtistInfo()
     }, [slug])
 
-    // Use metrics from snapshot (data.json) - no live scraping
-    // The snapshot is updated every 6 hours by cron job
+    // Use metrics from the artist object (cached in data.json)
     const allMetrics = useMemo(() => {
-        const result: any[] = []
+        const result: MetricData[] = []
         const m = artistData?.metrics
         
         if (m) {
             if (m.spotify_listeners > 0) result.push({
-                label: 'Spotify Oyentes', value: m.spotify_listeners.toString(), 
-                numericValue: m.spotify_listeners, platform: 'spotify', isLive: true, priority: 8, metric: 'listeners'
+                label: 'Spotify Oyentes', value: m.spotify_listeners.toLocaleString('es-AR'), 
+                numericValue: m.spotify_listeners, platform: 'spotify', isLive: true, metric: 'listeners'
             })
             if (m.youtube_subs > 0) result.push({
-                label: 'YouTube Subs', value: m.youtube_subs.toString(), 
-                numericValue: m.youtube_subs, platform: 'youtube', isLive: true, priority: 6, metric: 'subscribers'
+                label: 'YouTube Subs', value: m.youtube_subs.toLocaleString('es-AR'), 
+                numericValue: m.youtube_subs, platform: 'youtube', isLive: true, metric: 'subscribers'
             })
             if (m.youtube_views > 0) result.push({
-                label: 'YouTube Views', value: m.youtube_views.toString(), 
-                numericValue: m.youtube_views, platform: 'youtube', isLive: true, priority: 5, metric: 'views'
+                label: 'YouTube Views', value: m.youtube_views.toLocaleString('es-AR'), 
+                numericValue: m.youtube_views, platform: 'youtube', isLive: true, metric: 'views'
             })
             if (m.tiktok_followers > 0) result.push({
-                label: 'TikTok', value: m.tiktok_followers.toString(), 
-                numericValue: m.tiktok_followers, platform: 'tiktok', isLive: true, priority: 4, metric: 'followers'
+                label: 'TikTok', value: m.tiktok_followers.toLocaleString('es-AR'), 
+                numericValue: m.tiktok_followers, platform: 'tiktok', isLive: true, metric: 'followers'
             })
             if (m.instagram_followers > 0) result.push({
-                label: 'Instagram', value: m.instagram_followers.toString(), 
-                numericValue: m.instagram_followers, platform: 'instagram', isLive: true, priority: 9, metric: 'followers'
+                label: 'Instagram', value: m.instagram_followers.toLocaleString('es-AR'), 
+                numericValue: m.instagram_followers, platform: 'instagram', isLive: true, metric: 'followers'
             })
         }
         
-        // Sort by numeric value (highest first)
-        result.sort((a, b) => b.numericValue - a.numericValue)
-        return result
+        return result.sort((a, b) => b.numericValue - a.numericValue)
     }, [artistData?.metrics])
 
     // Calculate time since last update
     const lastUpdated = useMemo(() => {
-        const metrics = artistData?.metrics as any
-        const timestamp = metrics?.lastUpdated
+        const timestamp = artistData?.metrics?.lastUpdated
         if (!timestamp) return null
         const diff = Date.now() - new Date(timestamp).getTime()
         const hours = Math.floor(diff / (1000 * 60 * 60))
@@ -371,10 +137,10 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
             .filter(s => s.artistId === artistData.id)
             .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
         
-        const history: any = {}
-        const metrics = ['youtube_subs', 'youtube_views', 'spotify_listeners', 'tiktok_followers', 'instagram_followers']
+        const history: Record<string, {timestamp: string, value: number}[]> = {}
+        const metricKeys = ['youtube_subs', 'youtube_views', 'spotify_listeners', 'tiktok_followers', 'instagram_followers']
         
-        metrics.forEach(m => {
+        metricKeys.forEach(m => {
             history[m] = artistSnapshots
                 .filter(s => s.metrics[m] !== undefined)
                 .map(s => ({
@@ -386,23 +152,15 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
         return history
     }, [artistData, snapshots])
 
-    const allMetricsTyped = allMetrics as unknown as MetricData[]
-
-    const { components, relevanceScore } = useDynamicLayout(allMetricsTyped, artistData || {})
+    const { components, relevanceScore: relevanceScoreCalculated } = useDynamicLayout(allMetrics, artistData || {})
 
     const themeToUse = artistData 
-        ? { ...getThemeDefinition({ ...{ theme: artistData.theme } }) } 
+        ? getThemeDefinition({ theme: artistData.theme }) 
         : getThemeDefinition({ theme: 'SOFT_TRAP' })
 
     const sortedPlatforms = useMemo(() => {
-        if (!allMetrics.length) return []
         return getSortedPlatforms(allMetrics)
     }, [allMetrics])
-
-    const relevanceScoreCalculated = useMemo(() => {
-        if (!allMetrics.length) return 0
-        return calculateRelevanceScore(allMetrics, artistData?.platforms || {})
-    }, [allMetrics, artistData])
 
     useEffect(() => {
         injectFonts(themeToUse.fontUrl)
@@ -438,8 +196,7 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
                                 heroImageUrl: artistData.profile.heroImage,
                                 profileImage: artistData.profile.profileImage
                             }} 
-                            metrics={allMetricsTyped}
-                            sortedPlatforms={sortedPlatforms}
+                            metrics={allMetrics}
                             lastUpdated={lastUpdated}
                             history={historyByMetric}
                         />
@@ -467,15 +224,6 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
                 />
             case 'booking':
                 return <DynamicBooking booking={artistData.booking} />
-            case 'milestone':
-                return <MilestoneBanner 
-                    relevanceScore={relevanceScoreCalculated}
-                    metrics={artistData.metrics}
-                />
-            case 'trending':
-                return <TrendingAlert 
-                    sortedPlatforms={sortedPlatforms}
-                />
             default:
                 return null
         }
@@ -488,7 +236,7 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
                     <div className="fixed top-4 right-4 bg-black/80 text-white p-4 rounded-lg text-xs z-50">
                         <div>Relevance Score: {relevanceScoreCalculated}</div>
                         <div>Components: {components.length}</div>
-                        <div>Live Metrics: {allMetricsTyped.filter((m: any) => m.isLive).length}</div>
+                        <div>Live Metrics: {allMetrics.filter((m: any) => m.isLive).length}</div>
                         <div className="text-green-400 font-bold mt-2">Status: {artistData.status}</div>
                     </div>
                 )}

@@ -1,0 +1,9 @@
+{
+  "leaderboard": {
+    "platforms": true,
+    "top10": true,
+    "growth": true,
+    "legacy": true,
+    "reach": false
+  }
+}
