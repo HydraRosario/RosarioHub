@@ -516,80 +516,488 @@ function AnalyticsTab({ artists }: { artists: Artist[] }) {
 }
 
  // ─────────────────────────────────────────────────────────────
- //  CREATE ARTIST MODAL
+ //  CREATE ARTIST MODAL - Usa la misma estructura que EditArtistModal
  //──────────────────────────────────────────────────────────────
 function CreateArtistModal({ onClose, onSave }: { 
     onClose: () => void, 
     onSave: (artist: Partial<Artist>) => void 
 }) {
-    const [formData, setFormData] = useState({
+    const [activeSection, setActiveSection] = useState<'profile' | 'platforms' | 'booking'>('profile')
+    const [saving, setSaving] = useState(false)
+    
+    const [formData, setFormData] = useState<{
+        name: string
+        tagline: string
+        bio: string
+        heroImage: string
+        theme: string
+        status: 'active' | 'pending' | 'inactive'
+        spotify_enabled: boolean
+        spotify_iframe: string
+        spotify_artistId: string
+        youtube_enabled: boolean
+        youtube_iframe: string
+        youtube_channelId: string
+        instagram_enabled: boolean
+        instagram_username: string
+        tiktok_enabled: boolean
+        tiktok_username: string
+        soundcloud_enabled: boolean
+        soundcloud_iframe: string
+        twitter_enabled: boolean
+        social_instagram: string
+        social_tiktok: string
+        social_youtube: string
+        social_spotify: string
+        social_soundcloud: string
+        social_twitter: string
+        whatsapp: string
+        whatsappMessage: string
+        email: string
+    }>({
         name: '',
-        email: '',
-        theme: 'SOFT_TRAP'
+        tagline: '',
+        bio: '',
+        heroImage: '',
+        theme: 'SOFT_TRAP',
+        status: 'pending',
+        spotify_enabled: false,
+        spotify_iframe: '',
+        spotify_artistId: '',
+        youtube_enabled: false,
+        youtube_iframe: '',
+        youtube_channelId: '',
+        instagram_enabled: false,
+        instagram_username: '',
+        tiktok_enabled: false,
+        tiktok_username: '',
+        soundcloud_enabled: false,
+        soundcloud_iframe: '',
+        twitter_enabled: false,
+        social_instagram: '',
+        social_tiktok: '',
+        social_youtube: '',
+        social_spotify: '',
+        social_soundcloud: '',
+        social_twitter: '',
+        whatsapp: '',
+        whatsappMessage: '',
+        email: ''
     })
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        const slug = formData.name.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '')
-        onSave({ ...formData, slug })
+        setSaving(true)
+        
+        let heroImage = formData.heroImage
+        let profileImage = ''
+
+        if (formData.youtube_channelId) {
+            try {
+                const response = await fetch(`/api/youtube?channelId=${formData.youtube_channelId}`)
+                if (response.ok) {
+                    const data = await response.json()
+                    if (data.bannerImage) heroImage = data.bannerImage
+                    if (data.profileImage) profileImage = data.profileImage
+                }
+            } catch (error) {
+                console.error('Error fetching YouTube data:', error)
+            }
+        }
+
+        const slug = formData.name.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '').toLowerCase()
+        
+        onSave({
+            name: formData.name,
+            slug,
+            email: formData.email,
+            theme: formData.theme,
+            status: formData.status,
+            profile: {
+                name: formData.name,
+                tagline: formData.tagline,
+                bio: formData.bio,
+                heroImage: heroImage,
+                profileImage: profileImage
+            },
+            platforms: {
+                spotify: { iframe: formData.spotify_iframe, enabled: formData.spotify_enabled, artistId: formData.spotify_artistId },
+                youtube: { iframe: formData.youtube_iframe, enabled: formData.youtube_enabled, channelId: formData.youtube_channelId },
+                instagram: { enabled: formData.instagram_enabled, username: formData.instagram_username },
+                tiktok: { enabled: formData.tiktok_enabled, username: formData.tiktok_username },
+                soundcloud: { iframe: formData.soundcloud_iframe, enabled: formData.soundcloud_enabled },
+                twitter: { enabled: formData.twitter_enabled }
+            },
+            social: {
+                instagram: formData.social_instagram,
+                tiktok: formData.social_tiktok,
+                youtube: formData.social_youtube,
+                spotify: formData.social_spotify,
+                soundcloud: formData.social_soundcloud,
+                twitter: formData.social_twitter
+            },
+            booking: {
+                whatsapp: formData.whatsapp,
+                whatsappMessage: formData.whatsappMessage,
+                email: formData.email
+            }
+        })
+        setSaving(false)
     }
 
+    const sectionTabs = [
+        { key: 'profile', label: 'Perfil' },
+        { key: 'platforms', label: 'Plataformas' },
+        { key: 'booking', label: 'Contacto' }
+    ]
+
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
             <motion.div 
-                className="bg-white rounded-lg p-8 max-w-md w-full mx-4"
+                className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 my-8"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.2 }}
             >
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Create New Artist</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Artist Name</label>
-                        <input
-                            type="text"
-                            required
-                            value={formData.name}
-                            onChange={(e) => setFormData({...formData, name: e.target.value})}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input
-                            type="email"
-                            required
-                            value={formData.email}
-                            onChange={(e) => setFormData({...formData, email: e.target.value})}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Theme</label>
-                        <select
-                            value={formData.theme}
-                            onChange={(e) => setFormData({...formData, theme: e.target.value})}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Crear Nuevo Artista</h2>
+                
+                <div className="flex border-b mb-4">
+                    {sectionTabs.map(tab => (
+                        <button
+                            key={tab.key}
+                            type="button"
+                            onClick={() => setActiveSection(tab.key as any)}
+                            className={`px-4 py-2 text-sm font-medium ${
+                                activeSection === tab.key 
+                                    ? 'text-purple-600 border-b-2 border-purple-600' 
+                                    : 'text-gray-500'
+                            }`}
                         >
-                            <option value="SOFT_TRAP">Soft Trap</option>
-                            <option value="BRUTALIST">Brutalist</option>
-                            <option value="PINK_GOTH">Pink Goth</option>
-                            <option value="INDIE_VIBE">Indie Vibe</option>
-                        </select>
-                    </div>
-                    <div className="flex justify-end space-x-3 pt-4">
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-4 max-h-[60vh] overflow-y-auto">
+                    {activeSection === 'profile' && (
+                        <>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre del Artista</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Tagline</label>
+                                <input
+                                    type="text"
+                                    value={formData.tagline}
+                                    onChange={(e) => setFormData({...formData, tagline: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    placeholder="Trap from Rosario"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                                <textarea
+                                    value={formData.bio}
+                                    onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    rows={3}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Tema</label>
+                                <select
+                                    value={formData.theme}
+                                    onChange={(e) => setFormData({...formData, theme: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                >
+                                    <option value="SOFT_TRAP">Soft Trap</option>
+                                    <option value="BRUTALIST">Brutalist</option>
+                                    <option value="PINK_GOTH">Pink Goth</option>
+                                    <option value="INDIE_VIBE">Indie Vibe</option>
+                                    <option value="TECHNO_MINIMAL">Techno</option>
+                                    <option value="VAPORWAVE">Vaporwave</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                                <select
+                                    value={formData.status}
+                                    onChange={(e) => setFormData({...formData, status: e.target.value as any})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                >
+                                    <option value="active">Active</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </>
+                    )}
+
+                    {activeSection === 'platforms' && (
+                        <div className="space-y-4">
+                            <p className="text-sm text-gray-500">Para cada plataforma: activala, poné el link y el iframe.</p>
+                            
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="font-bold flex items-center gap-2">
+                                        <span className="text-green-500">🎵</span> Spotify
+                                    </span>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={formData.spotify_enabled}
+                                            onChange={(e) => setFormData({...formData, spotify_enabled: e.target.checked})}
+                                            className="w-4 h-4"
+                                        />
+                                        <span className="text-sm">Activo</span>
+                                    </label>
+                                </div>
+                                <div className="space-y-2">
+                                    <input
+                                        type="url"
+                                        placeholder="Link de artista"
+                                        value={formData.social_spotify}
+                                        onChange={(e) => setFormData({...formData, social_spotify: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Artist ID"
+                                        value={formData.spotify_artistId}
+                                        onChange={(e) => setFormData({...formData, spotify_artistId: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                    <textarea
+                                        placeholder="Iframe"
+                                        value={formData.spotify_iframe}
+                                        onChange={(e) => setFormData({...formData, spotify_iframe: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm font-mono"
+                                        rows={3}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="font-bold flex items-center gap-2">
+                                        <span className="text-red-500">▶️</span> YouTube
+                                    </span>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={formData.youtube_enabled}
+                                            onChange={(e) => setFormData({...formData, youtube_enabled: e.target.checked})}
+                                            className="w-4 h-4"
+                                        />
+                                        <span className="text-sm">Activo</span>
+                                    </label>
+                                </div>
+                                <div className="space-y-2">
+                                    <input
+                                        type="url"
+                                        placeholder="Link del canal"
+                                        value={formData.social_youtube}
+                                        onChange={(e) => setFormData({...formData, social_youtube: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Channel ID (ej: UCdfZnZPCKjkzYAoU9NC3zCw)"
+                                        value={formData.youtube_channelId}
+                                        onChange={(e) => setFormData({...formData, youtube_channelId: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                    <textarea
+                                        placeholder="Iframe"
+                                        value={formData.youtube_iframe}
+                                        onChange={(e) => setFormData({...formData, youtube_iframe: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm font-mono"
+                                        rows={3}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="font-bold flex items-center gap-2">
+                                        <span className="text-pink-500">📸</span> Instagram
+                                    </span>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={formData.instagram_enabled}
+                                            onChange={(e) => setFormData({...formData, instagram_enabled: e.target.checked})}
+                                            className="w-4 h-4"
+                                        />
+                                        <span className="text-sm">Activo</span>
+                                    </label>
+                                </div>
+                                <div className="space-y-2">
+                                    <input
+                                        type="url"
+                                        placeholder="Link de perfil"
+                                        value={formData.social_instagram}
+                                        onChange={(e) => setFormData({...formData, social_instagram: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Username (sin @)"
+                                        value={formData.instagram_username}
+                                        onChange={(e) => setFormData({...formData, instagram_username: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="font-bold flex items-center gap-2">
+                                        <span className="text-cyan-500">🎬</span> TikTok
+                                    </span>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={formData.tiktok_enabled}
+                                            onChange={(e) => setFormData({...formData, tiktok_enabled: e.target.checked})}
+                                            className="w-4 h-4"
+                                        />
+                                        <span className="text-sm">Activo</span>
+                                    </label>
+                                </div>
+                                <div className="space-y-2">
+                                    <input
+                                        type="url"
+                                        placeholder="Link de perfil"
+                                        value={formData.social_tiktok}
+                                        onChange={(e) => setFormData({...formData, social_tiktok: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Username (sin @)"
+                                        value={formData.tiktok_username}
+                                        onChange={(e) => setFormData({...formData, tiktok_username: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="font-bold flex items-center gap-2">
+                                        <span className="text-orange-500">☁️</span> SoundCloud
+                                    </span>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={formData.soundcloud_enabled}
+                                            onChange={(e) => setFormData({...formData, soundcloud_enabled: e.target.checked})}
+                                            className="w-4 h-4"
+                                        />
+                                        <span className="text-sm">Activo</span>
+                                    </label>
+                                </div>
+                                <div className="space-y-2">
+                                    <input
+                                        type="url"
+                                        placeholder="Link de perfil"
+                                        value={formData.social_soundcloud}
+                                        onChange={(e) => setFormData({...formData, social_soundcloud: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                    <textarea
+                                        placeholder="Iframe"
+                                        value={formData.soundcloud_iframe}
+                                        onChange={(e) => setFormData({...formData, soundcloud_iframe: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm font-mono"
+                                        rows={3}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="font-bold flex items-center gap-2">
+                                        <span className="text-black">🐦</span> X / Twitter
+                                    </span>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={formData.twitter_enabled}
+                                            onChange={(e) => setFormData({...formData, twitter_enabled: e.target.checked})}
+                                            className="w-4 h-4"
+                                        />
+                                        <span className="text-sm">Activo</span>
+                                    </label>
+                                </div>
+                                <div className="space-y-2">
+                                    <input
+                                        type="url"
+                                        placeholder="Link de perfil"
+                                        value={formData.social_twitter}
+                                        onChange={(e) => setFormData({...formData, social_twitter: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeSection === 'booking' && (
+                        <>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
+                                <input
+                                    type="text"
+                                    value={formData.whatsapp}
+                                    onChange={(e) => setFormData({...formData, whatsapp: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    placeholder="5493412345678"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Mensaje de WhatsApp</label>
+                                <textarea
+                                    value={formData.whatsappMessage}
+                                    onChange={(e) => setFormData({...formData, whatsappMessage: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    rows={2}
+                                ></textarea>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Email de Booking</label>
+                                <input
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                />
+                            </div>
+                        </>
+                    )}
+
+                    <div className="flex justify-end space-x-3 pt-4 border-t">
                         <button
                             type="button"
                             onClick={onClose}
                             className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
                         >
-                            Cancel
+                            Cancelar
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                            disabled={saving}
+                            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50"
                         >
-                            Create Artist
+                            {saving ? 'Guardando...' : 'Crear Artista'}
                         </button>
                     </div>
                 </form>
