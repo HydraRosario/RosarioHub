@@ -99,12 +99,31 @@ export default function FactoryDashboard() {
         }
     }
 
+    const calculateRelevance = (metrics: any) => {
+        const ytSubs = metrics?.youtube_subs || 0
+        const ytViews = metrics?.youtube_views || 0
+        const spotify = metrics?.spotify_listeners || 0
+        const tiktok = metrics?.tiktok_followers || 0
+        const instagram = metrics?.instagram_followers || 0
+        const soundcloud = metrics?.soundcloud_followers || 0
+        const twitter = metrics?.twitter_followers || 0
+        
+        const totalReach = ytSubs + spotify + tiktok + instagram + soundcloud + twitter
+        const ytBonus = ytViews > 0 ? Math.log10(ytViews + 1) * 2 : 0
+        
+        return Math.round(totalReach + ytBonus)
+    }
+
     const stats = useMemo(() => {
-        const totalFans = artists.reduce((acc, a) => acc + (a.metrics?.youtube_subs || 0) + (a.metrics?.spotify_listeners || 0), 0)
+        const totalFans = artists.reduce((acc, a) => 
+            acc + (a.metrics?.youtube_subs || 0) + (a.metrics?.spotify_listeners || 0) + (a.metrics?.tiktok_followers || 0) + (a.metrics?.instagram_followers || 0), 0)
+        
+        const totalRelevance = artists.reduce((acc, a) => acc + calculateRelevance(a.metrics), 0)
+        
         return {
             totalArtists: artists.length,
             activeArtists: artists.filter(a => a.status === 'active').length,
-            avgRelevance: artists.length ? artists.reduce((acc, a) => acc + (a.metrics?.relevance_score || 0), 0) / artists.length : 0,
+            avgRelevance: artists.length ? Math.round(totalRelevance / artists.length) : 0,
             totalFans
         }
     }, [artists])

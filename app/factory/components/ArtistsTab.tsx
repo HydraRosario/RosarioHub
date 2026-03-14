@@ -10,6 +10,21 @@ interface ArtistsTabProps {
     onDelete: (id: string) => void
 }
 
+const calculateRelevance = (metrics: any) => {
+    const ytSubs = metrics?.youtube_subs || 0
+    const ytViews = metrics?.youtube_views || 0
+    const spotify = metrics?.spotify_listeners || 0
+    const tiktok = metrics?.tiktok_followers || 0
+    const instagram = metrics?.instagram_followers || 0
+    const soundcloud = metrics?.soundcloud_followers || 0
+    const twitter = metrics?.twitter_followers || 0
+    
+    const totalReach = ytSubs + spotify + tiktok + instagram + soundcloud + twitter
+    const ytBonus = ytViews > 0 ? Math.log10(ytViews + 1) * 2 : 0
+    
+    return Math.round(totalReach + ytBonus)
+}
+
 export function ArtistsTab({ artists, onEdit, onDelete }: ArtistsTabProps) {
     return (
         <motion.div
@@ -64,14 +79,14 @@ export function ArtistsTab({ artists, onEdit, onDelete }: ArtistsTabProps) {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center">
-                                        <span className="text-sm text-gray-900 mr-2">{artist.metrics?.relevance_score?.toLocaleString('es-AR') || '-'}</span>
+                                        <span className="text-sm text-gray-900 mr-2">{calculateRelevance(artist.metrics).toLocaleString('es-AR')}</span>
                                         <TrendingUp className="w-4 h-4 text-green-500" />
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div className="flex items-center space-x-3">
                                         <a 
-                                            href={`/artist/${artist.slug}`}
+                                            href={`/${artist.slug}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="text-purple-600 hover:text-purple-900 flex items-center"

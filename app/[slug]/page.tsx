@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 
-import { Artist, MetricData } from '../../factory/types'
+import { Artist, MetricData } from '../factory/types'
 
 import {
     DynamicHero,
@@ -12,23 +12,22 @@ import {
     DynamicSocialStack,
     DynamicBooking,
     Footer
-} from '../../components/LegoComponents'
+} from '../components/LegoComponents'
 
 import {
     ThemeContext,
     getThemeDefinition,
     injectFonts,
-} from '../../themeEngine'
+} from '../themeEngine'
 
 import {
     calculateRelevanceScore,
     getSortedPlatforms,
-    Platforms
-} from '../../lib/rankingEngine'
+} from '../lib/rankingEngine'
 
 import { 
     useDynamicLayout
-} from '../../lib/componentEngine'
+} from '../lib/componentEngine'
 
 function formatNumber(num: number): string {
     if (!num) return '0'

@@ -1,6 +1,6 @@
 {
   "leaderboard": {
-    "platforms": true,
+    "platforms": false,
     "top10": true,
     "growth": true,
     "legacy": true,

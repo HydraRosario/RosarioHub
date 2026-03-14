@@ -78,6 +78,21 @@ export function calculateAnalytics(artists: any[], snapshots: any[]) {
 
     const globalTotalReach = artistsWithStats.reduce((sum, a) => sum + a.currentTotal, 0)
 
+    // Detailed metrics totals (Current)
+    const metricsTotals = artists.reduce((acc: any, artist) => {
+        const m = artist.metrics || {}
+        acc.youtube_subs += Number(m.youtube_subs) || 0
+        acc.youtube_views += Number(m.youtube_views) || 0
+        acc.spotify_listeners += Number(m.spotify_listeners) || 0
+        acc.tiktok_followers += Number(m.tiktok_followers) || 0
+        acc.instagram_followers += Number(m.instagram_followers) || 0
+        acc.soundcloud_followers += Number(m.soundcloud_followers) || 0
+        acc.twitter_followers += Number(m.twitter_followers) || 0
+        return acc
+    }, { youtube_subs: 0, youtube_views: 0, spotify_listeners: 0, tiktok_followers: 0, instagram_followers: 0, soundcloud_followers: 0, twitter_followers: 0 })
+
+    const totalEverything = Object.values(metricsTotals).reduce((a: any, b: any) => a + b, 0) as number
+
     // History
     const reachByTimestamp: Record<string, number> = {}
     snapshots.forEach((s: any) => {
@@ -96,6 +111,8 @@ export function calculateAnalytics(artists: any[], snapshots: any[]) {
         topImpact: [...artistsWithStats].sort((a, b) => b.impact - a.impact),
         systemReachHistory,
         adoptionStats,
-        globalTotalReach
+        globalTotalReach,
+        metricsTotals,
+        totalEverything
     }
 }
