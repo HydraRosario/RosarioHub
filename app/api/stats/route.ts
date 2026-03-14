@@ -24,10 +24,8 @@ function parseCount(value: string): number {
 
 // Format number for display
 function formatNumber(num: number): string {
-    if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B'
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M'
-    if (num >= 1000) return (num / 1000).toFixed(1) + 'K'
-    return num.toString()
+    if (!num) return '0'
+    return num.toLocaleString('es-AR')
 }
 
 // Helper function definitions for scraping logic

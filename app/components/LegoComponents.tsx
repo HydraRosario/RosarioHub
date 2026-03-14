@@ -1,21 +1,25 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Instagram, Youtube, Music2, MessageCircle, Mail, TrendingUp, Zap, MapPin, Play, ExternalLink, Twitter, Cloud } from 'lucide-react'
+import { Instagram, Youtube, Music2, MessageCircle, Mail, TrendingUp, Zap, MapPin, Play, ExternalLink, Twitter, Cloud, RefreshCw } from 'lucide-react'
 import { useTheme } from '../themeEngine'
 import { PlatformScore, formatMetricValue } from '../lib/rankingEngine'
+import { TrendChart } from './TrendChart'
 
 interface Profile {
     name: string
     tagline?: string
     bio?: string
     heroImageUrl?: string
+    profileImage?: string
 }
 
-export function DynamicHero({ profile, metrics, sortedPlatforms }: { 
+export function DynamicHero({ profile, metrics, sortedPlatforms, history, lastUpdated }: { 
     profile: Profile, 
     metrics: any[],
-    sortedPlatforms?: PlatformScore[]
+    sortedPlatforms?: PlatformScore[],
+    history?: any,
+    lastUpdated?: string | null
 }) {
     const { classes } = useTheme()
     
@@ -25,15 +29,25 @@ export function DynamicHero({ profile, metrics, sortedPlatforms }: {
     return (
         <section 
             className="relative min-h-screen flex flex-col justify-end pb-16 overflow-hidden"
-            style={{ 
-                backgroundImage: `url(${profile.heroImageUrl})`,
-                backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed'
-            }}
         >
+            <div 
+                className="absolute inset-0 -z-10"
+                style={{ 
+                    backgroundImage: `url(${profile.heroImageUrl})`,
+                    backgroundSize: 'cover', backgroundPosition: 'center',
+                    filter: 'blur(2px)'
+                }}
+            />
             <div className="absolute inset-0 bg-black/60 bg-gradient-to-t from-black via-black/40 to-transparent" />
             <div className="container mx-auto relative z-10 flex flex-col items-center text-center px-4">
-                <div className={`mb-6 px-4 py-1.5 border border-white/20 text-xs font-bold tracking-widest uppercase text-white/80 backdrop-blur-md ${classes.badge || 'rounded-full'}`}>
-                    <MapPin className="inline w-3 h-3 mr-1" /> Rosario, SF
+                <div className="mb-8 flex items-center gap-4">
+                    <div className={`px-4 py-1.5 border border-white/20 text-xs font-bold tracking-widest uppercase text-white/80 backdrop-blur-md ${classes.badge || 'rounded-full'}`}>
+                        <MapPin className="inline w-3 h-3 mr-1" /> Rosario, SF
+                    </div>
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-500/20 border border-purple-500/30 rounded-full text-xs font-bold text-purple-300">
+                        <RefreshCw className="w-3 h-3 animate-spin-slow" />
+                        {lastUpdated ? `ACTUALIZADO ${lastUpdated}` : 'Cargando métricas...'}
+                    </div>
                 </div>
                 <h1 className={`text-6xl md:text-8xl mb-4 text-white drop-shadow-2xl ${classes.heroName || ''}`} style={{ color: 'var(--color-primary)' }}>
                     {profile.name}
@@ -49,7 +63,7 @@ export function DynamicHero({ profile, metrics, sortedPlatforms }: {
                                     {stat.value}
                                 </span>
                                 {stat.isLive && (
-                                    <span className="mt-1 mb-2 inline-block px-2 py-0.5 text-[0.5rem] font-bold bg-green-500/20 text-green-400 border border-green-500/30 rounded flex items-center gap-1">
+                                    <span className="mt-1 mb-0.5 inline-block px-2 py-0.5 text-[0.5rem] font-bold bg-green-500/20 text-green-400 border border-green-500/30 rounded flex items-center gap-1">
                                         <span className="w-1.5 h-1.5 animate-pulse rounded-full bg-green-400"></span>
                                         LIVE
                                     </span>
@@ -57,6 +71,22 @@ export function DynamicHero({ profile, metrics, sortedPlatforms }: {
                                 <span className="text-[0.6rem] md:text-xs font-bold text-white/60 uppercase tracking-widest">
                                     {stat.label}
                                 </span>
+                                
+                                {/* Trend Chart */}
+                                {history && history[stat.platform === 'spotify' ? 'spotify_listeners' : 
+                                                   stat.platform === 'youtube' ? (stat.label.includes('Subs') ? 'youtube_subs' : 'youtube_views') :
+                                                   stat.platform === 'tiktok' ? 'tiktok_followers' : 
+                                                   stat.platform === 'instagram' ? 'instagram_followers' : '']?.length > 1 && (
+                                    <div className="w-full mt-4 h-8">
+                                        <TrendChart 
+                                            data={history[stat.platform === 'spotify' ? 'spotify_listeners' : 
+                                                          stat.platform === 'youtube' ? (stat.label.includes('Subs') ? 'youtube_subs' : 'youtube_views') :
+                                                          stat.platform === 'tiktok' ? 'tiktok_followers' : 
+                                                          stat.platform === 'instagram' ? 'instagram_followers' : '']} 
+                                            height={30}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -75,7 +105,7 @@ export function DynamicBio({ profile }: { profile: Profile }) {
                     initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-100px' }}
                     className={`w-full aspect-[4/5] object-cover bg-neutral-900 border border-white/5 ${classes.iframeWrap || 'rounded-3xl'}`}
                 >
-                    <img src={profile.heroImageUrl || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800'} alt={profile.name} className="w-full h-full object-cover opacity-80" />
+                    <img src={profile.profileImage || profile.heroImageUrl || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800'} alt={profile.name} className="w-full h-full object-cover opacity-80" />
                 </motion.div>
                 <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-100px' }}>
                    <h4 className="text-[0.65rem] md:text-xs font-bold tracking-widest uppercase flex items-center mb-6" style={{ color: 'var(--color-primary)' }}>
@@ -85,15 +115,10 @@ export function DynamicBio({ profile }: { profile: Profile }) {
                    <h2 className="text-5xl md:text-7xl font-black mb-8 leading-[0.9]" style={{ fontFamily: 'var(--font-heading)' }}>
                        SOBRE EL <br/><span style={{ color: 'var(--color-primary)' }}>ARTISTA</span>
                    </h2>
-                   <p className="text-white/60 text-lg leading-relaxed mb-10 text-pretty" style={{ fontFamily: 'var(--font-body)' }}>
-                       {profile.bio || 'Artista emergente de Rosario, Argentina.'}
-                   </p>
-                   <div className="flex flex-wrap gap-4">
-                       <span className={`px-5 py-2.5 text-[0.65rem] md:text-xs font-bold uppercase tracking-wider bg-white/[0.03] text-white/50 border border-white/10 ${classes.badge || 'rounded-full'}`}>INDEPENDENT</span>
-                       <span className={`px-5 py-2.5 text-[0.65rem] md:text-xs font-bold uppercase tracking-wider bg-white/[0.03] text-white/50 border border-white/10 ${classes.badge || 'rounded-full'}`}>PRODUCER</span>
-                       <span className={`px-5 py-2.5 text-[0.65rem] md:text-xs font-bold uppercase tracking-wider bg-white/[0.03] text-white/50 border border-white/10 ${classes.badge || 'rounded-full'}`}>ARTIST</span>
-                   </div>
-               </motion.div>
+                    <p className="text-white/60 text-lg leading-relaxed mb-10 text-pretty" style={{ fontFamily: 'var(--font-body)' }}>
+                        {profile.bio || 'Artista emergente de Rosario, Argentina.'}
+                    </p>
+                </motion.div>
             </div>
         </section>
     )
@@ -373,7 +398,7 @@ export function DynamicBooking({ booking }: { booking: Booking }) {
                 )}
                 {booking.email && (
                     <p className="text-sm text-white/30 flex items-center justify-center gap-2">
-                        <Mail className="w-4 h-4"/> O escribinos a <br className="md:hidden"/><a href={`mailto:${booking.email}`} className="font-medium hover:text-white transition underline underline-offset-4 decoration-white/20" style={{ color: 'var(--color-primary)' }}>{booking.email}</a>
+                        <Mail className="w-4 h-4"/> O escribiendo a <br className="md:hidden"/><a href={`mailto:${booking.email}`} className="font-medium hover:text-white transition underline underline-offset-4 decoration-white/20" style={{ color: 'var(--color-primary)' }}>{booking.email}</a>
                     </p>
                 )}
             </div>
@@ -381,19 +406,12 @@ export function DynamicBooking({ booking }: { booking: Booking }) {
     )
 }
 
-interface Studio {
-    name?: string
-    url?: string
-    city?: string
-}
-
-export function Footer({ studio }: { studio?: Studio }) {
-    const studioName = studio?.name || 'ArtistHub'
+export function Footer() {
     const currentYear = new Date().getFullYear()
     
     return (
         <footer className="py-12 bg-black border-t border-white/5 text-center text-white/20">
-            <p className="text-xs font-mono tracking-widest uppercase">© {currentYear} {studioName}</p>
+            <p className="text-xs font-mono tracking-widest uppercase">© {currentYear} ArtistHub</p>
         </footer>
     )
 }

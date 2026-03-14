@@ -19,8 +19,6 @@ import {
     TrendingAlert
 } from '../../components/LegoComponents'
 
-import { useLiveMetrics, PlatformMetric } from '../../components/ClientMetrics'
-
 import {
     ThemeContext,
     getThemeDefinition,
@@ -44,6 +42,7 @@ interface ArtistData {
         tagline: string
         bio: string
         heroImage: string
+        profileImage?: string
     }
     platforms: Platforms
     social: {
@@ -58,11 +57,6 @@ interface ArtistData {
         whatsapp: string
         whatsappMessage: string
         email: string
-    }
-    studio: {
-        name: string
-        url: string
-        city: string
     }
     metrics: {
         spotify_listeners: number
@@ -236,10 +230,7 @@ function getPriority(platform: string, metric: string): number {
 
 function formatNumber(num: number): string {
     if (!num) return '0'
-    if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B'
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M'
-    if (num >= 1000) return (num / 1000).toFixed(1) + 'K'
-    return num.toString()
+    return num.toLocaleString('es-AR')
 }
 
 function buildFromJson(metrics: any): PlatformMetrics[] {
@@ -278,6 +269,22 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
     const [artistData, setArtistData] = useState<ArtistData | null>(null)
     const [loading, setLoading] = useState(true)
     const [slug, setSlug] = useState<string>('')
+    const [snapshots, setSnapshots] = useState<any[]>([])
+
+    useEffect(() => {
+        const fetchSnapshots = async () => {
+            try {
+                const response = await fetch('/api/snapshots')
+                const data = await response.json()
+                if (data.snapshots) {
+                    setSnapshots(data.snapshots)
+                }
+            } catch (err) {
+                console.error("Error al cargar snapshots:", err)
+            }
+        }
+        fetchSnapshots()
+    }, [])
 
     useEffect(() => {
         const unwrapParams = async () => {
@@ -309,37 +316,75 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
         fetchArtistInfo()
     }, [slug])
 
-    // Use cached snapshots (updated once per day)
-    const { metrics: liveMetrics, loading: liveLoading, error: liveError, lastUpdate } = useLiveMetrics(
-        artistData?.platforms || {},
-        artistData?.id
-    )
-    
-    // Build metrics array: live data + fallback to static JSON
+    // Use metrics from snapshot (data.json) - no live scraping
+    // The snapshot is updated every 6 hours by cron job
     const allMetrics = useMemo(() => {
-        const result: any[] = [...liveMetrics]
+        const result: any[] = []
+        const m = artistData?.metrics
         
-        // Add static metrics as fallback if no live data
-        if (artistData?.metrics && liveMetrics.length === 0) {
-            const m = artistData.metrics
+        if (m) {
             if (m.spotify_listeners > 0) result.push({
                 label: 'Spotify Oyentes', value: m.spotify_listeners.toString(), 
-                numericValue: m.spotify_listeners, platform: 'spotify', isLive: false, priority: 8, metric: 'listeners'
+                numericValue: m.spotify_listeners, platform: 'spotify', isLive: true, priority: 8, metric: 'listeners'
             })
             if (m.youtube_subs > 0) result.push({
                 label: 'YouTube Subs', value: m.youtube_subs.toString(), 
-                numericValue: m.youtube_subs, platform: 'youtube', isLive: false, priority: 6, metric: 'subscribers'
+                numericValue: m.youtube_subs, platform: 'youtube', isLive: true, priority: 6, metric: 'subscribers'
+            })
+            if (m.youtube_views > 0) result.push({
+                label: 'YouTube Views', value: m.youtube_views.toString(), 
+                numericValue: m.youtube_views, platform: 'youtube', isLive: true, priority: 5, metric: 'views'
             })
             if (m.tiktok_followers > 0) result.push({
                 label: 'TikTok', value: m.tiktok_followers.toString(), 
-                numericValue: m.tiktok_followers, platform: 'tiktok', isLive: false, priority: 4, metric: 'followers'
+                numericValue: m.tiktok_followers, platform: 'tiktok', isLive: true, priority: 4, metric: 'followers'
+            })
+            if (m.instagram_followers > 0) result.push({
+                label: 'Instagram', value: m.instagram_followers.toString(), 
+                numericValue: m.instagram_followers, platform: 'instagram', isLive: true, priority: 9, metric: 'followers'
             })
         }
         
-        // Sort by value
+        // Sort by numeric value (highest first)
         result.sort((a, b) => b.numericValue - a.numericValue)
         return result
-    }, [liveMetrics, artistData])
+    }, [artistData?.metrics])
+
+    // Calculate time since last update
+    const lastUpdated = useMemo(() => {
+        const metrics = artistData?.metrics as any
+        const timestamp = metrics?.lastUpdated
+        if (!timestamp) return null
+        const diff = Date.now() - new Date(timestamp).getTime()
+        const hours = Math.floor(diff / (1000 * 60 * 60))
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+        
+        if (hours > 0) return `hace ${hours}h ${minutes}m`
+        if (minutes > 0) return `hace ${minutes}m`
+        return 'hace un momento'
+    }, [artistData?.metrics])
+
+    const historyByMetric = useMemo(() => {
+        if (!artistData || !snapshots.length) return {}
+        
+        const artistSnapshots = snapshots
+            .filter(s => s.artistId === artistData.id)
+            .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+        
+        const history: any = {}
+        const metrics = ['youtube_subs', 'youtube_views', 'spotify_listeners', 'tiktok_followers', 'instagram_followers']
+        
+        metrics.forEach(m => {
+            history[m] = artistSnapshots
+                .filter(s => s.metrics[m] !== undefined)
+                .map(s => ({
+                    timestamp: s.timestamp,
+                    value: s.metrics[m]
+                }))
+        })
+        
+        return history
+    }, [artistData, snapshots])
 
     const allMetricsTyped = allMetrics as unknown as MetricData[]
 
@@ -363,7 +408,7 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
         injectFonts(themeToUse.fontUrl)
     }, [themeToUse])
 
-    const isLoading = loading || liveLoading
+    const isLoading = loading
 
     if (isLoading) {
         return (
@@ -390,15 +435,20 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
                             profile={{ 
                                 name: artistData.profile.name,
                                 tagline: artistData.profile.tagline,
-                                heroImageUrl: artistData.profile.heroImage
+                                heroImageUrl: artistData.profile.heroImage,
+                                profileImage: artistData.profile.profileImage
                             }} 
                             metrics={allMetricsTyped}
                             sortedPlatforms={sortedPlatforms}
+                            lastUpdated={lastUpdated}
+                            history={historyByMetric}
                         />
                         <DynamicBio 
                             profile={{ 
                                 name: artistData.profile.name,
-                                bio: artistData.profile.bio
+                                bio: artistData.profile.bio,
+                                heroImageUrl: artistData.profile.heroImage,
+                                profileImage: artistData.profile.profileImage
                             }} 
                         />
                     </>
@@ -454,7 +504,7 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
                     </motion.div>
                 ))}
                 
-                <Footer studio={artistData.studio} />
+                <Footer />
             </div>
         </ThemeContext.Provider>
     )

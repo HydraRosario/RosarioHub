@@ -13,6 +13,9 @@ interface Snapshot {
         youtube_videos?: number
         spotify_listeners?: number
         tiktok_followers?: number
+        instagram_followers?: number
+        soundcloud_followers?: number
+        twitter_followers?: number
     }
 }
 
@@ -47,7 +50,13 @@ export async function GET() {
     return NextResponse.json(data)
 }
 
-export async function POST() {
+export async function POST(request: Request) {
+    // Vercel Cron requests include this header
+    const vercelCron = request.headers.get('x-vercel-cron')
+    if (vercelCron !== '1') {
+        return NextResponse.json({ error: 'Unauthorized - Cron job only' }, { status: 401 })
+    }
+    
     const dataFilePath = path.join(process.cwd(), 'data.json')
     
     try {
@@ -64,15 +73,30 @@ export async function POST() {
                 
                 try {
                     const ytResponse = await fetch(
-                        `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelId}&key=${apiKey}`
+                        `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet,brandingSettings&id=${channelId}&key=${apiKey}`
                     )
                     const ytData = await ytResponse.json()
                     
-                    if (ytData.items?.[0]?.statistics) {
-                        const stats = ytData.items[0].statistics
-                        metrics.youtube_subs = parseInt(stats.subscriberCount) || 0
-                        metrics.youtube_views = parseInt(stats.viewCount) || 0
-                        metrics.youtube_videos = parseInt(stats.videoCount) || 0
+                    if (ytData.items?.[0]) {
+                        const channel = ytData.items[0]
+                        
+                        // Métricas
+                        if (channel.statistics) {
+                            const stats = channel.statistics
+                            metrics.youtube_subs = parseInt(stats.subscriberCount) || 0
+                            metrics.youtube_views = parseInt(stats.viewCount) || 0
+                            metrics.youtube_videos = parseInt(stats.videoCount) || 0
+                        }
+                        
+                        // Imágenes del canal (se guardan en el perfil del artista)
+                        if (channel.snippet?.thumbnails || channel.brandingSettings?.image) {
+                            const profileImage = channel.snippet.thumbnails?.high?.url || channel.snippet.thumbnails?.medium?.url
+                            const bannerImage = channel.brandingSettings?.image?.bannerMobileHdImageUrl || channel.brandingSettings?.image?.bannerHdImageUrl || channel.brandingSettings?.image?.bannerImageUrl
+                            
+                            if (!artist.profile) artist.profile = {}
+                            if (profileImage) artist.profile.profileImage = profileImage
+                            if (bannerImage) artist.profile.heroImage = bannerImage
+                        }
                     }
                 } catch (e) {
                     console.error('YouTube API error:', e)
@@ -109,16 +133,110 @@ export async function POST() {
                 }
             }
             
+            // Instagram
+            if (artist.platforms?.instagram?.username) {
+                try {
+                    const username = artist.platforms.instagram.username.replace('@', '')
+                    const igResponse = await fetch(
+                        `https://www.instagram.com/${username}/?__a=1&__d=1`
+                    )
+                    if (igResponse.ok) {
+                        const igData = await igResponse.json()
+                        const user = igData?.graphql?.user
+                        if (user?.edge_followed_by?.count) {
+                            metrics.instagram_followers = user.edge_followed_by.count
+                        }
+                    }
+                } catch {
+                    metrics.instagram_followers = 0
+                }
+            }
+            
+            // SoundCloud
+            if (artist.platforms?.soundcloud?.enabled && artist.social?.soundcloud) {
+                try {
+                    // Extract username from SoundCloud URL
+                    const scUrl = artist.social.soundcloud
+                    const scMatch = scUrl.match(/soundcloud\.com\/([^\/]+)/)
+                    if (scMatch) {
+                        const scResponse = await fetch(
+                            `https://api.soundcloud.com/users/${scMatch[1]}`,
+                            { headers: { 'Authorization': 'OAuth 2' } }
+                        )
+                        if (scResponse.ok) {
+                            const scData = await scResponse.json()
+                            if (scData.followers_count) {
+                                metrics.soundcloud_followers = scData.followers_count
+                            }
+                        }
+                    }
+                } catch {
+                    metrics.soundcloud_followers = 0
+                }
+            }
+            
+            // Twitter/X
+            if (artist.platforms?.twitter?.enabled && artist.social?.twitter) {
+                try {
+                    const twUrl = artist.social.twitter
+                    const twMatch = twUrl.match(/(?:twitter\.com|x\.com)\/([^\/\?]+)/)
+                    if (twMatch) {
+                        // Try to scrape followers (simplified)
+                        const twResponse = await fetch(
+                            `https://x.com/${twMatch[1]}`,
+                            { headers: { 'User-Agent': 'Mozilla/5.0' } }
+                        )
+                        if (twResponse.ok) {
+                            const html = await twResponse.text()
+                            const followersMatch = html.match(/"followers_count":(\d+)/)
+                            if (followersMatch) {
+                                metrics.twitter_followers = parseInt(followersMatch[1])
+                            }
+                        }
+                    }
+                } catch {
+                    metrics.twitter_followers = 0
+                }
+            }
+            
             snapshots.push({
                 artistId: artist.id,
                 timestamp: new Date().toISOString(),
                 metrics
             })
+            
+            // Update artist data with current metrics
+            if (artist.metrics) {
+                artist.metrics = {
+                    ...artist.metrics,
+                    ...metrics,
+                    lastUpdated: new Date().toISOString()
+                }
+            } else {
+                artist.metrics = {
+                    ...metrics,
+                    lastUpdated: new Date().toISOString()
+                }
+            }
         }
         
+        // Save updated artists data with metrics
+        try {
+            fs.writeFileSync(dataFilePath, JSON.stringify(artistsData, null, 2))
+            console.log('[Snapshots] Updated data.json with metrics')
+        } catch (e) {
+            console.error('[Snapshots] Failed to update data.json:', e)
+        }
+        
+        const existingData = readSnapshots()
+        const newSnapshots = [...(existingData.snapshots || []), ...snapshots]
+        
+        // Limitar a los últimos 100 snapshots para evitar que el archivo crezca infinitamente
+        const limitedSnapshots = newSnapshots.slice(-100)
+
         const snapshotsData: SnapshotsData = {
             lastUpdate: new Date().toISOString(),
-            snapshots
+            snapshots: limitedSnapshots
         }
         
         writeSnapshots(snapshotsData)

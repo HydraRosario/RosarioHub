@@ -1,0 +1,29 @@
+{
+  "lastUpdate": "2026-03-14T08:16:06.246Z",
+  "snapshots": [
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-14T08:16:03.218Z",
+      "metrics": {
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_listeners": 25,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-14T08:16:06.244Z",
+      "metrics": {
+        "youtube_subs": 2,
+        "youtube_views": 40,
+        "youtube_videos": 9,
+        "spotify_listeners": 5,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    }
+  ]
+}
