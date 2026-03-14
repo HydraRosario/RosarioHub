@@ -53,7 +53,11 @@ export async function GET() {
 export async function POST(request: Request) {
     // Vercel Cron requests include this header
     const vercelCron = request.headers.get('x-vercel-cron')
-    if (vercelCron !== '1') {
+    
+    // Temporarily allow manual execution for debugging
+    if (process.env.NODE_ENV === 'development') {
+        // Allow manual execution in development
+    } else if (vercelCron !== '1') {
         return NextResponse.json({ error: 'Unauthorized - Cron job only' }, { status: 401 })
     }
     

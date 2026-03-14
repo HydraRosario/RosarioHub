@@ -27,6 +27,7 @@ interface Artist {
         tagline: string
         bio: string
         heroImage: string
+        profileImage: string
     }
     platforms: {
         spotify: PlatformConfig
@@ -223,17 +224,11 @@ export default function FactoryDashboard() {
                 <CreateArtistModal 
                     onClose={() => setShowCreateModal(false)}
                     onSave={async (artist) => {
-                        // Guardar en nuestra API local
                         try {
                             const response = await fetch('/api/artists', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    name: artist.name,
-                                    slug: artist.slug,
-                                    email: artist.email,
-                                    theme: artist.theme
-                                })
+                                body: JSON.stringify(artist)
                             })
                             
                             if (response.ok) {
@@ -241,7 +236,7 @@ export default function FactoryDashboard() {
                                 setArtists([...artists, newArtist])
                                 setShowCreateModal(false)
                             } else {
-                                alert('Error al crear artista en el archivo local')
+                                alert('Error al crear artista')
                             }
                         } catch (error) {
                             alert('Error conectando con la API: ' + error)
@@ -1022,6 +1017,7 @@ function EditArtistModal({ artist, onClose, onSave }: {
         tagline: string
         bio: string
         heroImage: string
+        profileImage: string
         // Basic
         theme: string
         status: 'active' | 'pending' | 'inactive'
@@ -1056,6 +1052,7 @@ function EditArtistModal({ artist, onClose, onSave }: {
         tagline: artist.profile?.tagline || '',
         bio: artist.profile?.bio || '',
         heroImage: artist.profile?.heroImage || '',
+        profileImage: artist.profile?.profileImage || '',
         // Basic
         theme: artist.theme || 'SOFT_TRAP',
         status: artist.status || 'active',
@@ -1086,8 +1083,25 @@ function EditArtistModal({ artist, onClose, onSave }: {
         email: artist.booking?.email || artist.email || ''
     })
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        
+        let heroImage = formData.heroImage
+        let profileImage = formData.profileImage
+
+        if (formData.youtube_channelId) {
+            try {
+                const response = await fetch(`/api/youtube?channelId=${formData.youtube_channelId}`)
+                if (response.ok) {
+                    const data = await response.json()
+                    if (data.bannerImage) heroImage = data.bannerImage
+                    if (data.profileImage) profileImage = data.profileImage
+                }
+            } catch (error) {
+                console.error('Error fetching YouTube data:', error)
+            }
+        }
+
         const validStatus = formData.status === 'active' || formData.status === 'pending' || formData.status === 'inactive' 
             ? formData.status as 'active' | 'pending' | 'inactive'
             : 'pending'
@@ -1102,7 +1116,8 @@ function EditArtistModal({ artist, onClose, onSave }: {
                 name: formData.name,
                 tagline: formData.tagline,
                 bio: formData.bio,
-                heroImage: formData.heroImage
+                heroImage: heroImage,
+                profileImage: profileImage
             },
             platforms: {
                 spotify: { iframe: formData.spotify_iframe, enabled: formData.spotify_enabled, artistId: formData.spotify_artistId },
