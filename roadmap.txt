@@ -2,7 +2,7 @@
 ## Red Social para Músicos y Artistas de Rosario
 
 **Última actualización:** 13/03/2026  
-**Estado:** Fase 1-2 implementadas - En progreso: Onboarding + Engagement
+**Estado:** Fase 1-2 implementadas - En progreso: Agregar más artistas
 
 ---
 
@@ -43,22 +43,31 @@
 
 ## 🚀 PRÓXIMAS PRIORIDADES
 
-### **1. ONBOARDING DE ARTISTAS (CRÍTICO)**
+### **1. AGREGAR MÁS ARTISTAS (CRÍTICO)**
 
 **Estado actual:** Solo 2 artistas activos - Necesitamos mínimo 10+
 
-- [ ] **Página pública de aplicación** - Formulario simple en homepage
-  - Nombre, género, bio, links a redes
-  - Validación: que sea de Rosario (checkbox + verificación manual)
-- [ ] **Dashboard de validación** - Admin revisa solicitudes en Factory
-- [ ] **Proceso de onboarding guiado** - Paso a paso para configurar métricas
 - [ ] **Añadir 8-10 artistas más** - Diversificar géneros (trap, rock, pop, jazz, electrónico)
+- [ ] **Todos los perfiles son creados manualmente** por el administrador desde Factory
+- [ ] Los interesados deben contactar por WhatsApp para pedir ser agregados
+- [ ] NO hay formulario público de aplicación
 
-**Estrategia sugerida:** En lugar de formulario complejo, hacer outreach directo a artistas conocidos y ofrecerles inclusión gratuita.
+**Estrategia:** Outreach directo a artistas conocidos y ofrecerles inclusión gratuita.
 
----
+### **2. MEJORAS TÉCNICAS (OPCIONAL)**
 
-### **2. SISTEMA DE ENGAGEMENT (MEDIA PRIORIDAD)**
+**NO CRÍTICO - El sistema funciona bien así:**
+
+- [ ] YouTube API Key configurada en producción (mejora estabilidad)
+- [ ] A futuro: guardar métricas scrapeadas en data.json (opcional)
+- [ ] A futuro: relevance_score en Factory (opcional)
+
+**Cómo funciona actualmente:**
+- Las métricas se scrapean en **tiempo real** cuando alguien visita una página de artista
+- Los snapshots guardan historial en `snapshots.json` (funciona correctamente)
+- El Factory Dashboard muestra "-" para relevance_score (no es crítico)
+
+### **3. SISTEMA DE ENGAGEMENT (BAJA PRIORIDAD)**
 
 - [ ] **Badge "Top del Mes"** - Destacar al #1 visualmente
 - [ ] **Comparador de Artistas** - Herramienta para comparar métricas side-by-side
@@ -102,8 +111,8 @@
 **Objetivo:** Llegar a 10 artistas activos en 30 días
 
 1. **Esta semana:** Añadir 3-5 artistas conocidos localmente
-2. **Próxima semana:** Crear formulario público de aplicación
-3. **Mes 1:** Implementar sistema de badges y comparación básica
+2. **Continuar outreach** contacting artists por WhatsApp/Instagram
+3. **Mes 1:** Si hay 10+ artistas, implementar badges y comparación básica
 
 **Contacto actual:** https://wa.me/5493417207642
 
@@ -113,13 +122,14 @@
 
 - **Scraping es frágil:** YouTube API funciona bien, pero Spotify/TikTok pueden fallar. Mantener como fallback.
 - **Calidad > Cantidad:** Es mejor tener 10 artistas bien configurados que 50 incompletos.
-- **Factory Dashboard:** Ya existe para gestionar artistas. Usar para validación manual.
-- **Focus actual:**onsigue más artistas → mejora visibilidad → más artistas se suman naturalmente
+- **Factory Dashboard:** Ya existe para gestionar artistas. Solo accesible localmente (escritura).
+- **Sin formulario público:** Todos los perfiles son creados manualmente por el administrador.
+- **Focus actual:** Conseguir más artistas → mejora visibilidad → más artistas se suman naturalmente
 
 ---
 
 ## 🚀 ESTADO: **PLATAFORMA FUNCIONAL - CRECIMIENTO ORGÁNICO**
 
-**Completado:** Métricas, snapshots, artist pages, leaderboard, themes, página pública  
-**En progreso:** Onboarding de más artistas, engagement  
-**Pendiente:** Eventos, comparador, badges complejos
+**Completado:** Métricas en tiempo real, snapshots, artist pages, leaderboard, themes, Factory Dashboard, limpieza de código  
+**En progreso:** Agregar más artistas  
+**Pendiente (opcional):** YouTube API Key, persistencia métricas, relevance score en Factory, badges, comparador, eventos

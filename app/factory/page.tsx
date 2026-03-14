@@ -230,7 +230,7 @@ export default function FactoryDashboard() {
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
                                     name: artist.name,
-                                    slug: artist.slug?.toLowerCase().replace(/\s+/g, '-'),
+                                    slug: artist.slug,
                                     email: artist.email,
                                     theme: artist.theme
                                 })
@@ -325,7 +325,7 @@ function OverviewTab({ artists, stats, onCreateArtist }: {
                                     </div>
                                     <div>
                                         <p className="font-medium text-gray-900">{artist.name}</p>
-                                        <p className="text-sm text-gray-500">Relevance: {artist.metrics.relevance_score}</p>
+                                        <p className="text-sm text-gray-500">Relevance: {artist.metrics?.relevance_score || '-'}</p>
                                     </div>
                                 </div>
                                 <div className="text-right">
@@ -391,9 +391,6 @@ function ArtistsTab({ artists, onEdit, onDelete }: {
                                 Relevance
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Subdomain
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Actions
                             </th>
                         </tr>
@@ -423,12 +420,9 @@ function ArtistsTab({ artists, onEdit, onDelete }: {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center">
-                                        <span className="text-sm text-gray-900 mr-2">{artist.metrics.relevance_score}</span>
+                                        <span className="text-sm text-gray-900 mr-2">{artist.metrics?.relevance_score || '-'}</span>
                                         <TrendingUp className="w-4 h-4 text-green-500" />
                                     </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {artist.slug}.rosariohub.com
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <a 
@@ -503,13 +497,13 @@ function AnalyticsTab({ artists }: { artists: Artist[] }) {
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Performers</h3>
                     <div className="space-y-3">
                         {artists
-                            .sort((a, b) => b.metrics.relevance_score - a.metrics.relevance_score)
+                            .sort((a, b) => (b.metrics?.relevance_score || 0) - (a.metrics?.relevance_score || 0))
                             .slice(0, 3)
                             .map((artist, index) => (
                                 <div key={artist.id} className="flex items-center justify-between">
                                     <div>
                                         <p className="text-sm font-medium text-gray-900">{artist.name}</p>
-                                        <p className="text-xs text-gray-500">Relevance: {artist.metrics.relevance_score}</p>
+                                        <p className="text-xs text-gray-500">Relevance: {artist.metrics?.relevance_score || '-'}</p>
                                     </div>
                                     <div className="text-lg font-bold text-purple-600">#{index + 1}</div>
                                 </div>
@@ -530,14 +524,14 @@ function CreateArtistModal({ onClose, onSave }: {
 }) {
     const [formData, setFormData] = useState({
         name: '',
-        slug: '',
         email: '',
         theme: 'SOFT_TRAP'
     })
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        onSave(formData)
+        const slug = formData.name.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '')
+        onSave({ ...formData, slug })
     }
 
     return (
@@ -558,17 +552,6 @@ function CreateArtistModal({ onClose, onSave }: {
                             value={formData.name}
                             onChange={(e) => setFormData({...formData, name: e.target.value})}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Slug (subdomain)</label>
-                        <input
-                            type="text"
-                            required
-                            value={formData.slug}
-                            onChange={(e) => setFormData({...formData, slug: e.target.value})}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-                            placeholder="artist-name"
                         />
                     </div>
                     <div>
@@ -632,16 +615,19 @@ function EditArtistModal({ artist, onClose, onSave }: {
         bio: string
         heroImage: string
         // Basic
-        slug: string
         theme: string
         status: 'active' | 'pending' | 'inactive'
-        // Platforms (link + enabled)
+        // Platforms (link + enabled + IDs for metrics)
         spotify_enabled: boolean
         spotify_iframe: string
+        spotify_artistId: string
         youtube_enabled: boolean
         youtube_iframe: string
+        youtube_channelId: string
         instagram_enabled: boolean
+        instagram_username: string
         tiktok_enabled: boolean
+        tiktok_username: string
         soundcloud_enabled: boolean
         soundcloud_iframe: string
         twitter_enabled: boolean
@@ -663,16 +649,19 @@ function EditArtistModal({ artist, onClose, onSave }: {
         bio: artist.profile?.bio || '',
         heroImage: artist.profile?.heroImage || '',
         // Basic
-        slug: artist.slug || '',
         theme: artist.theme || 'SOFT_TRAP',
         status: artist.status || 'active',
         // Platforms
         spotify_enabled: artist.platforms?.spotify?.enabled || false,
         spotify_iframe: artist.platforms?.spotify?.iframe || '',
+        spotify_artistId: artist.platforms?.spotify?.artistId || '',
         youtube_enabled: artist.platforms?.youtube?.enabled || false,
         youtube_iframe: artist.platforms?.youtube?.iframe || '',
+        youtube_channelId: artist.platforms?.youtube?.channelId || '',
         instagram_enabled: artist.platforms?.instagram?.enabled || false,
+        instagram_username: artist.platforms?.instagram?.username || '',
         tiktok_enabled: artist.platforms?.tiktok?.enabled || false,
+        tiktok_username: artist.platforms?.tiktok?.username || '',
         soundcloud_enabled: artist.platforms?.soundcloud?.enabled || false,
         soundcloud_iframe: artist.platforms?.soundcloud?.iframe || '',
         twitter_enabled: artist.platforms?.twitter?.enabled || false,
@@ -694,11 +683,10 @@ function EditArtistModal({ artist, onClose, onSave }: {
         const validStatus = formData.status === 'active' || formData.status === 'pending' || formData.status === 'inactive' 
             ? formData.status as 'active' | 'pending' | 'inactive'
             : 'pending'
-            
+        
         onSave({
             ...artist,
             name: formData.name,
-            slug: formData.slug,
             email: formData.email,
             theme: formData.theme,
             status: validStatus,
@@ -709,10 +697,10 @@ function EditArtistModal({ artist, onClose, onSave }: {
                 heroImage: formData.heroImage
             },
             platforms: {
-                spotify: { iframe: formData.spotify_iframe, enabled: formData.spotify_enabled },
-                youtube: { iframe: formData.youtube_iframe, enabled: formData.youtube_enabled },
-                instagram: { enabled: formData.instagram_enabled },
-                tiktok: { enabled: formData.tiktok_enabled },
+                spotify: { iframe: formData.spotify_iframe, enabled: formData.spotify_enabled, artistId: formData.spotify_artistId },
+                youtube: { iframe: formData.youtube_iframe, enabled: formData.youtube_enabled, channelId: formData.youtube_channelId },
+                instagram: { enabled: formData.instagram_enabled, username: formData.instagram_username },
+                tiktok: { enabled: formData.tiktok_enabled, username: formData.tiktok_username },
                 soundcloud: { iframe: formData.soundcloud_iframe, enabled: formData.soundcloud_enabled },
                 twitter: { enabled: formData.twitter_enabled }
             },
@@ -810,16 +798,6 @@ function EditArtistModal({ artist, onClose, onSave }: {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Slug (subdomain)</label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={formData.slug}
-                                    onChange={(e) => setFormData({...formData, slug: e.target.value})}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                                />
-                            </div>
-                            <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Tema</label>
                                 <select
                                     value={formData.theme}
@@ -878,6 +856,13 @@ function EditArtistModal({ artist, onClose, onSave }: {
                                         onChange={(e) => setFormData({...formData, social_spotify: e.target.value})}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
                                     />
+                                    <input
+                                        type="text"
+                                        placeholder="Artist ID (ej: 4uPoJ3tuc56vh0w6ijU4cT)"
+                                        value={formData.spotify_artistId}
+                                        onChange={(e) => setFormData({...formData, spotify_artistId: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
                                     <textarea
                                         placeholder="Iframe (copiá el código completo desde Spotify)"
                                         value={formData.spotify_iframe}
@@ -910,6 +895,13 @@ function EditArtistModal({ artist, onClose, onSave }: {
                                         placeholder="Link del canal o video (https://youtube.com/...)"
                                         value={formData.social_youtube}
                                         onChange={(e) => setFormData({...formData, social_youtube: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Channel ID (ej: UCdfZnZPCKjkzYAoU9NC3zCw)"
+                                        value={formData.youtube_channelId}
+                                        onChange={(e) => setFormData({...formData, youtube_channelId: e.target.value})}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
                                     />
                                     <textarea
@@ -946,6 +938,13 @@ function EditArtistModal({ artist, onClose, onSave }: {
                                         onChange={(e) => setFormData({...formData, social_instagram: e.target.value})}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
                                     />
+                                    <input
+                                        type="text"
+                                        placeholder="Username (sin @)"
+                                        value={formData.instagram_username}
+                                        onChange={(e) => setFormData({...formData, instagram_username: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
                                 </div>
                             </div>
 
@@ -971,6 +970,13 @@ function EditArtistModal({ artist, onClose, onSave }: {
                                         placeholder="Link de perfil (https://tiktok.com/...)"
                                         value={formData.social_tiktok}
                                         onChange={(e) => setFormData({...formData, social_tiktok: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Username (sin @)"
+                                        value={formData.tiktok_username}
+                                        onChange={(e) => setFormData({...formData, tiktok_username: e.target.value})}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
                                     />
                                 </div>

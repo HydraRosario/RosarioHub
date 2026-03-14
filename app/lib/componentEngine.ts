@@ -3,7 +3,9 @@
 //  Los componentes se renderizan según las métricas en tiempo real
 //──────────────────────────────────────────────────────────────
 
-export interface MetricData {
+import { calculateRelevanceScore, PlatformScore } from './rankingEngine'
+
+export interface MetricData extends PlatformScore {
     label: string
     value: string
     platform: 'spotify' | 'youtube' | 'instagram' | 'tiktok'
@@ -107,44 +109,13 @@ export const COMPONENT_MAP = {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  CALCULADOR DE RELEVANCIA
-//──────────────────────────────────────────────────────────────
-export function calculateRelevanceScore(metrics: MetricData[]): number {
-    if (!metrics.length) return 0
-    
-    // Ponderación por plataforma
-    const platformWeights = {
-        spotify: 1.5,
-        youtube: 1.2,
-        instagram: 1.0,
-        tiktok: 0.8
-    }
-    
-    // Ponderación por live data
-    const liveBonus = metrics.filter(m => m.isLive).length * 2
-    
-    // Ponderación por crecimiento
-    const growthBonus = metrics
-        .filter(m => m.growth && m.growth > 0)
-        .reduce((sum, m) => sum + (m.growth || 0), 0) * 0.1
-    
-    // Score base
-    const baseScore = metrics.reduce((score, metric) => {
-        const weight = platformWeights[metric.platform] || 1
-        return score + (metric.priority * weight)
-    }, 0)
-    
-    return Math.round(baseScore + liveBonus + growthBonus)
-}
-
-// ─────────────────────────────────────────────────────────────
 //  MOTOR DE COMPONENTES DINÁMICOS
 //──────────────────────────────────────────────────────────────
 export function generateDynamicLayout(
     metrics: MetricData[],
     artistData: any
 ): ComponentConfig[] {
-    const relevanceScore = calculateRelevanceScore(metrics)
+    const relevanceScore = calculateRelevanceScore(metrics, artistData.platforms || {})
     const components: ComponentConfig[] = []
     
     // Siempre incluimos hero
@@ -295,7 +266,7 @@ export function useDynamicLayout(
     artistData: any
 ): DynamicLayout {
     const layout = generateDynamicLayout(metrics, artistData)
-    const relevanceScore = calculateRelevanceScore(metrics)
+    const relevanceScore = calculateRelevanceScore(metrics, artistData.platforms || {})
     
     return {
         components: layout,

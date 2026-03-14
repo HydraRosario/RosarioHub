@@ -423,5 +423,3 @@ export function TrendingAlert({ sortedPlatforms }: TrendingProps) {
     // Este alert está deshabilitado para evitar duplicación
     return null
 }
-
-export function DynamicStatsSection({ metrics }: { metrics: any[] }) { return null }
