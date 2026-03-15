@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-03-15T02:54:45.413Z",
+  "lastUpdate": "2026-03-15T03:42:20.774Z",
   "snapshots": [
     {
       "artistId": "1",
@@ -195,6 +195,53 @@
     {
       "artistId": "1773539879664",
       "timestamp": "2026-03-15T02:54:45.411Z",
+      "metrics": {
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T03:42:14.820Z",
+      "metrics": {
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T03:42:17.061Z",
+      "metrics": {
+        "youtube_subs": 2,
+        "youtube_views": 40,
+        "youtube_videos": 9,
+        "spotify_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T03:42:19.381Z",
+      "metrics": {
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T03:42:20.772Z",
       "metrics": {
         "youtube_subs": 241,
         "youtube_views": 11883,
