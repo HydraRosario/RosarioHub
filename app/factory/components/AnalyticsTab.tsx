@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Globe, Youtube, Instagram, Music2, TrendingUp, Zap, Trophy, Crown, Eye, EyeOff } from 'lucide-react'
+import { Globe, Youtube, Instagram, Music2, TrendingUp, Zap, Trophy, Crown, Eye, EyeOff, Users } from 'lucide-react'
 import { Artist, Snapshot } from '../types'
 import { calculateAnalytics, Settings } from '../utils/analytics'
 import { 
@@ -35,7 +35,7 @@ export function AnalyticsTab({ artists, snapshots }: AnalyticsTabProps) {
         fetchSettings()
     }, [])
 
-    const toggleLeaderboardSection = async (section: keyof Settings['leaderboard']) => {
+    const toggleLeaderboardSection = async (section: 'platforms' | 'top10' | 'growth' | 'legacy' | 'reach' | 'spotifyTop') => {
         if (!settings) return
         
         const newSettings = {
@@ -59,7 +59,29 @@ export function AnalyticsTab({ artists, snapshots }: AnalyticsTabProps) {
         }
     }
 
+    const getRankingTitle = (section: keyof Settings['leaderboard']['titles']): string => {
+        if (!settings?.leaderboard?.titles) return ''
+        return settings.leaderboard.titles[section] || ''
+    }
+
+    const getSectionStyles = (section: keyof Settings['leaderboard']['styles']) => {
+        if (!settings?.leaderboard?.styles?.[section]) return {
+            container: 'bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm',
+            position: 'top-8 right-8',
+            variant: 'factory' as const
+        }
+        const styles = settings.leaderboard.styles[section].analytics || {
+            container: 'bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm',
+            position: 'top-8 right-8'
+        }
+        return {
+            ...styles,
+            variant: (styles.variant === 'hall-of-fame' ? 'hall-of-fame' : styles.variant === 'spotify-top' ? 'spotify-top' : 'factory') as 'factory' | 'hall-of-fame' | 'spotify-top'
+        }
+    }
+
     const { 
+        topSpotify,
         topPopularity, 
         topGrowing, 
         topImpact, 
@@ -70,6 +92,7 @@ export function AnalyticsTab({ artists, snapshots }: AnalyticsTabProps) {
         const result = calculateAnalytics(artists, snapshots)
         return {
             ...result,
+            topSpotify: (result.topSpotify || []).slice(0, 10),
             topPopularity: result.topPopularity.slice(0, 10),
             topGrowing: result.topGrowing.slice(0, 10),
             topImpact: result.topImpact.slice(0, 10)
@@ -78,7 +101,7 @@ export function AnalyticsTab({ artists, snapshots }: AnalyticsTabProps) {
 
     const metricBreakdown = useMemo(() => getMetricBreakdown(metricsTotals), [metricsTotals])
 
-    const ToggleButton = ({ section }: { section: keyof Settings['leaderboard'] }) => {
+    const ToggleButton = ({ section }: { section: 'platforms' | 'top10' | 'growth' | 'legacy' | 'reach' | 'spotifyTop' }) => {
         if (!settings) return <div className="p-2 w-8 h-8 rounded-lg bg-gray-100 animate-pulse" />
         const isActive = settings.leaderboard[section]
         return (
@@ -100,8 +123,8 @@ export function AnalyticsTab({ artists, snapshots }: AnalyticsTabProps) {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-8 pb-20">
             {/* REACH */}
             <div className="grid grid-cols-1 lg:grid-cols-1 gap-8 items-start">
-                <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm relative overflow-hidden group">
-                    <div className="absolute top-6 right-6 z-10">
+                <div className={`${getSectionStyles('reach').container} relative overflow-hidden group`}>
+                    <div className={`absolute ${getSectionStyles('reach').position}`}>
                         <ToggleButton section="reach" />
                     </div>
                     <div className="flex items-center gap-4 mb-6 text-left">
@@ -109,7 +132,7 @@ export function AnalyticsTab({ artists, snapshots }: AnalyticsTabProps) {
                             <TrendingUp className="w-5 h-5" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-black text-gray-900 leading-tight">Alcance Rosario Hub</h3>
+                            <h3 className="text-lg font-black text-gray-900 leading-tight">{getRankingTitle('reach')}</h3>
                             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Métricas Globales Acumuladas</p>
                         </div>
                     </div>
@@ -119,25 +142,32 @@ export function AnalyticsTab({ artists, snapshots }: AnalyticsTabProps) {
 
             {/* RANKINGS */}
             <div className="grid grid-cols-1 gap-8">
-                <section className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm relative overflow-hidden group">
-                    <div className="absolute top-8 right-8">
+                <section className={`${getSectionStyles('spotifyTop').container} relative overflow-hidden group`}>
+                    <div className={`absolute ${getSectionStyles('spotifyTop').position}`}>
+                        <ToggleButton section="spotifyTop" />
+                    </div>
+                    <RankingListDisplay title={getRankingTitle('spotifyTop')} icon={<Music2 className="w-6 h-6" />} data={topSpotify} type="total" variant={getSectionStyles('spotifyTop').variant || 'factory'} colors={settings?.leaderboard?.styles?.spotifyTop?.colors} />
+                </section>
+
+                <section className={`${getSectionStyles('top10').container} relative overflow-hidden group`}>
+                    <div className={`absolute ${getSectionStyles('top10').position}`}>
                         <ToggleButton section="top10" />
                     </div>
-                    <RankingListDisplay title="Ranking Popularidad" icon={<Trophy className="w-6 h-6" />} data={topPopularity} type="total" variant="factory" />
+                    <RankingListDisplay title={getRankingTitle('top10')} icon={<Users className="w-6 h-6" />} data={topPopularity} type="total" variant={getSectionStyles('top10').variant || 'factory'} colors={settings?.leaderboard?.styles?.top10?.colors} />
                 </section>
 
-                <section className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden group">
-                    <div className="absolute top-10 right-10">
+                <section className={`${getSectionStyles('growth').container} relative overflow-hidden group`}>
+                    <div className={`absolute ${getSectionStyles('growth').position}`}>
                         <ToggleButton section="growth" />
                     </div>
-                    <RankingListDisplay title="Ranking Crecimiento" icon={<TrendingUp className="w-6 h-6" />} data={topGrowing} type="growth" variant="factory" />
+                    <RankingListDisplay title={getRankingTitle('growth')} icon={<TrendingUp className="w-6 h-6" />} data={topGrowing} type="growth" variant={getSectionStyles('growth').variant || 'factory'} colors={settings?.leaderboard?.styles?.growth?.colors} />
                 </section>
 
-                <section className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden group">
-                    <div className="absolute top-10 right-10">
+                <section className={`${getSectionStyles('legacy').container} relative overflow-hidden group`}>
+                    <div className={`absolute ${getSectionStyles('legacy').position}`}>
                         <ToggleButton section="legacy" />
                     </div>
-                    <RankingListDisplay title="Ranking Impacto Rosario" icon={<Zap className="w-6 h-6" />} data={topImpact} type="impact" variant="factory" />
+                    <RankingListDisplay title={getRankingTitle('legacy')} icon={<Zap className="w-6 h-6" />} data={topImpact} type="impact" variant={getSectionStyles('legacy').variant || 'factory'} colors={settings?.leaderboard?.styles?.legacy?.colors} />
                 </section>
             </div>
         </motion.div>

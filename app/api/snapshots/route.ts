@@ -56,7 +56,9 @@ export async function POST(request: Request) {
         const snapshots: Snapshot[] = []
         
         for (const artist of artistsData) {
-            const metrics: Snapshot['metrics'] = {}
+            const metrics: Snapshot['metrics'] = {
+                tiktok_likes: 0
+            }
             
             if (artist.platforms?.youtube?.channelId) {
                 const channelId = artist.platforms.youtube.channelId
@@ -64,7 +66,7 @@ export async function POST(request: Request) {
                 
                 try {
                     const ytResponse = await fetch(
-                        `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet,brandingSettings&id=${channelId}&key=${apiKey}`
+                        `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet,brandingSettings,contentDetails&id=${channelId}&key=${apiKey}`
                     )
                     const ytData = await ytResponse.json()
                     
@@ -80,13 +82,34 @@ export async function POST(request: Request) {
                         }
                         
                         // Imágenes del canal (se guardan en el perfil del artista)
-                        if (channel.snippet?.thumbnails || channel.brandingSettings?.image) {
-                            const profileImage = channel.snippet.thumbnails?.high?.url || channel.snippet.thumbnails?.medium?.url
-                            const bannerImage = channel.brandingSettings?.image?.bannerMobileHdImageUrl || channel.brandingSettings?.image?.bannerHdImageUrl || channel.brandingSettings?.image?.bannerImageUrl
-                            
-                            if (!artist.profile) artist.profile = {}
-                            if (profileImage) artist.profile.profileImage = profileImage
-                            if (bannerImage) artist.profile.heroImage = bannerImage
+                        const ytProfileImage = channel.snippet?.thumbnails?.high?.url || channel.snippet?.thumbnails?.medium?.url || channel.snippet?.thumbnails?.default?.url
+                        
+                        // Intentar múltiples campos para el banner (según YouTube Data API v3)
+                        const branding = channel.brandingSettings?.image
+                        const ytBannerImage = branding?.bannerMobileHdImageUrl || 
+                                           branding?.bannerMobileImageUrl || 
+                                           branding?.bannerHdImageUrl || 
+                                           branding?.bannerImageUrl ||
+                                           branding?.bannerTabletHdImageUrl ||
+                                           branding?.bannerTabletImageUrl ||
+                                           branding?.bannerMobileLowImageUrl ||
+                                           branding?.bannerTabletLowImageUrl ||
+                                           branding?.bannerExternalUrl ||
+                                           branding?.bannerMobileExternalUrl ||
+                                           branding?.bannerTabletHdExternalUrl ||
+                                           branding?.bannerTabletExternalUrl
+                        
+                        // Proteger imágenes subidas manualmente - no sobrescribir si existen
+                        if (!artist.profile) artist.profile = {}
+                        
+                        if (ytProfileImage && !artist.profile.uploadedHeroImage && !artist.profile.uploadedProfileImage) {
+                            artist.profile.profileImage = ytProfileImage
+                            artist.profile.youtubeProfileImage = ytProfileImage
+                        }
+                        
+                        if (ytBannerImage && !artist.profile.uploadedHeroImage) {
+                            artist.profile.heroImage = ytBannerImage
+                            artist.profile.youtubeHeroImage = ytBannerImage
                         }
                     }
                 } catch (e) {
@@ -100,12 +123,24 @@ export async function POST(request: Request) {
                         `https://open.spotify.com/artist/${artist.platforms.spotify.artistId}`
                     )
                     const html = await spResponse.text()
+                    
+                    // Monthly listeners
                     const listenerMatch = html.match(/(\d[\d,]*) monthly listeners/)
                     if (listenerMatch) {
-                        metrics.spotify_listeners = parseInt(listenerMatch[1].replace(/,/g, '')) || 0
+                        metrics.spotify_monthly_listeners = parseInt(listenerMatch[1].replace(/,/g, '')) || 0
+                    }
+                    
+                    // Spotify profile image (og:image)
+                    const ogImageMatch = html.match(/<meta property="og:image" content="([^"]+)"/)
+                    if (ogImageMatch && ogImageMatch[1]) {
+                        if (!artist.profile) artist.profile = {}
+                        // Solo guardar si no hay imágenes subidas manualmente
+                        if (!artist.profile.uploadedHeroImage && !artist.profile.uploadedProfileImage) {
+                            artist.profile.spotifyProfileImage = ogImageMatch[1]
+                        }
                     }
                 } catch {
-                    metrics.spotify_listeners = 0
+                    metrics.spotify_monthly_listeners = 0
                 }
             }
             
@@ -115,30 +150,70 @@ export async function POST(request: Request) {
                         `https://www.tiktok.com/@${artist.platforms.tiktok.username}?lang=en`
                     )
                     const html = await ttResponse.text()
-                    const followerMatch = html.match(/(\d[\d,]*) Followers/)
+                    
+                    // New TikTok format uses JSON in the HTML
+                    const followerMatch = html.match(/"followerCount":(\d+)/)
                     if (followerMatch) {
-                        metrics.tiktok_followers = parseInt(followerMatch[1].replace(/,/g, '')) || 0
+                        metrics.tiktok_followers = parseInt(followerMatch[1]) || 0
+                    }
+                    
+                    const likesMatch = html.match(/"heartCount":(\d+)/)
+                    if (likesMatch) {
+                        metrics.tiktok_likes = parseInt(likesMatch[1]) || 0
                     }
                 } catch {
                     metrics.tiktok_followers = 0
+                    metrics.tiktok_likes = 0
                 }
             }
             
-            // Instagram
+            // Instagram - Nota: Instagram ha bloqueado el scrapeo directo
+            // Se necesita API oficial o servicio de terceros para obtener datos
             if (artist.platforms?.instagram?.username) {
                 try {
                     const username = artist.platforms.instagram.username.replace('@', '')
-                    const igResponse = await fetch(
-                        `https://www.instagram.com/${username}/?__a=1&__d=1`
-                    )
-                    if (igResponse.ok) {
-                        const igData = await igResponse.json()
-                        const user = igData?.graphql?.user
-                        if (user?.edge_followed_by?.count) {
-                            metrics.instagram_followers = user.edge_followed_by.count
+                    
+                    // Intentar con la API de Instagram Graph (requiere token)
+                    const igToken = process.env.INSTAGRAM_ACCESS_TOKEN
+                    if (igToken) {
+                        const igResponse = await fetch(
+                            `https://graph.instagram.com/${username}?fields=followers_count&access_token=${igToken}`
+                        )
+                        if (igResponse.ok) {
+                            const data = await igResponse.json()
+                            metrics.instagram_followers = data.followers_count || 0
                         }
+                    } else {
+                        // Sin token, intentar scrapeo básico
+                        const igResponse = await fetch(
+                            `https://www.instagram.com/${username}/`,
+                            { 
+                                headers: { 
+                                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                                    'Accept-Language': 'en-US,en;q=0.9'
+                                } 
+                            }
+                        )
+                        const html = await igResponse.text()
+                        
+                        // Buscar en diferentes lugares del HTML
+                        let followers = 0
+                        const patterns = [
+                            /"edge_followed_by"\s*:\s*\{[^}]*"count"\s*:\s*(\d+)/,
+                            /"followed_by_count"\s*:\s*(\d+)/,
+                            /(\d+)\s+followers/
+                        ]
+                        for (const pattern of patterns) {
+                            const match = html.match(pattern)
+                            if (match) {
+                                followers = parseInt(match[1]) || 0
+                                break
+                            }
+                        }
+                        metrics.instagram_followers = followers
                     }
-                } catch {
+                } catch (e) {
+                    console.error('Instagram error:', e)
                     metrics.instagram_followers = 0
                 }
             }

@@ -76,7 +76,7 @@ export default function FactoryDashboard() {
         }
     }
 
-    const handleUpdateArtist = async (updatedArtist: any): Promise<boolean> => {
+    const handleUpdateArtist = async (updatedArtist: Artist): Promise<boolean> => {
         console.log('handleUpdateArtist llamado con:', updatedArtist)
         try {
             const res = await fetch(`/api/artists/${updatedArtist.id}`, {
@@ -110,7 +110,7 @@ export default function FactoryDashboard() {
     const calculateRelevance = (metrics: any) => {
         const ytSubs = metrics?.youtube_subs || 0
         const ytViews = metrics?.youtube_views || 0
-        const spotify = metrics?.spotify_listeners || 0
+        const spotify = metrics?.spotify_monthly_listeners || 0
         const tiktok = metrics?.tiktok_followers || 0
         const instagram = metrics?.instagram_followers || 0
         const soundcloud = metrics?.soundcloud_followers || 0
@@ -124,7 +124,7 @@ export default function FactoryDashboard() {
 
     const stats = useMemo(() => {
         const totalFans = artists.reduce((acc, a) => 
-            acc + (a.metrics?.youtube_subs || 0) + (a.metrics?.spotify_listeners || 0) + (a.metrics?.tiktok_followers || 0) + (a.metrics?.instagram_followers || 0), 0)
+            acc + (a.metrics?.youtube_subs || 0) + (a.metrics?.spotify_monthly_listeners || 0) + (a.metrics?.tiktok_followers || 0) + (a.metrics?.instagram_followers || 0), 0)
         
         const totalRelevance = artists.reduce((acc, a) => acc + calculateRelevance(a.metrics), 0)
         

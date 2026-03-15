@@ -55,17 +55,3 @@ export function getSortedPlatforms(
     })
 }
 
-export function calculatePlatformMetrics(platforms: Platforms) {
-    return Object.entries(platforms)
-        .filter(([key, value]) => value?.enabled && key !== 'soundcloud' && key !== 'twitter')
-        .map(([platform, data]) => ({
-            platform,
-            enabled: true,
-            hasData: false
-        }))
-}
-
-export function formatMetricValue(value: number): string {
-    if (!value) return '0'
-    return value.toLocaleString('es-AR')
-}

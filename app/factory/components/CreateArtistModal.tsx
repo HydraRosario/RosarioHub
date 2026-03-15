@@ -131,9 +131,11 @@ export function CreateArtistModal({ onClose, onSave }: CreateArtistModalProps) {
             metrics: {
                 youtube_subs: 0,
                 youtube_views: 0,
-                spotify_listeners: 0,
+                youtube_videos: 0,
+                spotify_monthly_listeners: 0,
                 instagram_followers: 0,
                 tiktok_followers: 0,
+                tiktok_likes: 0,
                 soundcloud_followers: 0,
                 twitter_followers: 0,
                 relevance_score: 0

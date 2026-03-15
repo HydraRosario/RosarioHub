@@ -26,15 +26,56 @@ interface Profile {
     bio?: string
     heroImageUrl?: string
     profileImage?: string
+    youtubeProfileImage?: string
+    youtubeHeroImage?: string
+    spotifyProfileImage?: string
+    uploadedHeroImage?: string
+    uploadedProfileImage?: string
 }
 
-export function DynamicHero({ profile, metrics, history, lastUpdated }: { 
+export function DynamicHero({ profile, metrics, history, lastUpdated, heroImageSource, profileImageSource }: { 
     profile: Profile, 
     metrics: MetricData[],
     history?: Record<string, {timestamp: string, value: number}[]>,
     lastUpdated?: string | null
+    heroImageSource?: 'youtube_banner' | 'youtube_profile' | 'spotify_profile' | 'upload'
+    profileImageSource?: 'youtube_banner' | 'youtube_profile' | 'spotify_profile' | 'upload'
 }) {
     const { classes } = useTheme()
+    
+    // Determine hero image based on source
+    const getHeroImage = () => {
+        if (heroImageSource === 'upload') {
+            return profile.uploadedHeroImage || ''
+        }
+        if (heroImageSource === 'spotify_profile') {
+            return profile.spotifyProfileImage || ''
+        }
+        if (heroImageSource === 'youtube_banner') {
+            return profile.youtubeHeroImage || ''
+        }
+        if (heroImageSource === 'youtube_profile') {
+            return profile.youtubeProfileImage || ''
+        }
+        return profile.heroImageUrl || ''
+    }
+    
+    // Determine profile image based on source
+    const getProfileImage = () => {
+        if (profileImageSource === 'upload') {
+            return profile.profileImage || ''
+        }
+        if (profileImageSource === 'spotify_profile') {
+            return profile.spotifyProfileImage || ''
+        }
+        if (profileImageSource === 'youtube_banner') {
+            return profile.youtubeHeroImage || ''
+        }
+        if (profileImageSource === 'youtube_profile') {
+            return profile.youtubeProfileImage || ''
+        }
+        return ''
+    }
     
     // Show ALL metrics sorted by value (highest first!)
     const displayMetrics = metrics?.length > 0 ? metrics : []
@@ -43,14 +84,16 @@ export function DynamicHero({ profile, metrics, history, lastUpdated }: {
         <section 
             className="relative min-h-screen flex flex-col justify-end pb-16 overflow-hidden"
         >
-            <div 
-                className="absolute inset-0 -z-10"
-                style={{ 
-                    backgroundImage: `url(${profile.heroImageUrl})`,
-                    backgroundSize: 'cover', backgroundPosition: 'center',
-                    filter: 'blur(2px)'
-                }}
-            />
+            {getHeroImage() && (
+                <div 
+                    className="absolute inset-0 -z-10"
+                    style={{ 
+                        backgroundImage: `url(${getHeroImage()})`,
+                        backgroundSize: 'cover', backgroundPosition: 'center',
+                        filter: 'blur(2px)'
+                    }}
+                />
+            )}
             <div className="absolute inset-0 bg-black/60 bg-gradient-to-t from-black via-black/40 to-transparent" />
             <div className="container mx-auto relative z-10 flex flex-col items-center text-center px-4">
                 <div className="mb-8 flex items-center gap-4">
@@ -86,13 +129,13 @@ export function DynamicHero({ profile, metrics, history, lastUpdated }: {
                                 </span>
                                 
                                 {/* Trend Chart */}
-                                {history && history[stat.platform === 'spotify' ? 'spotify_listeners' : 
+                                {history && history[stat.platform === 'spotify' ? 'spotify_monthly_listeners' : 
                                                    stat.platform === 'youtube' ? (stat.label.includes('Subs') ? 'youtube_subs' : 'youtube_views') :
                                                    stat.platform === 'tiktok' ? 'tiktok_followers' : 
                                                    stat.platform === 'instagram' ? 'instagram_followers' : '']?.length > 1 && (
                                     <div className="w-full mt-4 h-8">
                                         <TrendChart 
-                                            data={history[stat.platform === 'spotify' ? 'spotify_listeners' : 
+                                            data={history[stat.platform === 'spotify' ? 'spotify_monthly_listeners' : 
                                                           stat.platform === 'youtube' ? (stat.label.includes('Subs') ? 'youtube_subs' : 'youtube_views') :
                                                           stat.platform === 'tiktok' ? 'tiktok_followers' : 
                                                           stat.platform === 'instagram' ? 'instagram_followers' : '']} 
@@ -109,8 +152,25 @@ export function DynamicHero({ profile, metrics, history, lastUpdated }: {
     )
 }
 
-export function DynamicBio({ profile }: { profile: Profile }) {
+export function DynamicBio({ profile, profileImageSource }: { profile: Profile, profileImageSource?: 'youtube_banner' | 'youtube_profile' | 'spotify_profile' | 'upload' }) {
     const { classes } = useTheme()
+    
+    const getProfileImage = () => {
+        if (profileImageSource === 'upload') {
+            return profile.uploadedProfileImage || ''
+        }
+        if (profileImageSource === 'spotify_profile') {
+            return profile.spotifyProfileImage || ''
+        }
+        if (profileImageSource === 'youtube_banner') {
+            return profile.youtubeHeroImage || ''
+        }
+        if (profileImageSource === 'youtube_profile') {
+            return profile.youtubeProfileImage || ''
+        }
+        return ''
+    }
+    
     return (
         <section className="py-24 md:py-32 px-4 bg-[#0a0a0a] text-white">
             <div className="container mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
@@ -118,7 +178,7 @@ export function DynamicBio({ profile }: { profile: Profile }) {
                     initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-100px' }}
                     className={`w-full aspect-[4/5] object-cover bg-neutral-900 border border-white/5 ${classes.iframeWrap || 'rounded-3xl'}`}
                 >
-                    <img src={profile.profileImage || profile.heroImageUrl || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800'} alt={profile.name} className="w-full h-full object-cover opacity-80" />
+                    {getProfileImage() && <img src={getProfileImage()} alt={profile.name} className="w-full h-full object-cover opacity-80" />}
                 </motion.div>
                 <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-100px' }}>
                    <h4 className="text-[0.65rem] md:text-xs font-bold tracking-widest uppercase flex items-center mb-6" style={{ color: 'var(--color-primary)' }}>
@@ -429,4 +489,3 @@ export function Footer() {
     )
 }
 
-// Eliminados componentes MilestoneBanner y TrendingAlert por redundancia.

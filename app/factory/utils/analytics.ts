@@ -5,6 +5,159 @@ export interface Settings {
         growth: boolean
         legacy: boolean
         reach: boolean
+        spotifyTop: boolean
+        titles: {
+            spotifyTop: string
+            top10: string
+            growth: string
+            legacy: string
+            reach: string
+            platforms: string
+        }
+        styles: {
+            spotifyTop: {
+                analytics: {
+                    container: string
+                    position: string
+                    variant?: string
+                }
+                leaderboard: {
+                    spacing: string
+                    variant?: string
+                }
+                colors: {
+                    icon: string
+                    iconDark: string
+                    title: string
+                    titleLight: string
+                    subtitle: string
+                    subtitleLight: string
+                    card: string
+                    cardLight: string
+                    name: string
+                    nameLight: string
+                    tagline: string
+                    taglineLight: string
+                    value: string
+                    valueLight: string
+                    label: string
+                    labelLight: string
+                }
+            }
+            top10: {
+                analytics: {
+                    container: string
+                    position: string
+                    variant?: string
+                }
+                leaderboard: {
+                    spacing: string
+                }
+                colors: {
+                    icon: string
+                    iconDark: string
+                    title: string
+                    titleLight: string
+                    subtitle: string
+                    subtitleLight: string
+                    card: string
+                    cardLight: string
+                    name: string
+                    nameLight: string
+                    tagline: string
+                    taglineLight: string
+                    value: string
+                    valueLight: string
+                    label: string
+                    labelLight: string
+                }
+            }
+            growth: {
+                analytics: {
+                    container: string
+                    position: string
+                    variant?: string
+                }
+                leaderboard: {
+                    spacing: string
+                }
+                colors: {
+                    icon: string
+                    iconDark: string
+                    title: string
+                    titleLight: string
+                    subtitle: string
+                    subtitleLight: string
+                    card: string
+                    cardLight: string
+                    name: string
+                    nameLight: string
+                    tagline: string
+                    taglineLight: string
+                    value: string
+                    valueLight: string
+                    label: string
+                    labelLight: string
+                }
+            }
+            legacy: {
+                analytics: {
+                    container: string
+                    position: string
+                    variant?: string
+                }
+                leaderboard: {
+                    spacing: string
+                    variant?: string
+                }
+                colors: {
+                    icon: string
+                    iconDark: string
+                    title: string
+                    titleLight: string
+                    subtitle: string
+                    subtitleLight: string
+                    card: string
+                    cardLight: string
+                    name: string
+                    nameLight: string
+                    tagline: string
+                    taglineLight: string
+                    value: string
+                    valueLight: string
+                    label: string
+                    labelLight: string
+                }
+            }
+            reach: {
+                analytics: {
+                    container: string
+                    position: string
+                    variant?: string
+                }
+                leaderboard: {
+                    spacing: string
+                }
+                colors: {
+                    icon: string
+                    iconDark: string
+                    title: string
+                    titleLight: string
+                    subtitle: string
+                    subtitleLight: string
+                    card: string
+                    cardLight: string
+                    name: string
+                    nameLight: string
+                    tagline: string
+                    taglineLight: string
+                    value: string
+                    valueLight: string
+                    label: string
+                    labelLight: string
+                }
+            }
+        }
     }
 }
 
@@ -26,9 +179,13 @@ export function formatGrowth(percentage: number): string {
     return '0%'
 }
 
+export function getSpotifyTop(m: any) {
+    return Number(m.spotify_monthly_listeners) || 0
+}
+
 export function getTotalFans(m: any) {
     return (Number(m.youtube_subs) || 0) + 
-           (Number(m.spotify_listeners) || 0) + 
+           (Number(m.spotify_monthly_listeners) || 0) + 
            (Number(m.tiktok_followers) || 0) + 
            (Number(m.instagram_followers) || 0) +
            (Number(m.soundcloud_followers) || 0) + 
@@ -70,10 +227,11 @@ export function calculateAnalytics(artists: any[], snapshots: any[]) {
 
         const firstTotal = getTotalFans(firstMetrics)
         const lastTotal = getTotalFans(lastMetrics)
+        const spotifyTotal = getSpotifyTop(lastMetrics)
         const impactTotal = (Number(lastMetrics.youtube_views) || 0) + lastTotal
         const growth = firstTotal > 0 ? ((lastTotal - firstTotal) / firstTotal) * 100 : 0
         
-        return { ...artist, growth, impact: impactTotal, currentTotal: lastTotal }
+        return { ...artist, growth, impact: impactTotal, currentTotal: lastTotal, spotifyTotal }
     })
 
     const globalTotalReach = artistsWithStats.reduce((sum, a) => sum + a.currentTotal, 0)
@@ -83,13 +241,13 @@ export function calculateAnalytics(artists: any[], snapshots: any[]) {
         const m = artist.metrics || {}
         acc.youtube_subs += Number(m.youtube_subs) || 0
         acc.youtube_views += Number(m.youtube_views) || 0
-        acc.spotify_listeners += Number(m.spotify_listeners) || 0
+        acc.spotify_monthly_listeners += Number(m.spotify_monthly_listeners) || 0
         acc.tiktok_followers += Number(m.tiktok_followers) || 0
         acc.instagram_followers += Number(m.instagram_followers) || 0
         acc.soundcloud_followers += Number(m.soundcloud_followers) || 0
         acc.twitter_followers += Number(m.twitter_followers) || 0
         return acc
-    }, { youtube_subs: 0, youtube_views: 0, spotify_listeners: 0, tiktok_followers: 0, instagram_followers: 0, soundcloud_followers: 0, twitter_followers: 0 })
+    }, { youtube_subs: 0, youtube_views: 0, spotify_monthly_listeners: 0, tiktok_followers: 0, instagram_followers: 0, soundcloud_followers: 0, twitter_followers: 0 })
 
     const totalEverything = Object.values(metricsTotals).reduce((a: any, b: any) => a + b, 0) as number
 
@@ -106,6 +264,7 @@ export function calculateAnalytics(artists: any[], snapshots: any[]) {
     })).sort((a,b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
 
     return {
+        topSpotify: [...artistsWithStats].sort((a, b) => b.spotifyTotal - a.spotifyTotal),
         topPopularity: [...artistsWithStats].sort((a, b) => b.currentTotal - a.currentTotal),
         topGrowing: [...artistsWithStats].sort((a, b) => b.growth - a.growth),
         topImpact: [...artistsWithStats].sort((a, b) => b.impact - a.impact),

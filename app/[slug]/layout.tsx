@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     
     const totalFollowers = 
         (artist.metrics?.youtube_subs || 0) +
-        (artist.metrics?.spotify_listeners || 0) +
+        (artist.metrics?.spotify_monthly_listeners || 0) +
         (artist.metrics?.instagram_followers || 0) +
         (artist.metrics?.tiktok_followers || 0)
     

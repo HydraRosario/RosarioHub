@@ -15,7 +15,7 @@ const FALLBACK_DATA = [
     status: 'active',
     theme: 'SOFT_TRAP',
     metrics: {
-      spotify_listeners: 25000,
+      spotify_monthly_listeners: 25000,
       youtube_subs: 1700,
       instagram_followers: 8500,
       relevance_score: 45
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
     id: Date.now().toString(),
     status: 'pending',
     metrics: {
-      spotify_listeners: 0,
+      spotify_monthly_listeners: 0,
       youtube_subs: 0,
       instagram_followers: 0,
       relevance_score: 0

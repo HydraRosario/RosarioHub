@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-03-15T03:42:20.774Z",
+  "lastUpdate": "2026-03-15T08:22:44.079Z",
   "snapshots": [
     {
       "artistId": "1",
@@ -247,6 +247,928 @@
         "youtube_views": 11883,
         "youtube_videos": 32,
         "spotify_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T04:37:59.989Z",
+      "metrics": {
+        "tiktok_likes": 9238,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T04:38:01.968Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 2,
+        "youtube_views": 40,
+        "youtube_videos": 9,
+        "spotify_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T04:38:04.048Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T04:38:05.113Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T04:40:50.158Z",
+      "metrics": {
+        "tiktok_likes": 9238,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_listeners": 23,
+        "tiktok_followers": 785
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T04:40:52.464Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 2,
+        "youtube_views": 40,
+        "youtube_videos": 9,
+        "spotify_listeners": 4,
+        "tiktok_followers": 4
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T04:40:55.171Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_listeners": 4,
+        "tiktok_followers": 4157
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T04:40:56.663Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_listeners": 36
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T04:43:01.461Z",
+      "metrics": {
+        "tiktok_likes": 9238,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T04:43:04.286Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 2,
+        "youtube_views": 40,
+        "youtube_videos": 9,
+        "spotify_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T04:43:06.767Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T04:43:08.168Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T04:50:07.575Z",
+      "metrics": {
+        "tiktok_likes": 9238,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T04:50:10.712Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 2,
+        "youtube_views": 40,
+        "youtube_videos": 9,
+        "spotify_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T04:50:13.246Z",
+      "metrics": {
+        "tiktok_likes": 79000,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T04:50:14.520Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T05:53:37.010Z",
+      "metrics": {
+        "tiktok_likes": 9238,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T05:53:39.548Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 2,
+        "youtube_views": 40,
+        "youtube_videos": 9,
+        "spotify_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T05:53:42.132Z",
+      "metrics": {
+        "tiktok_likes": 79000,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T05:53:43.475Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T05:59:40.539Z",
+      "metrics": {
+        "tiktok_likes": 9238,
+        "spotify_followers": 0,
+        "spotify_popularity": 0,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T05:59:42.828Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "spotify_followers": 0,
+        "spotify_popularity": 0,
+        "youtube_subs": 2,
+        "youtube_views": 40,
+        "youtube_videos": 9,
+        "spotify_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T05:59:45.254Z",
+      "metrics": {
+        "tiktok_likes": 79000,
+        "spotify_followers": 0,
+        "spotify_popularity": 0,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T05:59:46.243Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "spotify_followers": 0,
+        "spotify_popularity": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T06:12:02.775Z",
+      "metrics": {
+        "tiktok_likes": 9239,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_monthly_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T06:12:05.651Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 2,
+        "youtube_views": 40,
+        "youtube_videos": 9,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T06:12:08.834Z",
+      "metrics": {
+        "tiktok_likes": 79000,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T06:12:09.988Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_monthly_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T07:13:53.183Z",
+      "metrics": {
+        "tiktok_likes": 9239,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_monthly_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T07:13:56.111Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 2,
+        "youtube_views": 40,
+        "youtube_videos": 9,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T07:13:58.799Z",
+      "metrics": {
+        "tiktok_likes": 79000,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T07:14:00.743Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_monthly_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T07:32:18.397Z",
+      "metrics": {
+        "tiktok_likes": 9239,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_monthly_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T07:32:21.160Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 2,
+        "youtube_views": 40,
+        "youtube_videos": 9,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T07:32:23.858Z",
+      "metrics": {
+        "tiktok_likes": 79000,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T07:32:25.426Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_monthly_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T07:42:57.365Z",
+      "metrics": {
+        "tiktok_likes": 9239,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_monthly_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T07:43:00.065Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 2,
+        "youtube_views": 40,
+        "youtube_videos": 9,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T07:43:02.140Z",
+      "metrics": {
+        "tiktok_likes": 79000,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T07:43:03.224Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_monthly_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T07:45:29.958Z",
+      "metrics": {
+        "tiktok_likes": 9239,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_monthly_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T07:45:32.380Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 207,
+        "youtube_views": 10413,
+        "youtube_videos": 27,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T07:45:34.513Z",
+      "metrics": {
+        "tiktok_likes": 79000,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T07:45:36.098Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_monthly_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T07:51:43.195Z",
+      "metrics": {
+        "tiktok_likes": 9239,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_monthly_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T07:51:45.662Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 207,
+        "youtube_views": 10413,
+        "youtube_videos": 27,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T07:51:48.211Z",
+      "metrics": {
+        "tiktok_likes": 79000,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T07:51:49.274Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_monthly_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T08:00:33.696Z",
+      "metrics": {
+        "tiktok_likes": 9239,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_monthly_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T08:00:36.383Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 207,
+        "youtube_views": 10413,
+        "youtube_videos": 27,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T08:00:39.291Z",
+      "metrics": {
+        "tiktok_likes": 79000,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T08:00:40.572Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_monthly_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T08:01:04.472Z",
+      "metrics": {
+        "tiktok_likes": 9239,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_monthly_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T08:01:06.863Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 207,
+        "youtube_views": 10413,
+        "youtube_videos": 27,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T08:01:08.847Z",
+      "metrics": {
+        "tiktok_likes": 79000,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T08:01:09.949Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_monthly_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T08:04:20.933Z",
+      "metrics": {
+        "tiktok_likes": 9239,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_monthly_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T08:04:23.432Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 207,
+        "youtube_views": 10413,
+        "youtube_videos": 27,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T08:04:25.930Z",
+      "metrics": {
+        "tiktok_likes": 79000,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T08:04:27.042Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_monthly_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T08:07:30.675Z",
+      "metrics": {
+        "tiktok_likes": 9239,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_monthly_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T08:07:33.051Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 207,
+        "youtube_views": 10413,
+        "youtube_videos": 27,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T08:07:35.167Z",
+      "metrics": {
+        "tiktok_likes": 79000,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T08:07:36.247Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_monthly_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T08:18:39.377Z",
+      "metrics": {
+        "tiktok_likes": 9239,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_monthly_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T08:18:41.918Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 207,
+        "youtube_views": 10413,
+        "youtube_videos": 27,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T08:18:44.535Z",
+      "metrics": {
+        "tiktok_likes": 79000,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T08:18:45.708Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_monthly_listeners": 36,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1",
+      "timestamp": "2026-03-15T08:22:38.176Z",
+      "metrics": {
+        "tiktok_likes": 9239,
+        "youtube_subs": 1710,
+        "youtube_views": 155333,
+        "youtube_videos": 33,
+        "spotify_monthly_listeners": 23,
+        "tiktok_followers": 785,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773389297621",
+      "timestamp": "2026-03-15T08:22:40.568Z",
+      "metrics": {
+        "tiktok_likes": 7,
+        "youtube_subs": 207,
+        "youtube_views": 10413,
+        "youtube_videos": 27,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773525776027",
+      "timestamp": "2026-03-15T08:22:42.565Z",
+      "metrics": {
+        "tiktok_likes": 79000,
+        "youtube_subs": 1600,
+        "youtube_views": 281271,
+        "youtube_videos": 784,
+        "spotify_monthly_listeners": 4,
+        "tiktok_followers": 4157,
+        "instagram_followers": 0
+      }
+    },
+    {
+      "artistId": "1773539879664",
+      "timestamp": "2026-03-15T08:22:44.077Z",
+      "metrics": {
+        "tiktok_likes": 0,
+        "youtube_subs": 241,
+        "youtube_views": 11883,
+        "youtube_videos": 32,
+        "spotify_monthly_listeners": 36,
         "instagram_followers": 0
       }
     }

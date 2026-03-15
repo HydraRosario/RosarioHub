@@ -8,8 +8,11 @@
       "name": "HydraRosario",
       "tagline": "Trap & Deep House",
       "bio": "Artista emergente de Rosario, Argentina. Fusionando sonidos urbanos con electrónica.",
-      "heroImage": "https://image-cdn-ak.spotifycdn.com/image/ab67616100005174625ad70f92ca45ce3ddb010d",
-      "profileImage": "https://yt3.ggpht.com/5jMhezkAuQsjdwLVx4UnlXRsLkkhIFXmv3PMZct3D2E2A3yDHB53sCT7dNQ40IqiKZwCzZGQ7KU=s800-c-k-c0x00ffffff-no-rj"
+      "heroImage": "https://yt3.googleusercontent.com/5TFNHbJ1FvG2JHCFsQV0oWbgIN0ajfSROufAH4eSwVEaR2ufyrN0sDAWxKv_dUFDXDA_YSN4uw",
+      "profileImage": "https://yt3.ggpht.com/5jMhezkAuQsjdwLVx4UnlXRsLkkhIFXmv3PMZct3D2E2A3yDHB53sCT7dNQ40IqiKZwCzZGQ7KU=s800-c-k-c0x00ffffff-no-rj",
+      "youtubeProfileImage": "https://yt3.ggpht.com/5jMhezkAuQsjdwLVx4UnlXRsLkkhIFXmv3PMZct3D2E2A3yDHB53sCT7dNQ40IqiKZwCzZGQ7KU=s800-c-k-c0x00ffffff-no-rj",
+      "spotifyProfileImage": "https://i.scdn.co/image/ab6761610000e5eb625ad70f92ca45ce3ddb010d",
+      "youtubeHeroImage": "https://yt3.googleusercontent.com/5TFNHbJ1FvG2JHCFsQV0oWbgIN0ajfSROufAH4eSwVEaR2ufyrN0sDAWxKv_dUFDXDA_YSN4uw"
     },
     "platforms": {
       "spotify": {
@@ -31,7 +34,7 @@
         "username": "hhhestudios"
       },
       "soundcloud": {
-        "iframe": "<iframe \n  width=\"100%\" \n  height=\"450\" \n  scrolling=\"no\" \n  frameborder=\"no\" \n  allow=\"autoplay\" \n  src=\"https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/hydra_rosario&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true\">\n</iframe>",
+        "iframe": "<iframe \n  width=\"100%\" \n  height=\"166\" \n  scrolling=\"no\" \n  frameborder=\"no\" \n  allow=\"autoplay\" \n  src=\"https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/juan-cruz-helou/muy-rapido-para-nada&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true\">\n</iframe>",
         "enabled": true
       },
       "twitter": {
@@ -51,29 +54,28 @@
       "whatsappMessage": "¡Hola! estuve mirando tu página web y quería ponerme en contacto.",
       "email": "HHHESTUDIOS@hotmail.com"
     },
-    "studio": {
-      "name": "RosarioHub",
-      "url": "https://rosariohub.com",
-      "city": "Rosario"
-    },
     "created_at": "2026-03-13T01:53:14.165Z",
-    "name": "HydraRosario",
-    "email": "HHHESTUDIOS@hotmail.com",
     "metrics": {
       "youtube_subs": 1710,
       "youtube_views": 155333,
       "youtube_videos": 33,
       "spotify_listeners": 23,
       "tiktok_followers": 785,
-      "lastUpdated": "2026-03-15T03:42:14.820Z",
-      "instagram_followers": 0
+      "lastUpdated": "2026-03-15T08:22:38.176Z",
+      "instagram_followers": 0,
+      "tiktok_likes": 9239,
+      "spotify_followers": 0,
+      "spotify_popularity": 0,
+      "spotify_monthly_listeners": 23
     },
-    "imageSource": "spotify"
+    "imageSource": "spotify",
+    "heroImageSource": "spotify_profile",
+    "profileImageSource": "youtube_profile",
+    "name": "HydraRosario",
+    "email": "HHHESTUDIOS@hotmail.com"
   },
   {
-    "name": "Lauri",
     "slug": "Lauri",
-    "email": "lauricontacto03@gmail.com",
     "theme": "INDIE_VIBE",
     "id": "1773389297621",
     "status": "active",
@@ -82,8 +84,11 @@
       "name": "Lauri",
       "tagline": "Trap - Indie Rock - Hyperpop",
       "bio": "Músico independiente con falta de autoestima",
-      "heroImage": "https://image-cdn-ak.spotifycdn.com/image/ab67616100005174a6dbf3f5ff6cc71c8b2a5279",
-      "profileImage": "https://yt3.ggpht.com/m8nJleCOJ8eiTCn3CSibsCNcL7btKy9Y74bLMbpMlEwpGCF8dnvGZgqc4H1GuprZym5Th6px=s800-c-k-c0x00ffffff-no-rj"
+      "heroImage": "https://yt3.googleusercontent.com/lAL9JlDCj9RobbOtauJVyT5XQ-xjqU6FMQgY21Ootw6SZ8_WewsIMNbEkn2Rc5IvvR0TT1lFIQ",
+      "profileImage": "https://yt3.ggpht.com/ZAXgjXC4qcfIUs7DV9vzckCdWHcscg8iCKOGo1rT0Z5j2vVzw9Nz-xiPf-Fiim3oNHEJWoGh2A=s800-c-k-c0x00ffffff-no-rj",
+      "youtubeProfileImage": "https://yt3.ggpht.com/ZAXgjXC4qcfIUs7DV9vzckCdWHcscg8iCKOGo1rT0Z5j2vVzw9Nz-xiPf-Fiim3oNHEJWoGh2A=s800-c-k-c0x00ffffff-no-rj",
+      "spotifyProfileImage": "https://i.scdn.co/image/ab6761610000e5eba6dbf3f5ff6cc71c8b2a5279",
+      "youtubeHeroImage": "https://yt3.googleusercontent.com/lAL9JlDCj9RobbOtauJVyT5XQ-xjqU6FMQgY21Ootw6SZ8_WewsIMNbEkn2Rc5IvvR0TT1lFIQ"
     },
     "platforms": {
       "spotify": {
@@ -94,7 +99,7 @@
       "youtube": {
         "iframe": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/U1ITuGrzLzs?si=XvkIzmgwWcBqwqLf\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
         "enabled": true,
-        "channelId": "UC6LcztnL1MmZMlMlsVz_L5Q"
+        "channelId": "UClZNZSB1BSYb3EK6qjtSNvA"
       },
       "instagram": {
         "enabled": true,
@@ -115,7 +120,7 @@
     "social": {
       "instagram": "https://www.instagram.com/lauricaceres03/",
       "tiktok": "https://www.tiktok.com/@laurisc03?lang=es",
-      "youtube": "https://www.youtube.com/channel/UC6LcztnL1MmZMlMlsVz_L5Q",
+      "youtube": "https://www.youtube.com/@LauriCaceres",
       "spotify": "https://open.spotify.com/intl-es/artist/1tGoEax60SoeH420584o5k?si=xBmVemuSSEa-XH4E2d0ZhQ",
       "soundcloud": "https://soundcloud.com/user-556264010",
       "twitter": "https://x.com/LauriCceres1"
@@ -126,35 +131,36 @@
       "email": "lauricontacto03@gmail.com"
     },
     "metrics": {
-      "youtube_subs": 2,
-      "youtube_views": 40,
-      "youtube_videos": 9,
+      "youtube_subs": 207,
+      "youtube_views": 10413,
+      "youtube_videos": 27,
       "spotify_listeners": 4,
       "tiktok_followers": 4,
-      "lastUpdated": "2026-03-15T03:42:17.061Z",
-      "instagram_followers": 0
+      "lastUpdated": "2026-03-15T08:22:40.568Z",
+      "instagram_followers": 0,
+      "tiktok_likes": 7,
+      "spotify_followers": 0,
+      "spotify_popularity": 0,
+      "spotify_monthly_listeners": 4
     },
-    "studio": {
-      "name": "HHHESTUDIOS",
-      "url": "",
-      "city": "Rosario"
-    },
-    "imageSource": "spotify",
-    "heroImageSource": "spotify",
-    "profileImageSource": "youtube"
+    "name": "Lauri",
+    "email": "lauricontacto03@gmail.com",
+    "heroImageSource": "youtube_banner",
+    "profileImageSource": "youtube_profile"
   },
   {
-    "name": "Adán David",
     "slug": "Adan_David",
-    "email": "adandavidhq@gmail.com",
     "theme": "SOFT_TRAP",
     "status": "active",
     "profile": {
       "name": "Adán David",
       "tagline": "Experimental Hip Hop & NeoPoesía",
       "bio": "Téc. En Comunicación - Escritor creativo\n- Productor - Realiz. Audiovisual",
-      "heroImage": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e025a7b7cf7963f700f606177e8",
-      "profileImage": "https://yt3.ggpht.com/qPQKOgcUfN6CN-m9o21P_JgfSTS6Gt_01oH5rDWQreJhd8lHS8aZZhO4dAvBtnFHtz_i3uHj=s800-c-k-c0x00ffffff-no-rj"
+      "heroImage": "https://yt3.googleusercontent.com/eyYona-wtezlFdNtqdkhQyWH4RDkftzWP--XPFpCgX65esCI5-FLiDMRkPPg9wogzdFQSvF_",
+      "profileImage": "https://yt3.ggpht.com/qPQKOgcUfN6CN-m9o21P_JgfSTS6Gt_01oH5rDWQreJhd8lHS8aZZhO4dAvBtnFHtz_i3uHj=s800-c-k-c0x00ffffff-no-rj",
+      "youtubeProfileImage": "https://yt3.ggpht.com/qPQKOgcUfN6CN-m9o21P_JgfSTS6Gt_01oH5rDWQreJhd8lHS8aZZhO4dAvBtnFHtz_i3uHj=s800-c-k-c0x00ffffff-no-rj",
+      "spotifyProfileImage": "https://i.scdn.co/image/ab67616d0000b2735a7b7cf7963f700f606177e8",
+      "youtubeHeroImage": "https://yt3.googleusercontent.com/eyYona-wtezlFdNtqdkhQyWH4RDkftzWP--XPFpCgX65esCI5-FLiDMRkPPg9wogzdFQSvF_"
     },
     "platforms": {
       "spotify": {
@@ -204,26 +210,34 @@
       "youtube_views": 281271,
       "youtube_videos": 784,
       "tiktok_followers": 4157,
-      "lastUpdated": "2026-03-15T03:42:19.381Z"
+      "lastUpdated": "2026-03-15T08:22:42.565Z",
+      "tiktok_likes": 79000,
+      "spotify_followers": 0,
+      "spotify_popularity": 0,
+      "spotify_monthly_listeners": 4
     },
     "id": "1773525776027",
     "created_at": "2026-03-14T22:02:56.028Z",
-    "imageSource": "spotify",
-    "heroImageSource": "spotify",
-    "profileImageSource": "youtube"
+    "name": "Adán David",
+    "email": "adandavidhq@gmail.com",
+    "heroImageSource": "spotify_profile",
+    "profileImageSource": "youtube_profile"
   },
   {
-    "name": "Leroy",
     "slug": "Leroy",
-    "email": "juanhelou2001@gmail.com",
     "theme": "PINK_GOTH",
     "status": "active",
     "profile": {
       "name": "Leroy",
       "tagline": "R&B - Trap - Hip Hop",
       "bio": "Compositor y rapero, del barrio Latinoamérica, zona sudoeste de la ciudad de Rosario",
-      "heroImage": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e020be83814426ae1bd41494019",
-      "profileImage": "https://yt3.ggpht.com/RpxgaO8Jaz0N7lzlZbSbJFJ_O78K9iym0-tYD1Y6WGR72t0D2SKpClb05Th14daHyB3Ebr84Gg=s800-c-k-c0x00ffffff-no-rj"
+      "heroImage": "/uploads/artists/1773539879664/hero/1773566075111-8lqhpjcaz.jpeg",
+      "profileImage": "/uploads/artists/1773539879664/profile/1773566077509-nfhgcx5ds.jpeg",
+      "youtubeProfileImage": "https://yt3.ggpht.com/RpxgaO8Jaz0N7lzlZbSbJFJ_O78K9iym0-tYD1Y6WGR72t0D2SKpClb05Th14daHyB3Ebr84Gg=s800-c-k-c0x00ffffff-no-rj",
+      "spotifyProfileImage": "https://i.scdn.co/image/ab67616d0000b2730be83814426ae1bd41494019",
+      "youtubeHeroImage": "https://yt3.googleusercontent.com/FMHa70tchvb28_doQqLKXT0w4aZqcYRWRlveHpz8F9bo4syCF5tJAsuWI_iYJhR8Jn43F6jb",
+      "uploadedHeroImage": "/uploads/artists/1773539879664/hero/1773566181791-vsfmg29nc.jpeg",
+      "uploadedProfileImage": "/uploads/artists/1773539879664/profile/1773566183698-wror29kar.jpeg"
     },
     "platforms": {
       "spotify": {
@@ -272,10 +286,17 @@
       "relevance_score": 0,
       "youtube_views": 11883,
       "youtube_videos": 32,
-      "lastUpdated": "2026-03-15T03:42:20.772Z"
+      "lastUpdated": "2026-03-15T08:22:44.077Z",
+      "tiktok_likes": 0,
+      "spotify_followers": 0,
+      "spotify_popularity": 0,
+      "spotify_monthly_listeners": 36
     },
     "id": "1773539879664",
     "created_at": "2026-03-15T01:57:59.664Z",
-    "imageSource": "spotify"
+    "name": "Leroy",
+    "email": "juanhelou2001@gmail.com",
+    "heroImageSource": "upload",
+    "profileImageSource": "upload"
   }
 ]

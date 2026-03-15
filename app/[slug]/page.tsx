@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 
-import { Artist, MetricData } from '../factory/types'
+import { Artist, MetricData, ArtistSnapshot } from '../factory/types'
 
 import {
     DynamicHero,
@@ -38,7 +38,7 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
     const [artistData, setArtistData] = useState<Artist | null>(null)
     const [loading, setLoading] = useState(true)
     const [slug, setSlug] = useState<string>('')
-    const [snapshots, setSnapshots] = useState<any[]>([])
+    const [snapshots, setSnapshots] = useState<ArtistSnapshot[]>([])
 
     useEffect(() => {
         const fetchSnapshots = async () => {
@@ -91,9 +91,9 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
         const m = artistData?.metrics
         
         if (m) {
-            if (m.spotify_listeners > 0) result.push({
-                label: 'Spotify Oyentes', value: m.spotify_listeners.toLocaleString('es-AR'), 
-                numericValue: m.spotify_listeners, platform: 'spotify', isLive: true, metric: 'listeners'
+            if (m.spotify_monthly_listeners > 0) result.push({
+                label: 'Spotify Monthly Listeners', value: m.spotify_monthly_listeners.toLocaleString('es-AR'), 
+                numericValue: m.spotify_monthly_listeners, platform: 'spotify', isLive: true, metric: 'listeners'
             })
             if (m.youtube_subs > 0) result.push({
                 label: 'YouTube Subs', value: m.youtube_subs.toLocaleString('es-AR'), 
@@ -103,9 +103,17 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
                 label: 'YouTube Views', value: m.youtube_views.toLocaleString('es-AR'), 
                 numericValue: m.youtube_views, platform: 'youtube', isLive: true, metric: 'views'
             })
+            if (m.youtube_videos !== undefined && m.youtube_videos > 0) result.push({
+                label: 'YouTube Videos', value: m.youtube_videos.toLocaleString('es-AR'), 
+                numericValue: m.youtube_videos, platform: 'youtube', isLive: true, metric: 'videos'
+            })
             if (m.tiktok_followers > 0) result.push({
-                label: 'TikTok', value: m.tiktok_followers.toLocaleString('es-AR'), 
+                label: 'TikTok Followers', value: m.tiktok_followers.toLocaleString('es-AR'), 
                 numericValue: m.tiktok_followers, platform: 'tiktok', isLive: true, metric: 'followers'
+            })
+            if (m.tiktok_likes !== undefined && m.tiktok_likes > 0) result.push({
+                label: 'TikTok Likes', value: m.tiktok_likes.toLocaleString('es-AR'), 
+                numericValue: m.tiktok_likes, platform: 'tiktok', isLive: true, metric: 'likes'
             })
             if (m.instagram_followers > 0) result.push({
                 label: 'Instagram', value: m.instagram_followers.toLocaleString('es-AR'), 
@@ -113,7 +121,24 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
             })
         }
         
-        return result.sort((a, b) => b.numericValue - a.numericValue)
+        const platformOrder = result.reduce((acc, m) => {
+            const p = m.platform
+            if (!acc[p] || m.numericValue > acc[p].maxValue) {
+                acc[p] = { maxValue: m.numericValue }
+            }
+            return acc
+        }, {} as Record<string, { maxValue: number }>)
+        
+        const sortedPlatforms = Object.entries(platformOrder)
+            .sort((a, b) => b[1].maxValue - a[1].maxValue)
+            .map(([platform]) => platform)
+        
+        return result.sort((a, b) => {
+            const idxA = sortedPlatforms.indexOf(a.platform)
+            const idxB = sortedPlatforms.indexOf(b.platform)
+            if (idxA !== idxB) return idxA - idxB
+            return b.numericValue - a.numericValue
+        })
     }, [artistData?.metrics])
 
     // Calculate time since last update
@@ -137,14 +162,14 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
             .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
         
         const history: Record<string, {timestamp: string, value: number}[]> = {}
-        const metricKeys = ['youtube_subs', 'youtube_views', 'spotify_listeners', 'tiktok_followers', 'instagram_followers']
+        const metricKeys = ['youtube_subs', 'youtube_views', 'spotify_monthly_listeners', 'tiktok_followers', 'instagram_followers']
         
         metricKeys.forEach(m => {
             history[m] = artistSnapshots
                 .filter(s => s.metrics[m] !== undefined)
                 .map(s => ({
                     timestamp: s.timestamp,
-                    value: s.metrics[m]
+                    value: s.metrics[m] || 0
                 }))
         })
         
@@ -193,8 +218,15 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
                                 name: artistData.profile.name,
                                 tagline: artistData.profile.tagline,
                                 heroImageUrl: artistData.profile.heroImage,
-                                profileImage: artistData.profile.profileImage
+                                profileImage: artistData.profile.profileImage,
+                                youtubeHeroImage: artistData.profile.youtubeHeroImage,
+                                youtubeProfileImage: artistData.profile.youtubeProfileImage,
+                                spotifyProfileImage: artistData.profile.spotifyProfileImage,
+                                uploadedHeroImage: artistData.profile.uploadedHeroImage,
+                                uploadedProfileImage: artistData.profile.uploadedProfileImage
                             }} 
+                            heroImageSource={artistData.heroImageSource}
+                            profileImageSource={artistData.profileImageSource}
                             metrics={allMetrics}
                             lastUpdated={lastUpdated}
                             history={historyByMetric}
@@ -204,8 +236,14 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
                                 name: artistData.profile.name,
                                 bio: artistData.profile.bio,
                                 heroImageUrl: artistData.profile.heroImage,
-                                profileImage: artistData.profile.profileImage
+                                profileImage: artistData.profile.profileImage,
+                                youtubeHeroImage: artistData.profile.youtubeHeroImage,
+                                youtubeProfileImage: artistData.profile.youtubeProfileImage,
+                                spotifyProfileImage: artistData.profile.spotifyProfileImage,
+                                uploadedHeroImage: artistData.profile.uploadedHeroImage,
+                                uploadedProfileImage: artistData.profile.uploadedProfileImage
                             }} 
+                            profileImageSource={artistData.profileImageSource}
                         />
                     </>
                 )

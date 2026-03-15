@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { Trophy, TrendingUp, Zap } from 'lucide-react'
+import { Trophy, TrendingUp, Zap, Music2, Users } from 'lucide-react'
 import { calculateAnalytics } from '../factory/utils/analytics'
 import { 
     PlatformAdoptionDisplay, 
@@ -62,7 +62,7 @@ export default async function LeaderboardPage() {
                 {settings.platforms && (
                     <section className="py-24 border-b border-white/5">
                         <h2 className="text-sm uppercase tracking-[0.4em] text-purple-500 font-black mb-16 text-center">
-                            Adopción de Plataformas
+                            {config.leaderboard.titles?.platforms || 'Adopción de Plataformas'}
                         </h2>
                         <PlatformAdoptionDisplay stats={analytics.adoptionStats} variant="leaderboard" />
                     </section>
@@ -80,34 +80,48 @@ export default async function LeaderboardPage() {
                 )}
 
                 {/* 3. RANKINGS */}
-                <div className="space-y-32 py-24">
+                <div className={`${config.leaderboard.styles?.legacy?.leaderboard?.spacing || 'space-y-32'} py-24`}>
+                    {settings.spotifyTop && (
+                        <RankingListDisplay 
+                            title={config.leaderboard.titles?.spotifyTop || 'Top 10 Spotify Rosario'} 
+                            icon={<Music2 className="w-8 h-8" />} 
+                            data={analytics.topSpotify?.slice(0, 10) || []} 
+                            type="total" 
+                            variant={config.leaderboard.styles?.spotifyTop?.leaderboard?.variant || 'leaderboard'}
+                            colors={config.leaderboard.styles?.spotifyTop?.colors}
+                        />
+                    )}
+
                     {settings.top10 && (
                         <RankingListDisplay 
-                            title="Top 10 Rosario" 
-                            icon={<Trophy className="w-8 h-8" />} 
+                            title={config.leaderboard.titles?.top10 || 'Ranking Fans'} 
+                            icon={<Users className="w-8 h-8" />} 
                             data={analytics.topPopularity.slice(0, 10)} 
                             type="total" 
-                            variant="leaderboard" 
+                            variant={config.leaderboard.styles?.top10?.leaderboard?.variant || 'leaderboard'}
+                            colors={config.leaderboard.styles?.top10?.colors}
                         />
                     )}
 
                     {settings.growth && (
                         <RankingListDisplay 
-                            title="Ranking Crecimiento" 
+                            title={config.leaderboard.titles?.growth || 'Ranking Crecimiento'} 
                             icon={<TrendingUp className="w-8 h-8" />} 
                             data={analytics.topGrowing.slice(0, 10)} 
                             type="growth" 
-                            variant="leaderboard" 
+                            variant={config.leaderboard.styles?.growth?.leaderboard?.variant || 'leaderboard'}
+                            colors={config.leaderboard.styles?.growth?.colors}
                         />
                     )}
 
                     {settings.legacy && (
                         <RankingListDisplay 
-                            title="Ranking Impacto" 
+                            title={config.leaderboard.titles?.legacy || 'Hall of Fame Rosario'} 
                             icon={<Zap className="w-8 h-8" />} 
                             data={analytics.topImpact.slice(0, 10)} 
                             type="impact" 
-                            variant="leaderboard" 
+                            variant={config.leaderboard.styles?.legacy?.leaderboard?.variant || 'leaderboard'}
+                            colors={config.leaderboard.styles?.legacy?.colors}
                         />
                     )}
                 </div>

@@ -1,61 +1,23 @@
-# ROADMAP - ROSARIOHUB
-## Red Social para Músicos y Artistas de Rosario
 
-**Última actualización:** 14/03/2026  
-**Estado:** Sistema Funcional (Local) - Planificando Migración a Nube e IA
+### FASE 1 - URGENTE (Inmediato)
 
----
+#### 1.1 Eliminar código de scraping inútil
+- **Archivo:** `app/api/snapshots/route.ts`
+- **Problema:** Líneas 99-233 intentan scrapear Spotify, TikTok, Instagram, Twitter parseando HTML
+- **Solución:** Eliminar toda la lógica de scraping - nunca funcionará en producción (CORS, anti-bot, auth)
+- **Estado:** [ ] PENDIENTE
 
-## 🎯 VISIÓN DEL PROYECTO
+### VISIÓN DEL PROYECTO
+**RosarioHub** es una plataforma que construye perfiles de artistas 100% automáticamente.
 
-**RosarioHub** es una **red social** que construye perfiles de artistas 100% automáticamente extrayendo información de sus redes sociales, permitiendo comparativas de crecimiento real y rankings dinámicos.
-
----
-
-## 🚨 PENDIENTE: ELIMINAR HARDCODING (MVP)
-
-| Campo | Actualmente | Objetivo (Automatización) |
-|-------|------------|---------------------------|
-| **Nombre/Bio** | YouTube API ✅ | Integrar Spotify/Instagram para respaldo |
-| **Género/Tags** | Input manual | Extraer con IA de bios de redes |
-| **Foto Perfil/Hero** | YouTube API ✅ | Extraer de Instagram (Scraper 2.0) |
-| **Ubicación** | Hardcodeado | Extraer de bios con IA |
-| **Links a redes** | Input manual | Auto-detección desde Bio (Links inteligentes) |
-| **Iframes Media** | Input manual | Generar automáticamente desde URLs |
-
----
-
-## 🚀 PRÓXIMAS PRIORIDADES
-
-### **1. ESCALABILIDAD DE CONTENIDO**
-- [ ] **Añadir 8-10 artistas más** manualmente para probar el sistema de rankings con datos reales de la ciudad.
-- [ ] Iniciar pruebas de carga visual con perfiles completos.
-
-### **2. TRANSICIÓN A BASE DE DATOS (CRÍTICO)**
-*Necesario para que la app funcione 100% en la nube (Vercel).*
-- [ ] Migrar de archivos `.json` a **Vercel Postgres** o **MongoDB**.
-- [ ] Implementar **Vercel KV (Redis)** para el manejo de snapshots.
-- [ ] Habilitar el Cron Job de 6hs en producción una vez migrada la persistencia.
-
-### **3. MOTOR DE EXTRACCIÓN CON IA (IA SCRAPER 2.0)**
-*Para resolver los bloqueos de Instagram y enriquecer el perfil.*
-- [ ] **Bypass de Bloqueos:** Implementar uso de proxies para obtener HTML de Instagram/TikTok sin ser baneado.
-- [ ] **Cerebro Gemini Pro:** Enviar el texto extraído a la IA para obtener:
-  - Seguidores reales (adiós al 0%).
-  - Géneros musicales específicos.
-  - **Próximas fechas de shows** detectadas automáticamente en las bios.
-
-### **4. SISTEMA DE ENGAGEMENT Y GAMIFICACIÓN**
-- [ ] **Badges Automáticos:** "Artista en Ascenso", "Legendario", "Top 1 del Mes".
-- [ ] **Comparador de Perfiles:** Herramienta para comparar estadísticas entre dos artistas.
-- [ ] **Alertas de Crecimiento:** Notificaciones cuando un artista sube un puesto en el ranking.
-
-### **5. SECCIÓN DE EVENTOS AUTOMATIZADA**
-- [ ] Implementar `/eventos` que se alimente directamente de la información escrapeada por la IA de las redes sociales de los artistas activos.
-
----
-
-## 🚀 ESTADO DE LA MISIÓN
-
-**En progreso:** Transición a Base de Datos y Planificación de IA.  
-**Bloqueo actual:** Escritura en disco en producción (Vercel) limita el Factory y los Snapshots a uso local/git-push.
+### PENDIENTE ORIGINAL (Legacy)
+- [ ] Migrar a base de datos (Vercel Postgres/MongoDB)
+- [ ] Implementar Redis para snapshots
+- [ ] Sistema de badges y gamificación
+- [ ] Sección de eventos
+agregar twitch a los datos de artista y renderizar la última transmisión arriba de todo,
+interactividad al inicio, tanto de la pagina home como la de leaderboard con cositas brillantes
+como neoncitos que pasan y cosas asi, hacer 36 remeras de la página para el top 3 mensual
+durante todo un año con un mismo diseño único y que los únicos que puedan tener esa remera
+es porque en algún momento estuvieron en el top 3 de la página, quien no llega al podio del top 3
+en ningún momento del año se queda sin ese diseño pero el año que viene se hace otrodiseño distinto

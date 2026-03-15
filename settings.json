@@ -1,9 +1,159 @@
 {
   "leaderboard": {
     "platforms": false,
-    "top10": true,
-    "growth": true,
+    "top10": false,
+    "growth": false,
     "legacy": true,
-    "reach": false
+    "reach": false,
+    "spotifyTop": true,
+    "titles": {
+      "spotifyTop": "Top 10 Spotify Rosario",
+      "top10": "Ranking Fans",
+      "growth": "Ranking Crecimiento",
+      "legacy": "Hall of Fame Rosario",
+      "reach": "Alcance Rosario Hub",
+      "platforms": "Adopción de Plataformas"
+    },
+    "styles": {
+      "spotifyTop": {
+        "analytics": {
+          "container": "bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-300 shadow-lg shadow-green-200/50 p-8 rounded-[2rem]",
+          "position": "top-8 right-8",
+          "variant": "spotify-top"
+        },
+        "leaderboard": {
+          "spacing": "space-y-32",
+          "variant": "spotify-top"
+        },
+        "colors": {
+          "icon": "bg-gradient-to-br from-green-400 to-emerald-600 text-white shadow-green-500/30",
+          "iconDark": "bg-white/10 text-green-400 shadow-green-500/20 border border-green-400/20",
+          "title": "text-green-400",
+          "titleLight": "text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-700",
+          "subtitle": "text-green-300",
+          "subtitleLight": "text-green-600",
+          "card": "bg-gradient-to-r from-green-900/20 to-emerald-900/20 border-green-600/30 hover:from-green-800/30 hover:to-emerald-800/30",
+          "cardLight": "bg-gradient-to-r from-green-50/50 to-emerald-50/50 border-green-200/50 hover:from-green-100/70 hover:to-emerald-100/70",
+          "name": "text-green-300",
+          "nameLight": "text-green-900",
+          "tagline": "text-green-600",
+          "taglineLight": "text-green-700",
+          "value": "text-green-400",
+          "valueLight": "text-green-700",
+          "label": "text-white/80",
+          "labelLight": "text-green-600"
+        }
+      },
+      "top10": {
+        "analytics": {
+          "container": "bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm",
+          "position": "top-8 right-8"
+        },
+        "leaderboard": {
+          "spacing": "space-y-32"
+        },
+        "colors": {
+          "icon": "bg-purple-50 text-purple-600 shadow-purple-200",
+          "iconDark": "bg-white/10 text-green-400 shadow-green-500/20 border border-green-400/20",
+          "title": "text-white",
+          "titleLight": "text-gray-900",
+          "subtitle": "text-gray-300",
+          "subtitleLight": "text-gray-500",
+          "card": "bg-white/5 border-white/10 hover:bg-white/[0.08]",
+          "cardLight": "bg-gray-50/50 border-gray-100 hover:bg-white hover:shadow-md",
+          "name": "text-white",
+          "nameLight": "text-gray-900",
+          "tagline": "text-gray-500",
+          "taglineLight": "text-gray-400",
+          "value": "text-white",
+          "valueLight": "text-gray-900",
+          "label": "text-gray-300",
+          "labelLight": "text-gray-400"
+        }
+      },
+      "growth": {
+        "analytics": {
+          "container": "bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm",
+          "position": "top-10 right-10"
+        },
+        "leaderboard": {
+          "spacing": "space-y-32"
+        },
+        "colors": {
+          "icon": "bg-purple-50 text-purple-600 shadow-purple-200",
+          "iconDark": "bg-white/10 text-green-400 shadow-green-500/20 border border-green-400/20",
+          "title": "text-white",
+          "titleLight": "text-gray-900",
+          "subtitle": "text-gray-300",
+          "subtitleLight": "text-gray-500",
+          "card": "bg-white/5 border-white/10 hover:bg-white/[0.08]",
+          "cardLight": "bg-gray-50/50 border-gray-100 hover:bg-white hover:shadow-md",
+          "name": "text-white",
+          "nameLight": "text-gray-900",
+          "tagline": "text-gray-500",
+          "taglineLight": "text-gray-400",
+          "value": "text-white",
+          "valueLight": "text-gray-900",
+          "label": "text-gray-300",
+          "labelLight": "text-gray-400"
+        }
+      },
+      "legacy": {
+        "analytics": {
+          "container": "bg-gradient-to-br from-yellow-50 to-amber-100 border-2 border-yellow-300 shadow-lg shadow-yellow-200/50 p-10 rounded-[2.5rem]",
+          "position": "top-10 right-10",
+          "variant": "hall-of-fame"
+        },
+        "leaderboard": {
+          "spacing": "space-y-32",
+          "variant": "hall-of-fame"
+        },
+        "colors": {
+          "icon": "bg-gradient-to-br from-yellow-400 to-amber-600 text-white shadow-yellow-500/30",
+          "iconDark": "bg-white/10 text-yellow-400 shadow-yellow-500/20 border border-yellow-400/20",
+          "title": "text-yellow-400",
+          "titleLight": "text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-700",
+          "subtitle": "text-yellow-300",
+          "subtitleLight": "text-amber-600",
+          "card": "bg-gradient-to-r from-yellow-900/20 to-amber-900/20 border-yellow-600/30 hover:from-yellow-800/30 hover:to-amber-800/30",
+          "cardLight": "bg-gradient-to-r from-yellow-50/50 to-amber-50/50 border-yellow-200/50 hover:from-yellow-100/70 hover:to-amber-100/70",
+          "name": "text-yellow-300",
+          "nameLight": "text-amber-900",
+          "tagline": "text-yellow-600",
+          "taglineLight": "text-amber-700",
+          "value": "text-yellow-400",
+          "valueLight": "text-amber-800",
+          "label": "text-yellow-300",
+          "labelLight": "text-amber-600"
+        }
+      },
+      "reach": {
+        "analytics": {
+          "container": "bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm",
+          "position": "top-6 right-6 z-10"
+        },
+        "leaderboard": {
+          "spacing": "space-y-32"
+        },
+        "colors": {
+          "icon": "bg-purple-50 text-purple-600 shadow-purple-200",
+          "iconDark": "bg-white/10 text-green-400 shadow-green-500/20 border border-green-400/20",
+          "title": "text-white",
+          "titleLight": "text-gray-900",
+          "subtitle": "text-gray-300",
+          "subtitleLight": "text-gray-500",
+          "card": "bg-white/5 border-white/10 hover:bg-white/[0.08]",
+          "cardLight": "bg-gray-50/50 border-gray-100 hover:bg-white hover:shadow-md",
+          "name": "text-white",
+          "nameLight": "text-gray-900",
+          "tagline": "text-gray-500",
+          "taglineLight": "text-gray-400",
+          "value": "text-white",
+          "valueLight": "text-gray-900",
+          "label": "text-gray-300",
+          "labelLight": "text-gray-400"
+        }
+      }
+    }
   }
 }

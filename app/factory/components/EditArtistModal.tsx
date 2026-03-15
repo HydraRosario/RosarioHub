@@ -13,10 +13,9 @@ interface EditArtistModalProps {
 export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProps) {
     const [activeSection, setActiveSection] = useState<'profile' | 'platforms' | 'booking'>('profile')
     const [saving, setSaving] = useState(false)
-    const [youtubeLoading, setYoutubeLoading] = useState(false)
-    const [heroImageSource, setHeroImageSource] = useState<'youtube' | 'spotify' | 'manual'>((artist as any).heroImageSource || 'youtube')
-    const [profileImageSource, setProfileImageSource] = useState<'youtube' | 'spotify' | 'manual'>((artist as any).profileImageSource || 'youtube')
-    
+    const [heroImageSource, setHeroImageSource] = useState<'youtube_banner' | 'youtube_profile' | 'spotify_profile' | 'upload'>((artist as any).heroImageSource || 'youtube_banner')
+    const [profileImageSource, setProfileImageSource] = useState<'youtube_banner' | 'youtube_profile' | 'spotify_profile' | 'upload'>((artist as any).profileImageSource || 'youtube_profile')
+    const [uploading, setUploading] = useState<{hero: boolean, profile: boolean}>({hero: false, profile: false})
     const [formData, setFormData] = useState({
         name: artist.profile?.name || artist.name || '',
         slug: artist.slug || '',
@@ -24,6 +23,8 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
         bio: artist.profile?.bio || '',
         heroImage: artist.profile?.heroImage || '',
         profileImage: artist.profile?.profileImage || '',
+        uploadedHeroImage: artist.profile?.uploadedHeroImage || '',
+        uploadedProfileImage: artist.profile?.uploadedProfileImage || '',
         theme: artist.theme || 'SOFT_TRAP',
         status: artist.status || 'active',
         // Platforms
@@ -53,68 +54,49 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
         email: artist.booking?.email || artist.email || ''
     })
 
+    const handleImageUpload = async (file: File, type: 'hero' | 'profile') => {
+        if (!file) return
+        
+        setUploading(prev => ({...prev, [type]: true}))
+        
+        try {
+            const formData = new FormData()
+            formData.append('file', file)
+            formData.append('artistId', artist.id)
+            formData.append('imageType', type)
+            
+            const response = await fetch('/api/upload/artist-image', {
+                method: 'POST',
+                body: formData
+            })
+            
+            if (!response.ok) {
+                throw new Error('Upload failed')
+            }
+            
+            const result = await response.json()
+            
+            if (type === 'hero') {
+                setFormData(prev => ({...prev, uploadedHeroImage: result.imageUrl}))
+            } else {
+                setFormData(prev => ({...prev, uploadedProfileImage: result.imageUrl}))
+            }
+            
+        } catch (error) {
+            console.error('Upload error:', error)
+            alert('Error al subir la imagen. Intenta de nuevo.')
+        } finally {
+            setUploading(prev => ({...prev, [type]: false}))
+        }
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setSaving(true)
         
         console.log('artist.id:', artist.id)
         
-        let heroImage = formData.heroImage
-        let profileImage = formData.profileImage
-
-        if (heroImageSource === 'youtube' && formData.youtube_channelId) {
-            setYoutubeLoading(true)
-            try {
-                const response = await fetch(`/api/youtube?channelId=${formData.youtube_channelId}`)
-                if (response.ok) {
-                    const data = await response.json()
-                    if (data.bannerImage) heroImage = data.bannerImage
-                }
-            } catch (error) {
-                console.error('Error fetching YouTube hero data:', error)
-            } finally {
-                setYoutubeLoading(false)
-            }
-        }
-
-        if (heroImageSource === 'spotify' && formData.spotify_artistId) {
-            try {
-                const response = await fetch(`/api/spotify?artistId=${formData.spotify_artistId}`)
-                if (response.ok) {
-                    const data = await response.json()
-                    if (data.heroImage) heroImage = data.heroImage
-                }
-            } catch (error) {
-                console.error('Error fetching Spotify hero data:', error)
-            }
-        }
-
-        if (profileImageSource === 'youtube' && formData.youtube_channelId) {
-            setYoutubeLoading(true)
-            try {
-                const response = await fetch(`/api/youtube?channelId=${formData.youtube_channelId}`)
-                if (response.ok) {
-                    const data = await response.json()
-                    if (data.profileImage) profileImage = data.profileImage
-                }
-            } catch (error) {
-                console.error('Error fetching YouTube profile data:', error)
-            } finally {
-                setYoutubeLoading(false)
-            }
-        }
-
-        if (profileImageSource === 'spotify' && formData.spotify_artistId) {
-            try {
-                const response = await fetch(`/api/spotify?artistId=${formData.spotify_artistId}`)
-                if (response.ok) {
-                    const data = await response.json()
-                    if (data.profileImage) profileImage = data.profileImage
-                }
-            } catch (error) {
-                console.error('Error fetching Spotify profile data:', error)
-            }
-        }
+        // Las imágenes se manejan directamente en el profile object con spread operator
 
         const validStatus = formData.status === 'active' || formData.status === 'pending' || formData.status === 'inactive' 
             ? formData.status as 'active' | 'pending' | 'inactive'
@@ -132,11 +114,13 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
             heroImageSource: heroImageSource,
             profileImageSource: profileImageSource,
             profile: {
+                ...artist.profile, // Mantener todos los campos existentes (youtubeHeroImage, youtubeProfileImage, spotifyProfileImage)
                 name: formData.name,
                 tagline: formData.tagline,
                 bio: formData.bio,
-                heroImage: heroImage || formData.heroImage,
-                profileImage: profileImage || formData.profileImage
+                // Solo actualizar uploadedHeroImage y uploadedProfileImage si es upload
+                ...(heroImageSource === 'upload' && { uploadedHeroImage: formData.uploadedHeroImage }),
+                ...(profileImageSource === 'upload' && { uploadedProfileImage: formData.uploadedProfileImage })
             },
             platforms: {
                 spotify: { iframe: formData.spotify_iframe, enabled: formData.spotify_enabled, artistId: formData.spotify_artistId },
@@ -242,41 +226,75 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
                                     rows={3}
                                 />
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Fuente de Imagen Hero</label>
-                                <select
-                                    value={heroImageSource}
-                                    onChange={(e) => setHeroImageSource(e.target.value as 'youtube' | 'spotify' | 'manual')}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                                >
-                                    <option value="youtube">YouTube</option>
-                                    <option value="spotify">Spotify</option>
-                                    <option value="manual">URL Manual</option>
-                                </select>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Fuente de Hero Image</label>
+                                    <select
+                                        value={heroImageSource}
+                                        onChange={(e) => setHeroImageSource(e.target.value as 'youtube_banner' | 'youtube_profile' | 'spotify_profile' | 'upload')}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    >
+                                        <option value="youtube_banner">YouTube (Banner)</option>
+                                        <option value="youtube_profile">YouTube (Perfil)</option>
+                                        <option value="spotify_profile">Spotify (Perfil)</option>
+                                        <option value="upload">Subir Archivo</option>
+                                    </select>
+                                </div>
+                                {heroImageSource === 'upload' && (
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Subir Hero Image</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={async (e) => {
+                                            const file = e.target.files?.[0]
+                                            if (file) {
+                                                await handleImageUpload(file, 'hero')
+                                            }
+                                        }}
+                                        disabled={uploading.hero}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50"
+                                    />
+                                    {uploading.hero && (
+                                        <p className="text-sm text-blue-600 mt-1">Subiendo imagen...</p>
+                                    )}
+                                </div>
+                                )}
                             </div>
-                            {heroImageSource === 'manual' && (
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Hero Image URL</label>
-                                <input
-                                    type="url"
-                                    value={formData.heroImage}
-                                    onChange={(e) => setFormData({...formData, heroImage: e.target.value})}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                                    placeholder="https://..."
-                                />
-                            </div>
-                            )}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Fuente de Imagen de Perfil</label>
-                                <select
-                                    value={profileImageSource}
-                                    onChange={(e) => setProfileImageSource(e.target.value as 'youtube' | 'spotify' | 'manual')}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                                >
-                                    <option value="youtube">YouTube</option>
-                                    <option value="spotify">Spotify</option>
-                                    <option value="manual">URL Manual</option>
-                                </select>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Fuente de Imagen de Perfil</label>
+                                    <select
+                                        value={profileImageSource}
+                                        onChange={(e) => setProfileImageSource(e.target.value as 'youtube_banner' | 'youtube_profile' | 'spotify_profile' | 'upload')}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    >
+                                        <option value="youtube_banner">YouTube (Banner)</option>
+                                        <option value="youtube_profile">YouTube (Perfil)</option>
+                                        <option value="spotify_profile">Spotify (Perfil)</option>
+                                        <option value="upload">Subir Archivo</option>
+                                    </select>
+                                </div>
+                                {profileImageSource === 'upload' && (
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Subir Profile Image</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={async (e) => {
+                                            const file = e.target.files?.[0]
+                                            if (file) {
+                                                await handleImageUpload(file, 'profile')
+                                            }
+                                        }}
+                                        disabled={uploading.profile}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50"
+                                    />
+                                    {uploading.profile && (
+                                        <p className="text-sm text-blue-600 mt-1">Subiendo imagen...</p>
+                                    )}
+                                </div>
+                                )}
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
@@ -373,8 +391,8 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
 
                     <div className="flex justify-end space-x-3 pt-4 border-t sticky bottom-0 bg-white">
                         <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-100 rounded">Cancelar</button>
-                        <button type="submit" disabled={saving || youtubeLoading} className="px-4 py-2 bg-purple-600 text-white rounded">
-                            {saving || youtubeLoading ? 'Guardando...' : 'Guardar'}
+                        <button type="submit" disabled={saving} className="px-4 py-2 bg-purple-600 text-white rounded">
+                            {saving ? 'Guardando...' : 'Guardar'}
                         </button>
                     </div>
                 </form>

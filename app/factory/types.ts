@@ -19,6 +19,12 @@ export interface Artist {
         bio: string
         heroImage: string
         profileImage: string
+        youtubeProfileImage?: string
+        youtubeHeroImage?: string
+        spotifyProfileImage?: string
+        // Nuevos campos para imágenes subidas
+        uploadedHeroImage?: string
+        uploadedProfileImage?: string
     }
     platforms: {
         spotify: PlatformConfig
@@ -42,17 +48,22 @@ export interface Artist {
         email: string
     }
     metrics: {
-        spotify_listeners: number
+        spotify_monthly_listeners: number
         youtube_subs: number
         youtube_views: number
+        youtube_videos: number
         instagram_followers: number
         tiktok_followers: number
+        tiktok_likes: number
         soundcloud_followers: number
         twitter_followers: number
         relevance_score: number
         lastUpdated?: string
     }
     created_at: string
+    // Image source preferences
+    heroImageSource?: 'spotify_profile' | 'youtube_banner' | 'youtube_profile' | 'upload'
+    profileImageSource?: 'spotify_profile' | 'youtube_banner' | 'youtube_profile' | 'upload'
     // Compatibility fields
     name?: string
     email?: string
@@ -69,17 +80,36 @@ export interface MetricData {
     metric: string
 }
 
-export interface Snapshot {
-    id?: string
+export interface ArtistSnapshot {
     artistId?: string
     timestamp: string
     metrics: {
-        spotify_listeners?: number
+        spotify_monthly_listeners?: number
         youtube_subs?: number
         youtube_views?: number
         youtube_videos?: number
         instagram_followers?: number
         tiktok_followers?: number
+        tiktok_likes?: number
+        soundcloud_followers?: number
+        twitter_followers?: number
+        relevance_score?: number
+        [key: string]: number | undefined
+    }
+}
+
+export interface Snapshot {
+    id?: string
+    artistId?: string
+    timestamp: string
+    metrics: {
+        spotify_monthly_listeners?: number
+        youtube_subs?: number
+        youtube_views?: number
+        youtube_videos?: number
+        instagram_followers?: number
+        tiktok_followers?: number
+        tiktok_likes?: number
         soundcloud_followers?: number
         twitter_followers?: number
         relevance_score?: number

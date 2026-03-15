@@ -33,7 +33,7 @@ export function OverviewTab({ artists, stats, snapshots, onCreateArtist }: Overv
     const calculateRelevance = (metrics: any) => {
         const ytSubs = metrics?.youtube_subs || 0
         const ytViews = metrics?.youtube_views || 0
-        const spotify = metrics?.spotify_listeners || 0
+        const spotify = metrics?.spotify_monthly_listeners || 0
         const tiktok = metrics?.tiktok_followers || 0
         const instagram = metrics?.instagram_followers || 0
         const soundcloud = metrics?.soundcloud_followers || 0

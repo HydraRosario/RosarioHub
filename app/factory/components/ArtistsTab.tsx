@@ -13,7 +13,7 @@ interface ArtistsTabProps {
 const calculateRelevance = (metrics: any) => {
     const ytSubs = metrics?.youtube_subs || 0
     const ytViews = metrics?.youtube_views || 0
-    const spotify = metrics?.spotify_listeners || 0
+    const spotify = metrics?.spotify_monthly_listeners || 0
     const tiktok = metrics?.tiktok_followers || 0
     const instagram = metrics?.instagram_followers || 0
     const soundcloud = metrics?.soundcloud_followers || 0
@@ -64,7 +64,7 @@ export function ArtistsTab({ artists, onEdit, onDelete }: ArtistsTabProps) {
                                         </div>
                                         <div>
                                             <div className="text-sm font-medium text-gray-900">{artist.name || artist.profile?.name}</div>
-                                            <div className="text-sm text-gray-500">{artist.email}</div>
+                                            <div className="text-sm text-gray-500">{artist.booking?.email}</div>
                                         </div>
                                     </div>
                                 </td>

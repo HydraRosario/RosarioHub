@@ -6,7 +6,7 @@ export const getMetricBreakdown = (metricsTotals: any) => [
     { label: 'YouTube Views', value: metricsTotals?.youtube_views || 0, icon: <Youtube className="w-5 h-5 text-red-500" /> },
     { label: 'YouTube Subs', value: metricsTotals?.youtube_subs || 0, icon: <Youtube className="w-5 h-5 text-red-400" /> },
     { label: 'Instagram', value: metricsTotals?.instagram_followers || 0, icon: <Instagram className="w-5 h-5 text-pink-500" /> },
-    { label: 'Spotify', value: metricsTotals?.spotify_listeners || 0, icon: <Music2 className="w-5 h-5 text-green-500" /> },
+    { label: 'Spotify Monthly Listeners', value: metricsTotals?.spotify_monthly_listeners || 0, icon: <Music2 className="w-5 h-5 text-green-500" /> },
     { label: 'TikTok', value: metricsTotals?.tiktok_followers || 0, icon: <Music2 className="w-5 h-5" /> },
 ].filter(m => m.value > 0).sort((a, b) => b.value - a.value)
 
@@ -92,31 +92,54 @@ export const ReachMetricsDisplay = ({ metrics, globalTotal, variant }: { metrics
 }
 
 /* --- RANKING LIST --- */
-export const RankingListDisplay = ({ title, icon, data, type, variant }: { title: string, icon: React.ReactNode, data: any[], type: 'total' | 'growth' | 'impact', variant: 'factory' | 'leaderboard' }) => {
+export const RankingListDisplay = ({ title, icon, data, type, variant, colors }: { 
+    title: string, 
+    icon: React.ReactNode, 
+    data: any[], 
+    type: 'total' | 'growth' | 'impact', 
+    variant: 'factory' | 'leaderboard' | 'hall-of-fame' | 'spotify-top',
+    colors?: any
+}) => {
     const isDark = variant === 'leaderboard'
+    const isHallOfFame = variant === 'hall-of-fame'
+    const isSpotifyTop = variant === 'spotify-top'
+    
+    // Usar colores centralizados o fallback
+    const getColor = (key: string, fallback: string) => {
+        if (colors?.[key]) return isDark ? colors[key + 'Dark'] || colors[key] : colors[key]
+        return fallback
+    }
     
     return (
         <div className="w-full">
             <div className="flex items-center gap-4 mb-10">
                 <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg ${
-                    isDark ? 'bg-white/5 text-purple-400 shadow-purple-500/10' : 'bg-purple-50 text-purple-600 shadow-purple-200'
+                    getColor('icon', isDark ? 'bg-white/10 text-purple-400 shadow-purple-500/20' : 'bg-purple-50 text-purple-600 shadow-purple-200')
                 }`}>
                     {icon}
                 </div>
                 <div className="text-left">
-                    <h3 className={`text-2xl font-black tracking-tight leading-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    <h3 className={`text-2xl font-black tracking-tight leading-tight ${
+                        isSpotifyTop ? getColor('title', isDark ? 'text-green-400' : 'text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-700') :
+                        isHallOfFame ? getColor('title', isDark ? 'text-yellow-400' : 'text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-700') :
+                        getColor('title', isDark ? 'text-white' : 'text-gray-900')
+                    }`}>
                         {title}
                     </h3>
-                    <p className={`text-[10px] uppercase font-bold tracking-widest ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                        {type === 'total' ? 'Basado en Fans Totales' : type === 'growth' ? 'Crecimiento Porcentual' : 'Score de Impacto Global'}
+                    <p className={`text-[10px] uppercase font-bold tracking-widest ${
+                        getColor('subtitle', isDark ? 'text-gray-400' : 'text-gray-500')
+                    }`}>
+                        {type === 'total' ? (isSpotifyTop ? 'Basado en Oyentes Mensuales' : 'Basado en Fans Totales') : type === 'growth' ? 'Crecimiento Porcentual' : 'Score de Impacto Global'}
                     </p>
                 </div>
             </div>
             
             <div className="space-y-3">
                 {data.map((artist, idx) => {
-                    const Wrapper = isDark ? 'a' : 'div'
-                    const extraProps = isDark ? { 
+                    // Usar 'a' para cualquier variante de leaderboard (leaderboard, hall-of-fame, spotify-top)
+                    const isLeaderboardVariant = variant === 'leaderboard' || variant === 'hall-of-fame' || variant === 'spotify-top'
+                    const Wrapper = isLeaderboardVariant ? 'a' : 'div'
+                    const extraProps = isLeaderboardVariant ? { 
                         href: `/${artist.slug}`, 
                         target: "_blank", 
                         rel: "noopener noreferrer" 
@@ -127,41 +150,49 @@ export const RankingListDisplay = ({ title, icon, data, type, variant }: { title
                             key={artist.slug || artist.id} 
                             {...extraProps}
                             className={`flex items-center gap-4 p-4 rounded-2xl border transition-all group ${
-                                isDark 
-                                ? 'bg-white/5 border-white/5 hover:bg-white/[0.08] cursor-pointer' 
-                                : 'bg-gray-50/50 border-gray-100 hover:bg-white hover:shadow-md'
+                                getColor('card', isDark ? 'bg-white/5 border-white/10 hover:bg-white/[0.08]' : 'bg-gray-50/50 border-gray-100 hover:bg-white hover:shadow-md')
                             }`}
                         >
                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-lg ${
                                 idx === 0 ? 'bg-yellow-500 text-white shadow-lg shadow-yellow-500/20' :
                                 idx === 1 ? (isDark ? 'bg-gray-400 text-black' : 'bg-gray-300 text-gray-700') :
                                 idx === 2 ? (isDark ? 'bg-amber-700 text-white' : 'bg-amber-600 text-white') :
-                                (isDark ? 'bg-white/5 text-gray-500 border border-white/5' : 'bg-white text-gray-400 border border-gray-200')
+                                (isDark ? 'bg-white/5 text-gray-400 border border-white/5' : 'bg-white text-gray-400 border border-gray-200')
                             }`}>
                             {idx + 1}
                         </div>
                         
                         <div className="flex-1 min-w-0 text-left">
-                            <h4 className={`font-black truncate group-hover:text-purple-500 transition-colors ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                            <h4 className={`font-black truncate group-hover:text-purple-500 transition-colors ${
+                                getColor('name', isDark ? 'text-white' : 'text-gray-900')
+                            }`}>
                                 {artist.profile?.name || artist.name}
                             </h4>
-                            <p className={`text-[10px] uppercase font-bold tracking-wider truncate shrink-0 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                            <p className={`text-[10px] uppercase font-bold tracking-wider truncate shrink-0 ${
+                                getColor('tagline', isDark ? 'text-gray-500' : 'text-gray-400')
+                            }`}>
                                 {artist.profile?.tagline || artist.theme || 'Músico'}
                             </p>
                         </div>
                         
                         <div className="text-right shrink-0">
                             {type === 'growth' ? (
-                                <div className={`text-lg font-black ${artist.growth > 0 ? 'text-green-500' : artist.growth < 0 ? 'text-red-500' : 'text-gray-400'}`}>
+                                <div className={`text-lg font-black ${
+                                    artist.growth > 0 ? 'text-green-500' : artist.growth < 0 ? 'text-red-500' : 'text-gray-400'
+                                }`}>
                                     {formatGrowth(artist.growth)}
                                 </div>
                             ) : (
-                                <div className={`text-lg font-black ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                                    {formatNumber(type === 'impact' ? artist.impact : artist.currentTotal)}
+                                <div className={`text-lg font-black ${
+                                    getColor('value', isDark ? 'text-white' : 'text-gray-900')
+                                }`}>
+                                    {formatNumber(isSpotifyTop ? artist.spotifyTotal : (type === 'impact' ? artist.impact : artist.currentTotal))}
                                 </div>
                             )}
-                            <div className={`text-[9px] font-bold uppercase tracking-tighter ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                                {type === 'total' ? 'Fans' : type === 'growth' ? 'Trend' : 'Score'}
+                            <div className={`text-[9px] font-bold uppercase tracking-tighter ${
+                                getColor('label', isDark ? 'text-gray-400' : 'text-gray-500')
+                            }`}>
+                                {type === 'total' ? (isSpotifyTop ? 'Oyentes' : 'Fans') : type === 'growth' ? 'Trend' : 'Score'}
                             </div>
                         </div>
                         </Wrapper>
