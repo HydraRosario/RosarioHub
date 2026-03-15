@@ -194,6 +194,15 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
                                 />
                             </div>
                             <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                                <textarea
+                                    value={formData.bio}
+                                    onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    rows={3}
+                                />
+                            </div>
+                            <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Hero Image URL</label>
                                 <input
                                     type="url"

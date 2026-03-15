@@ -31,7 +31,7 @@
         "username": "hhhestudios"
       },
       "soundcloud": {
-        "iframe": "<iframe \n  width=\"100%\" \n  height=\"300\" \n  scrolling=\"no\" \n  frameborder=\"no\" \n  allow=\"autoplay\" \n  src=\"https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/juan-cruz-helou/muy-rapido-para-nada&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true\">\n</iframe>",
+        "iframe": "<iframe \n  width=\"100%\" \n  height=\"450\" \n  scrolling=\"no\" \n  frameborder=\"no\" \n  allow=\"autoplay\" \n  src=\"https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/hydra_rosario&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true\">\n</iframe>",
         "enabled": true
       },
       "twitter": {
@@ -65,7 +65,7 @@
       "youtube_videos": 33,
       "spotify_listeners": 23,
       "tiktok_followers": 785,
-      "lastUpdated": "2026-03-15T00:41:36.053Z",
+      "lastUpdated": "2026-03-15T02:54:39.735Z",
       "instagram_followers": 0
     }
   },
@@ -130,7 +130,7 @@
       "youtube_videos": 9,
       "spotify_listeners": 4,
       "tiktok_followers": 4,
-      "lastUpdated": "2026-03-15T00:41:38.207Z",
+      "lastUpdated": "2026-03-15T02:54:41.650Z",
       "instagram_followers": 0
     },
     "studio": {
@@ -148,7 +148,7 @@
     "profile": {
       "name": "Adán David",
       "tagline": "Experimental Hip Hop & NeoPoesía",
-      "bio": "Multiverso Convexo ",
+      "bio": "Téc. En Comunicación - Escritor creativo\nProductor - Realiz. Audiovisual",
       "heroImage": "https://yt3.googleusercontent.com/eyYona-wtezlFdNtqdkhQyWH4RDkftzWP--XPFpCgX65esCI5-FLiDMRkPPg9wogzdFQSvF_",
       "profileImage": "https://yt3.ggpht.com/qPQKOgcUfN6CN-m9o21P_JgfSTS6Gt_01oH5rDWQreJhd8lHS8aZZhO4dAvBtnFHtz_i3uHj=s800-c-k-c0x00ffffff-no-rj"
     },
@@ -197,12 +197,77 @@
       "youtube_subs": 1600,
       "instagram_followers": 0,
       "relevance_score": 0,
-      "youtube_views": 281253,
+      "youtube_views": 281271,
       "youtube_videos": 784,
       "tiktok_followers": 4157,
-      "lastUpdated": "2026-03-15T00:41:39.897Z"
+      "lastUpdated": "2026-03-15T02:54:44.239Z"
     },
     "id": "1773525776027",
     "created_at": "2026-03-14T22:02:56.028Z"
+  },
+  {
+    "name": "Leroy",
+    "slug": "Leroy",
+    "email": "juanhelou2001@gmail.com",
+    "theme": "PINK_GOTH",
+    "status": "active",
+    "profile": {
+      "name": "Leroy",
+      "tagline": "R&B - Trap - Hip Hop",
+      "bio": "Compositor y rapero, del barrio Latinoamérica, zona sudoeste de la ciudad de Rosario",
+      "heroImage": "https://yt3.googleusercontent.com/FMHa70tchvb28_doQqLKXT0w4aZqcYRWRlveHpz8F9bo4syCF5tJAsuWI_iYJhR8Jn43F6jb",
+      "profileImage": "https://yt3.ggpht.com/RpxgaO8Jaz0N7lzlZbSbJFJ_O78K9iym0-tYD1Y6WGR72t0D2SKpClb05Th14daHyB3Ebr84Gg=s800-c-k-c0x00ffffff-no-rj"
+    },
+    "platforms": {
+      "spotify": {
+        "iframe": "<iframe data-testid=\"embed-iframe\" style=\"border-radius:12px\" src=\"https://open.spotify.com/embed/artist/5wFpPSnspQxI0230AMtoJs?utm_source=generator\" width=\"100%\" height=\"352\" frameBorder=\"0\" allowfullscreen=\"\" allow=\"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture\" loading=\"lazy\"></iframe>",
+        "enabled": true,
+        "artistId": "5wFpPSnspQxI0230AMtoJs"
+      },
+      "youtube": {
+        "iframe": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/QJaGICeqKX4?si=9TddYsSIwL5-yw-b\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
+        "enabled": true,
+        "channelId": "UCE2PPhWJcUGpOEX4_qN3cHQ"
+      },
+      "instagram": {
+        "enabled": true,
+        "username": "leroybsh"
+      },
+      "tiktok": {
+        "enabled": false,
+        "username": ""
+      },
+      "soundcloud": {
+        "iframe": "<iframe \n  width=\"100%\" \n  height=\"450\" \n  scrolling=\"no\" \n  frameborder=\"no\" \n  allow=\"autoplay\" \n  src=\"https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/juan-cruz-helou&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true\">\n</iframe>",
+        "enabled": true
+      },
+      "twitter": {
+        "enabled": false
+      }
+    },
+    "social": {
+      "instagram": "https://www.instagram.com/leroybsh",
+      "tiktok": "",
+      "youtube": "https://www.youtube.com/@leroy4704",
+      "spotify": "https://open.spotify.com/intl-es/artist/5wFpPSnspQxI0230AMtoJs?si=A9CBFZYyS-2n5VIedoG9CQ",
+      "soundcloud": "https://soundcloud.com/juan-cruz-helou/",
+      "twitter": ""
+    },
+    "booking": {
+      "whatsapp": "3416614252",
+      "whatsappMessage": "",
+      "email": "juanhelou2001@gmail.com"
+    },
+    "metrics": {
+      "spotify_listeners": 36,
+      "youtube_subs": 241,
+      "instagram_followers": 0,
+      "relevance_score": 0,
+      "youtube_views": 11883,
+      "youtube_videos": 32,
+      "lastUpdated": "2026-03-15T02:54:45.411Z"
+    },
+    "id": "1773539879664",
+    "created_at": "2026-03-15T01:57:59.664Z"
   }
 ]

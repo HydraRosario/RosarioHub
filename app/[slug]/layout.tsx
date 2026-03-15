@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             siteName: 'RosarioHub',
             images: [
                 {
-                    url: artist.profile?.heroImage || artist.profile?.profileImage || 'https://rosario-hub.vercel.app/og-default.jpg',
+                    url: artist.profile?.profileImage || artist.profile?.heroImage || 'https://rosario-hub.vercel.app/og-default.jpg',
                     width: 1200,
                     height: 630,
                     alt: `${artist.profile?.name || artist.name} - RosarioHub`
@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             card: 'summary_large_image',
             title: `${artist.profile?.name || artist.name} | RosarioHub`,
             description: `${artist.profile?.tagline || 'Artista de Rosario'} | ${totalFollowers.toLocaleString('es-AR')} seguidores`,
-            images: [artist.profile?.heroImage || artist.profile?.profileImage || 'https://rosario-hub.vercel.app/og-default.jpg']
+            images: [artist.profile?.profileImage || artist.profile?.heroImage || 'https://rosario-hub.vercel.app/og-default.jpg']
         }
     }
 }
