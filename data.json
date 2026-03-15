@@ -8,8 +8,8 @@
       "name": "HydraRosario",
       "tagline": "Trap & Deep House",
       "bio": "Artista emergente de Rosario, Argentina. Fusionando sonidos urbanos con electrónica.",
-      "heroImage": "https://yt3.googleusercontent.com/5TFNHbJ1FvG2JHCFsQV0oWbgIN0ajfSROufAH4eSwVEaR2ufyrN0sDAWxKv_dUFDXDA_YSN4uw",
-      "profileImage": "https://yt3.ggpht.com/5jMhezkAuQsjdwLVx4UnlXRsLkkhIFXmv3PMZct3D2E2A3yDHB53sCT7dNQ40IqiKZwCzZGQ7KU=s800-c-k-c0x00ffffff-no-rj"
+      "heroImage": "https://image-cdn-ak.spotifycdn.com/image/ab67616100005174625ad70f92ca45ce3ddb010d",
+      "profileImage": "https://image-cdn-ak.spotifycdn.com/image/ab67616100005174625ad70f92ca45ce3ddb010d"
     },
     "platforms": {
       "spotify": {
@@ -67,7 +67,8 @@
       "tiktok_followers": 785,
       "lastUpdated": "2026-03-15T02:54:39.735Z",
       "instagram_followers": 0
-    }
+    },
+    "imageSource": "spotify"
   },
   {
     "name": "Lauri",
@@ -81,8 +82,8 @@
       "name": "Lauri",
       "tagline": "Trap - Indie Rock - Hyperpop",
       "bio": "Músico independiente con falta de autoestima",
-      "heroImage": "https://yt3.googleusercontent.com/hurtMOT8VEvtJflFAFMoTOxA3Sk9SK64iZ29WYbHEK9LQQgBF7ScwzoT4uHc9IiStk1cv7o2GEU",
-      "profileImage": "https://yt3.ggpht.com/m8nJleCOJ8eiTCn3CSibsCNcL7btKy9Y74bLMbpMlEwpGCF8dnvGZgqc4H1GuprZym5Th6px=s800-c-k-c0x00ffffff-no-rj"
+      "heroImage": "https://image-cdn-ak.spotifycdn.com/image/ab67616100005174a6dbf3f5ff6cc71c8b2a5279",
+      "profileImage": "https://image-cdn-ak.spotifycdn.com/image/ab67616100005174a6dbf3f5ff6cc71c8b2a5279"
     },
     "platforms": {
       "spotify": {
@@ -137,7 +138,8 @@
       "name": "HHHESTUDIOS",
       "url": "",
       "city": "Rosario"
-    }
+    },
+    "imageSource": "spotify"
   },
   {
     "name": "Adán David",
@@ -148,9 +150,9 @@
     "profile": {
       "name": "Adán David",
       "tagline": "Experimental Hip Hop & NeoPoesía",
-      "bio": "Téc. En Comunicación - Escritor creativo\nProductor - Realiz. Audiovisual",
-      "heroImage": "https://yt3.googleusercontent.com/eyYona-wtezlFdNtqdkhQyWH4RDkftzWP--XPFpCgX65esCI5-FLiDMRkPPg9wogzdFQSvF_",
-      "profileImage": "https://yt3.ggpht.com/qPQKOgcUfN6CN-m9o21P_JgfSTS6Gt_01oH5rDWQreJhd8lHS8aZZhO4dAvBtnFHtz_i3uHj=s800-c-k-c0x00ffffff-no-rj"
+      "bio": "Téc. En Comunicación - Escritor creativo\n- Productor - Realiz. Audiovisual",
+      "heroImage": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e025a7b7cf7963f700f606177e8",
+      "profileImage": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e025a7b7cf7963f700f606177e8"
     },
     "platforms": {
       "spotify": {
@@ -203,7 +205,8 @@
       "lastUpdated": "2026-03-15T02:54:44.239Z"
     },
     "id": "1773525776027",
-    "created_at": "2026-03-14T22:02:56.028Z"
+    "created_at": "2026-03-14T22:02:56.028Z",
+    "imageSource": "spotify"
   },
   {
     "name": "Leroy",
@@ -215,8 +218,8 @@
       "name": "Leroy",
       "tagline": "R&B - Trap - Hip Hop",
       "bio": "Compositor y rapero, del barrio Latinoamérica, zona sudoeste de la ciudad de Rosario",
-      "heroImage": "https://yt3.googleusercontent.com/FMHa70tchvb28_doQqLKXT0w4aZqcYRWRlveHpz8F9bo4syCF5tJAsuWI_iYJhR8Jn43F6jb",
-      "profileImage": "https://yt3.ggpht.com/RpxgaO8Jaz0N7lzlZbSbJFJ_O78K9iym0-tYD1Y6WGR72t0D2SKpClb05Th14daHyB3Ebr84Gg=s800-c-k-c0x00ffffff-no-rj"
+      "heroImage": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e020be83814426ae1bd41494019",
+      "profileImage": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e020be83814426ae1bd41494019"
     },
     "platforms": {
       "spotify": {
@@ -268,6 +271,7 @@
       "lastUpdated": "2026-03-15T02:54:45.411Z"
     },
     "id": "1773539879664",
-    "created_at": "2026-03-15T01:57:59.664Z"
+    "created_at": "2026-03-15T01:57:59.664Z",
+    "imageSource": "spotify"
   }
 ]

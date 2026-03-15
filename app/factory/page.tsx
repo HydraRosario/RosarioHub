@@ -76,7 +76,7 @@ export default function FactoryDashboard() {
         }
     }
 
-    const handleUpdateArtist = async (updatedArtist: Artist): Promise<boolean> => {
+    const handleUpdateArtist = async (updatedArtist: any): Promise<boolean> => {
         console.log('handleUpdateArtist llamado con:', updatedArtist)
         try {
             const res = await fetch(`/api/artists/${updatedArtist.id}`, {

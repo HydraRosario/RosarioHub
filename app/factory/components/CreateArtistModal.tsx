@@ -70,6 +70,19 @@ export function CreateArtistModal({ onClose, onSave }: CreateArtistModalProps) {
             }
         }
 
+        if (!heroImage && formData.spotify_artistId) {
+            try {
+                const response = await fetch(`/api/spotify?artistId=${formData.spotify_artistId}`)
+                if (response.ok) {
+                    const data = await response.json()
+                    if (data.heroImage) heroImage = data.heroImage
+                    if (data.profileImage && !profileImage) profileImage = data.profileImage
+                }
+            } catch (error) {
+                console.error('Error fetching Spotify data:', error)
+            }
+        }
+
         const removeAccents = (str: string) => {
             const accentMap: Record<string, string> = {
                 'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u',

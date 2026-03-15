@@ -7,13 +7,20 @@ import { Artist } from '../types'
 interface EditArtistModalProps {
     artist: Artist
     onClose: () => void
-    onSave: (artist: Artist) => Promise<boolean>
+    onSave: (artist: any) => Promise<boolean>
 }
 
 export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProps) {
     const [activeSection, setActiveSection] = useState<'profile' | 'platforms' | 'booking'>('profile')
     const [saving, setSaving] = useState(false)
     const [youtubeLoading, setYoutubeLoading] = useState(false)
+    const [imageSource, setImageSource] = useState<'youtube' | 'spotify' | 'manual'>(() => {
+        if ((artist as any).imageSource) return (artist as any).imageSource
+        if (artist.profile?.heroImage) return 'manual'
+        if (artist.platforms?.youtube?.channelId) return 'youtube'
+        if (artist.platforms?.spotify?.artistId) return 'spotify'
+        return 'youtube'
+    })
     
     const [formData, setFormData] = useState({
         name: artist.profile?.name || artist.name || '',
@@ -60,7 +67,7 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
         let heroImage = formData.heroImage
         let profileImage = formData.profileImage
 
-        if (formData.youtube_channelId) {
+        if (imageSource === 'youtube' && formData.youtube_channelId) {
             setYoutubeLoading(true)
             try {
                 const response = await fetch(`/api/youtube?channelId=${formData.youtube_channelId}`)
@@ -76,6 +83,19 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
             }
         }
 
+        if (imageSource === 'spotify' && formData.spotify_artistId) {
+            try {
+                const response = await fetch(`/api/spotify?artistId=${formData.spotify_artistId}`)
+                if (response.ok) {
+                    const data = await response.json()
+                    if (data.heroImage) heroImage = data.heroImage
+                    if (data.profileImage) profileImage = data.profileImage
+                }
+            } catch (error) {
+                console.error('Error fetching Spotify data:', error)
+            }
+        }
+
         const validStatus = formData.status === 'active' || formData.status === 'pending' || formData.status === 'inactive' 
             ? formData.status as 'active' | 'pending' | 'inactive'
             : 'pending'
@@ -83,14 +103,13 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
         console.log('Guardando artista:', { formDataStatus: formData.status, validStatus })
         
         const success = await onSave({
-            id: artist.id,
+            ...artist,
             name: formData.name,
             slug: formData.slug,
             email: formData.email,
             theme: formData.theme,
             status: validStatus,
-            created_at: artist.created_at,
-            metrics: artist.metrics,
+            imageSource: imageSource,
             profile: {
                 name: formData.name,
                 tagline: formData.tagline,
@@ -203,6 +222,19 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
                                 />
                             </div>
                             <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Fuente de Imágenes</label>
+                                <select
+                                    value={imageSource}
+                                    onChange={(e) => setImageSource(e.target.value as 'youtube' | 'spotify' | 'manual')}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                >
+                                    <option value="youtube">YouTube</option>
+                                    <option value="spotify">Spotify</option>
+                                    <option value="manual">URL Manual</option>
+                                </select>
+                            </div>
+                            {imageSource === 'manual' && (
+                            <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Hero Image URL</label>
                                 <input
                                     type="url"
@@ -212,6 +244,7 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
                                     placeholder="https://..."
                                 />
                             </div>
+                            )}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Tema</label>
