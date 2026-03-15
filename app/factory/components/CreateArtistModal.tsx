@@ -6,7 +6,7 @@ import { Artist } from '../types'
 
 interface CreateArtistModalProps {
     onClose: () => void
-    onSave: (artist: Partial<Artist>) => void
+    onSave: (artist: Partial<Artist>) => Promise<boolean>
 }
 
 export function CreateArtistModal({ onClose, onSave }: CreateArtistModalProps) {
@@ -70,11 +70,11 @@ export function CreateArtistModal({ onClose, onSave }: CreateArtistModalProps) {
             }
         }
 
-        const slug = formData.name.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '').toLowerCase()
+        const slug = formData.name.replace(/\s+/g, '_')
         
-        onSave({
+        const success = await onSave({
             name: formData.name,
-            slug,
+            slug: slug,
             email: formData.email,
             theme: formData.theme,
             status: formData.status,
@@ -118,6 +118,9 @@ export function CreateArtistModal({ onClose, onSave }: CreateArtistModalProps) {
             }
         })
         setSaving(false)
+        if (success) {
+            onClose()
+        }
     }
 
     const sectionTabs = [
@@ -319,6 +322,86 @@ export function CreateArtistModal({ onClose, onSave }: CreateArtistModalProps) {
                                         placeholder="Username"
                                         value={formData.instagram_username}
                                         onChange={(e) => setFormData({...formData, instagram_username: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* TikTok */}
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="font-bold flex items-center gap-2">TikTok</span>
+                                    <input 
+                                        type="checkbox" 
+                                        checked={formData.tiktok_enabled}
+                                        onChange={(e) => setFormData({...formData, tiktok_enabled: e.target.checked})}
+                                        className="w-4 h-4 cursor-pointer"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <input
+                                        type="url"
+                                        placeholder="Link de perfil"
+                                        value={formData.social_tiktok}
+                                        onChange={(e) => setFormData({...formData, social_tiktok: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Username"
+                                        value={formData.tiktok_username}
+                                        onChange={(e) => setFormData({...formData, tiktok_username: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* SoundCloud */}
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="font-bold flex items-center gap-2">SoundCloud</span>
+                                    <input 
+                                        type="checkbox" 
+                                        checked={formData.soundcloud_enabled}
+                                        onChange={(e) => setFormData({...formData, soundcloud_enabled: e.target.checked})}
+                                        className="w-4 h-4 cursor-pointer"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <input
+                                        type="url"
+                                        placeholder="Link de artista"
+                                        value={formData.social_soundcloud}
+                                        onChange={(e) => setFormData({...formData, social_soundcloud: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                    />
+                                    <textarea
+                                        placeholder="Iframe"
+                                        value={formData.soundcloud_iframe}
+                                        onChange={(e) => setFormData({...formData, soundcloud_iframe: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm font-mono"
+                                        rows={2}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Twitter */}
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="font-bold flex items-center gap-2">Twitter/X</span>
+                                    <input 
+                                        type="checkbox" 
+                                        checked={formData.twitter_enabled}
+                                        onChange={(e) => setFormData({...formData, twitter_enabled: e.target.checked})}
+                                        className="w-4 h-4 cursor-pointer"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <input
+                                        type="url"
+                                        placeholder="Link de perfil"
+                                        value={formData.social_twitter}
+                                        onChange={(e) => setFormData({...formData, social_twitter: e.target.value})}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
                                     />
                                 </div>

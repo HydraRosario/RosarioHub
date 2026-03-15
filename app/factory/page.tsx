@@ -57,7 +57,7 @@ export default function FactoryDashboard() {
         }
     }
 
-    const handleCreateArtist = async (artistData: Partial<Artist>) => {
+    const handleCreateArtist = async (artistData: Partial<Artist>): Promise<boolean> => {
         try {
             const res = await fetch('/api/artists', {
                 method: 'POST',
@@ -67,32 +67,40 @@ export default function FactoryDashboard() {
             if (res.ok) {
                 setShowCreateModal(false)
                 fetchData()
+                return true
             }
+            return false
         } catch (error) {
             console.error('Error creating artist:', error)
+            return false
         }
     }
 
-    const handleUpdateArtist = async (updatedArtist: Artist) => {
+    const handleUpdateArtist = async (updatedArtist: Artist): Promise<boolean> => {
+        console.log('handleUpdateArtist llamado con:', updatedArtist)
         try {
-            const res = await fetch(`/api/artists?id=${updatedArtist.id}`, {
+            const res = await fetch(`/api/artists/${updatedArtist.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedArtist)
             })
+            console.log('Respuesta:', res.status, res.ok)
             if (res.ok) {
                 setEditArtist(null)
                 fetchData()
+                return true
             }
+            return false
         } catch (error) {
             console.error('Error updating artist:', error)
+            return false
         }
     }
 
     const handleDeleteArtist = async (id: string) => {
         if (!confirm('Are you sure you want to delete this artist?')) return
         try {
-            const res = await fetch(`/api/artists?id=${id}`, { method: 'DELETE' })
+            const res = await fetch(`/api/artists/${id}`, { method: 'DELETE' })
             if (res.ok) fetchData()
         } catch (error) {
             console.error('Error deleting artist:', error)

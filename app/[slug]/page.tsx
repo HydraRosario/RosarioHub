@@ -58,7 +58,8 @@ export default function ArtistPage({ params }: { params: Promise<{ slug: string 
     useEffect(() => {
         const unwrapParams = async () => {
             const resolvedParams = await params
-            setSlug(resolvedParams.slug)
+            const decodedSlug = decodeURIComponent(resolvedParams.slug)
+            setSlug(decodedSlug)
         }
         unwrapParams()
     }, [params])

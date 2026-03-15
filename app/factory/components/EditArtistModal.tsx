@@ -7,7 +7,7 @@ import { Artist } from '../types'
 interface EditArtistModalProps {
     artist: Artist
     onClose: () => void
-    onSave: (artist: Artist) => void
+    onSave: (artist: Artist) => Promise<boolean>
 }
 
 export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProps) {
@@ -17,6 +17,7 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
     
     const [formData, setFormData] = useState({
         name: artist.profile?.name || artist.name || '',
+        slug: artist.slug || '',
         tagline: artist.profile?.tagline || '',
         bio: artist.profile?.bio || '',
         heroImage: artist.profile?.heroImage || '',
@@ -54,6 +55,8 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
         e.preventDefault()
         setSaving(true)
         
+        console.log('artist.id:', artist.id)
+        
         let heroImage = formData.heroImage
         let profileImage = formData.profileImage
 
@@ -77,18 +80,23 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
             ? formData.status as 'active' | 'pending' | 'inactive'
             : 'pending'
         
-        onSave({
-            ...artist,
+        console.log('Guardando artista:', { formDataStatus: formData.status, validStatus })
+        
+        const success = await onSave({
+            id: artist.id,
             name: formData.name,
+            slug: formData.slug,
             email: formData.email,
             theme: formData.theme,
             status: validStatus,
+            created_at: artist.created_at,
+            metrics: artist.metrics,
             profile: {
                 name: formData.name,
                 tagline: formData.tagline,
                 bio: formData.bio,
-                heroImage: heroImage,
-                profileImage: profileImage
+                heroImage: heroImage || formData.heroImage,
+                profileImage: profileImage || formData.profileImage
             },
             platforms: {
                 spotify: { iframe: formData.spotify_iframe, enabled: formData.spotify_enabled, artistId: formData.spotify_artistId },
@@ -113,6 +121,9 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
             }
         })
         setSaving(false)
+        if (success) {
+            onClose()
+        }
     }
 
     const sectionTabs = [
@@ -131,7 +142,6 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
             >
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-2xl font-bold text-gray-900">Editar Artista</h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600">&times;</button>
                 </div>
                 
                 <div className="flex border-b mb-4">
@@ -165,12 +175,32 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
                                 />
                             </div>
                             <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">URL Slug</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={formData.slug}
+                                    onChange={(e) => setFormData({...formData, slug: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                />
+                            </div>
+                            <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Tagline</label>
                                 <input
                                     type="text"
                                     value={formData.tagline}
                                     onChange={(e) => setFormData({...formData, tagline: e.target.value})}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Hero Image URL</label>
+                                <input
+                                    type="url"
+                                    value={formData.heroImage}
+                                    onChange={(e) => setFormData({...formData, heroImage: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    placeholder="https://..."
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
@@ -207,7 +237,7 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
 
                     {activeSection === 'platforms' && (
                         <div className="space-y-4">
-                            {/* Repetir estructura resumida de plataformas */}
+                            {/* Spotify */}
                             <div className="p-4 bg-gray-50 rounded-lg border">
                                 <span className="font-bold flex items-center justify-between mb-2">Spotify 
                                     <input type="checkbox" checked={formData.spotify_enabled} onChange={e => setFormData({...formData, spotify_enabled: e.target.checked})} />
@@ -216,6 +246,7 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
                                 <input type="text" placeholder="ID" value={formData.spotify_artistId} onChange={e => setFormData({...formData, spotify_artistId: e.target.value})} className="w-full p-2 mb-2 border rounded text-sm" />
                                 <textarea placeholder="Iframe" value={formData.spotify_iframe} onChange={e => setFormData({...formData, spotify_iframe: e.target.value})} className="w-full p-2 border rounded text-sm font-mono" rows={2} />
                             </div>
+                            {/* YouTube */}
                             <div className="p-4 bg-gray-50 rounded-lg border">
                                 <span className="font-bold flex items-center justify-between mb-2">YouTube 
                                     <input type="checkbox" checked={formData.youtube_enabled} onChange={e => setFormData({...formData, youtube_enabled: e.target.checked})} />
@@ -223,6 +254,37 @@ export function EditArtistModal({ artist, onClose, onSave }: EditArtistModalProp
                                 <input type="url" placeholder="Link" value={formData.social_youtube} onChange={e => setFormData({...formData, social_youtube: e.target.value})} className="w-full p-2 mb-2 border rounded text-sm" />
                                 <input type="text" placeholder="Channel ID" value={formData.youtube_channelId} onChange={e => setFormData({...formData, youtube_channelId: e.target.value})} className="w-full p-2 mb-2 border rounded text-sm" />
                                 <textarea placeholder="Iframe" value={formData.youtube_iframe} onChange={e => setFormData({...formData, youtube_iframe: e.target.value})} className="w-full p-2 border rounded text-sm font-mono" rows={2} />
+                            </div>
+                            {/* Instagram */}
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <span className="font-bold flex items-center justify-between mb-2">Instagram 
+                                    <input type="checkbox" checked={formData.instagram_enabled} onChange={e => setFormData({...formData, instagram_enabled: e.target.checked})} />
+                                </span>
+                                <input type="url" placeholder="Link" value={formData.social_instagram} onChange={e => setFormData({...formData, social_instagram: e.target.value})} className="w-full p-2 mb-2 border rounded text-sm" />
+                                <input type="text" placeholder="Username" value={formData.instagram_username} onChange={e => setFormData({...formData, instagram_username: e.target.value})} className="w-full p-2 border rounded text-sm" />
+                            </div>
+                            {/* TikTok */}
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <span className="font-bold flex items-center justify-between mb-2">TikTok 
+                                    <input type="checkbox" checked={formData.tiktok_enabled} onChange={e => setFormData({...formData, tiktok_enabled: e.target.checked})} />
+                                </span>
+                                <input type="url" placeholder="Link" value={formData.social_tiktok} onChange={e => setFormData({...formData, social_tiktok: e.target.value})} className="w-full p-2 mb-2 border rounded text-sm" />
+                                <input type="text" placeholder="Username" value={formData.tiktok_username} onChange={e => setFormData({...formData, tiktok_username: e.target.value})} className="w-full p-2 border rounded text-sm" />
+                            </div>
+                            {/* SoundCloud */}
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <span className="font-bold flex items-center justify-between mb-2">SoundCloud 
+                                    <input type="checkbox" checked={formData.soundcloud_enabled} onChange={e => setFormData({...formData, soundcloud_enabled: e.target.checked})} />
+                                </span>
+                                <input type="url" placeholder="Link" value={formData.social_soundcloud} onChange={e => setFormData({...formData, social_soundcloud: e.target.value})} className="w-full p-2 mb-2 border rounded text-sm" />
+                                <textarea placeholder="Iframe" value={formData.soundcloud_iframe} onChange={e => setFormData({...formData, soundcloud_iframe: e.target.value})} className="w-full p-2 border rounded text-sm font-mono" rows={2} />
+                            </div>
+                            {/* Twitter */}
+                            <div className="p-4 bg-gray-50 rounded-lg border">
+                                <span className="font-bold flex items-center justify-between mb-2">Twitter/X 
+                                    <input type="checkbox" checked={formData.twitter_enabled} onChange={e => setFormData({...formData, twitter_enabled: e.target.checked})} />
+                                </span>
+                                <input type="url" placeholder="Link" value={formData.social_twitter} onChange={e => setFormData({...formData, social_twitter: e.target.value})} className="w-full p-2 border rounded text-sm" />
                             </div>
                         </div>
                     )}
