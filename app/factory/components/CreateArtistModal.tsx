@@ -70,7 +70,16 @@ export function CreateArtistModal({ onClose, onSave }: CreateArtistModalProps) {
             }
         }
 
-        const slug = formData.name.replace(/\s+/g, '_')
+        const removeAccents = (str: string) => {
+            const accentMap: Record<string, string> = {
+                'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u',
+                'Á': 'A', 'É': 'E', 'Í': 'I', 'Ó': 'O', 'Ú': 'U',
+                'ñ': 'n', 'Ñ': 'N'
+            }
+            return str.split('').map(char => accentMap[char] || char).join('')
+        }
+        
+        const slug = removeAccents(formData.name).replace(/\s+/g, '_')
         
         const success = await onSave({
             name: formData.name,
